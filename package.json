@@ -1,0 +1,44 @@
+{
+  "name": "bot-master",
+  "version": "0.0.1",
+  "description": "Framework that allows developer to write bots that will be supported on a bunch of different channels (messenger, telegram etc...) with only one integration",
+  "main": "./lib/index.js",
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha --recursive tests"
+  },
+  "directories": {
+    "tests": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [
+    "bot",
+    "framework",
+    "toolkit",
+    "botmaster"
+  ],
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "express": ">=4.x.x <7.0.0",
+    "lodash": "^4.13.1",
+    "request-promise": "^3.0.0",
+    "twit": "^2.2.4"
+  },
+  "engines": {
+    "node": ">=4.4.x"
+  },
+  "devDependencies": {
+    "eslint": "^2.9.0",
+    "eslint-config-airbnb": "^8.0.0",
+    "eslint-plugin-import": "^1.6.1",
+    "eslint-plugin-jsx-a11y": "^1.0.4",
+    "eslint-plugin-react": "^5.0.1",
+    "mocha-eslint": "^2.1.1",
+    "mocha": "^2.5.3",
+    "chai": "^3.5.0"
+  },
+  "author": "JD Wuarin <john.dwuarin@gmail.com>",
+  "license": "ISC"
+}
