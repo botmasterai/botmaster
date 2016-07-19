@@ -1,5 +1,5 @@
 {
-  "name": "bot-master",
+  "name": "botmaster",
   "version": "0.0.1",
   "description": "Framework allowing developers to write bots that are agnostic with respect to the channel used by their users (messenger, telegram etc...)",
   "main": "./lib/index.js",
@@ -11,7 +11,10 @@
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.ibm.com/JWuarin/botmaster"
+  },
+  "bugs": {
+    "url": "https://github.ibm.com/JWuarin/botmaster/issues"
   },
   "keywords": [
     "bot",
