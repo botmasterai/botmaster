@@ -1,7 +1,7 @@
 {
   "name": "bot-master",
   "version": "0.0.1",
-  "description": "Framework that allows developer to write bots that will be supported on a bunch of different channels (messenger, telegram etc...) with only one integration",
+  "description": "Framework allowing developers to write bots that are agnostic with respect to the channel used by their users (messenger, telegram etc...)",
   "main": "./lib/index.js",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha --recursive tests"
