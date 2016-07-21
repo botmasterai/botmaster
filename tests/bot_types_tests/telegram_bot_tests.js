@@ -7,37 +7,25 @@ const request = require('request-promise');
 const req = require('request');
 require('chai').should();
 const _ = require('lodash');
-const TelegramBot = require('../../lib/bot_types/telegram_bot');
+const TelegramBot = require('../../lib').botTypes.TelegramBot;
+const MemoryStore = require('../../lib/storage/memory_store');
 
 const TOKEN = process.env.TELEGRAM_TEST_TOKEN;
 if (TOKEN === undefined) {
-  throw new Error('Telegram Bot token must be defined. See Readme.md in ./test');
+  throw new Error('Telegram Bot token must be defined. See Readme.md in ./tests');
 }
 const USERID = process.env.TELEGRAM_TEST_USER_ID;
 if (USERID == undefined) {
-  throw new Error('Telegram test user must be defined. See Readme.md in ./test');
+  throw new Error('Telegram test user must be defined. See Readme.md in ./tests');
 }
 
 describe('Telegram Bot', function() {
-  /*
-  * Before all tests, create an instance of the bot which is
-  * accessible in the following tests.
-  * And also set up the mountpoint to make the calls.
-  */
   const telegramSettings = {
     credentials: {
       authToken: TOKEN
     },
     webhookEndpoint: '/telegram/webhook'
-    // sessionStore, // optional
   };
-
-  let telegramBot= null;
-
-  before(function(){
-    telegramBot = new TelegramBot(telegramSettings);
-    app.use('/', telegramBot.app);
-  });
 
   const baseIncommingMessage = { 
     message_id: 1,
@@ -57,6 +45,18 @@ describe('Telegram Bot', function() {
   const baseUpdateData = { 
     update_id: '466607164'
   };
+
+  /*
+  * Before all tests, create an instance of the bot which is
+  * accessible in the following tests.
+  * And also set up the mountpoint to make the calls.
+  */
+  let telegramBot= null;
+
+  before(function(){
+    telegramBot = new TelegramBot(telegramSettings);
+    app.use('/', telegramBot.app);
+  });
 
   describe('#constructor()', function() {
     it('should throw an error when authToken credential is missing', function(done) {
@@ -83,30 +83,29 @@ describe('Telegram Bot', function() {
     */
     let server = null
     before(function(done) {
-      server = app.listen(3000, function() {
-        console.log('test app listening on port 3000');
-        done();
-      })
+      server = app.listen(3000, function() { done(); });
     })
 
     after(function(done) {
-      server.close(function() {
-        console.log('test app closing and not listening anymore');
-        done();
-      });
+      server.close(function() { done(); });
     })
 
     it('should return a 200 statusCode when doing a standard request', function() {
+
+      // an error will occur here as request is badly formatted. but we don't
+      // care. So I eat the error up here.
+      telegramBot.once('error', () => {});
+
       return request(requestOptions)
       .then(function(res) {
         assert.equal(200, res.statusCode);
       });
     })
 
-    it('should emit a known event to the bot object when ' +
+    it('should emit an error event to the bot object when ' +
        'update is badly formatted', function(done) {
 
-      telegramBot.on('error', function(err) {
+      telegramBot.once('error', function(err) {
         err.message.should.equal(`Error in __formatUpdate "Cannot read property 'from' of undefined". Please report this.`);
         done();
       })
@@ -120,7 +119,7 @@ describe('Telegram Bot', function() {
     it('should emit an update event to the bot object when ' +
        'update is well formatted', function(done) {
 
-      telegramBot.on('update', function(update) {
+      telegramBot.once('update', function(update) {
         done();
       })
 
@@ -133,14 +132,14 @@ describe('Telegram Bot', function() {
       request(options);
     })
 
-    it.only('should emit a standard error event to the bot object when ' +
+    it('should emit a standard error event to the bot object when ' +
        'developer codes error in on("update") block', function(done) {
 
-      telegramBot.on('update', function(update) {
+      telegramBot.once('update', function(update) {
         telegramBot.blob(); // this is not an actual funcion => error expected
       })
 
-      telegramBot.on('error', function(err) {
+      telegramBot.once('error', function(err) {
         err.message.should.equal(`Uncaught error: "telegramBot.blob is not a function". This is most probably on your end.`);
         done();
       })
@@ -223,70 +222,4 @@ describe('Telegram Bot', function() {
       this.skip();
     })
   })
-
-  // describe('Update Object upon receiving text only message from telegram', function() {
-
-  //   const updateData
-
-  //   beforeEach(function() {
-
-
-
-  //   });
-
-  //   it('should have the correct format', function(done) {
-  //     const expectedUpdate = {
-  //       'raw': {
-
-  //       },
-  //       'sender': {
-  //         'id': USERID
-  //       },
-  //       'recipient': {
-  //         'id': null
-  //       },
-  //       'timestamp': 1468325836000,
-  //       'message': {
-  //         'mid': '466607164',
-  //         'seq': 1,
-  //         'text': 'Hello World'
-  //       }
-  //     };
-
-  //     telegramBot.on('update', function(update) {
-  //       console.log(JSON.stringify(update, null, 2));
-  //       // console.log(JSON.stringify(expectedUpdate, null, 2));
-
-  //       const condition = _.isEqual(update, expectedUpdate);
-  //       console.log(condition);
-
-  //       // update.should.equal(expectedUpdate);
-  //       expect(true).to.equal(true);
-  //       // assert(_.isEqual(update, expectedUpdate));
-  //       expect(expectedUpdate).to.deep.equal(update)
-  //       // expect(1+1).to.equal(2)
-
-  //       // assert.equal(update, expectedUpdate);
-  //       // if (_.isEqual(update, expectedUpdate)) {
-  //       //   console.log("how is that possible?")
-  //       //   // throw new Error('Object is not as expected');
-  //       // }
-  //       // console.log("Well it isn't?")
-  //       done();
-  //     });
-
-  //     // telegramBot.testSomething(function(update) {
-  //     //   telegramBot.emit('update', update);
-  //     // })
-
-  //     // telegramBot.testSomething()
-  //     // .then(function(update) {
-  //     //   telegramBot.emit('update', update);
-  //     // });
-
-  //     // telegramBot.testSomething();
-
-  //   })
-
-  // })
 });

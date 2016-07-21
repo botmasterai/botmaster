@@ -4,6 +4,7 @@
   "description": "Framework allowing developers to write bots that are agnostic with respect to the channel used by their users (messenger, telegram etc...)",
   "main": "./lib/index.js",
   "scripts": {
+    "start": "nodemon --legacy-watch ./example_jd.js",
     "test": "./node_modules/mocha/bin/mocha --recursive tests"
   },
   "directories": {
@@ -33,14 +34,15 @@
     "node": ">=4.4.x"
   },
   "devDependencies": {
+    "chai": "^3.5.0",
     "eslint": "^2.9.0",
     "eslint-config-airbnb": "^8.0.0",
     "eslint-plugin-import": "^1.6.1",
     "eslint-plugin-jsx-a11y": "^1.0.4",
     "eslint-plugin-react": "^5.0.1",
-    "mocha-eslint": "^2.1.1",
     "mocha": "^2.5.3",
-    "chai": "^3.5.0"
+    "mocha-eslint": "^2.1.1",
+    "nodemon": "^1.9.2"
   },
   "author": "JD Wuarin <john.dwuarin@gmail.com>",
   "license": "ISC"
