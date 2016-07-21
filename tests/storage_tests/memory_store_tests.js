@@ -4,12 +4,16 @@ const app = require('express')();
 const assert = require('chai').assert;
 const expect = require('chai').expect;
 const request = require('request-promise');
+const crypto = require('crypto');
 const req = require('request');
 require('chai').should();
 const _ = require('lodash');
 const Botmaster = require('../../lib');
 const SessionStore = Botmaster.storage.MemoryStore;
 
+const bodyParser = require('body-parser');
+
+    // app.use(bodyParser.json({ verify: verifyRequestSignature }));
 /*
 * just start a server listening on port 3000 locally
 * then close connection and create the botmaster object
@@ -64,7 +68,7 @@ describe('MemoryStore for Telegram Bots', function() {
       credentials: {
         authToken: TOKEN
       },
-      webhookEndpoint: '/telegram/webhook',
+      webhookEndpoint: '/webhook',
       sessionStore: new SessionStore()
     };
     const botsSettings = [{ telegram: telegramSettings }];
@@ -113,6 +117,14 @@ describe('MemoryStore for Telegram Bots', function() {
   });
 })
 
+function getMessengerSignatureHeader(updateData, fbAppSecret) {
+  const hash = crypto.createHmac('sha1', fbAppSecret)
+    .update(JSON.stringify(updateData))
+    .digest('hex');
+
+  return `sha1=${hash}`;
+}
+
 describe('MemoryStore for Messenger Bots', function() {
 
   const MESSENGER_VERIFY_TOKEN = process.env.MESSENGER_VERIFY_TOKEN;
@@ -122,6 +134,10 @@ describe('MemoryStore for Messenger Bots', function() {
   const MESSENGER_PAGE_TOKEN = process.env.MESSENGER_PAGE_TOKEN;
   if (MESSENGER_PAGE_TOKEN == undefined) {
     throw new Error('MESSENGER_PAGE_TOKEN must be defined. See Readme.md in ./tests');
+  }
+  const FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET;
+  if (FACEBOOK_APP_SECRET == undefined) {
+    throw new Error('FACEBOOK_APP_SECRET must be defined. See Readme.md in ./tests');
   }
 
   const userId = '134449875';
@@ -149,7 +165,10 @@ describe('MemoryStore for Messenger Bots', function() {
     method: 'POST',
     uri: 'http://localhost:3001/messenger/webhook',
     body: updateData,
-    json: true
+    json: true,
+    headers: {
+        'x-hub-signature': getMessengerSignatureHeader(updateData, FACEBOOK_APP_SECRET)
+    }
   };
 
   let botmaster = null;
@@ -157,9 +176,10 @@ describe('MemoryStore for Messenger Bots', function() {
     const messengerSettings = {
       credentials: {
         verifyToken: MESSENGER_VERIFY_TOKEN,
-        pageToken: MESSENGER_PAGE_TOKEN
+        pageToken: MESSENGER_PAGE_TOKEN,
+        fbAppSecret: FACEBOOK_APP_SECRET
       },
-      webhookEndpoint: '/messenger/webhook',
+      webhookEndpoint: '/webhook',
       sessionStore: new SessionStore()
     };
     const botsSettings = [{ messenger: messengerSettings }];
@@ -201,9 +221,34 @@ describe('MemoryStore for Messenger Bots', function() {
       const options = _.cloneDeep(requestOptions);
       options.body.entry[0].messaging[0].message.mid = 101;
       options.body.entry[0].messaging[0].message.seq = 2;
+      options.headers['x-hub-signature'] = getMessengerSignatureHeader(
+        options.body, FACEBOOK_APP_SECRET)
 
       request(options);
     });
 
   });
 })
+
+// function verifyRequestSignature(req, res, buf) {
+//   const signature = req.headers['x-hub-signature'];
+//   console.log("regfceds");
+
+//   if (!signature) {
+//     // For testing, let's log an error. In production, you should throw an
+//     // error.
+//     console.error('Couldn\'t validate the signature.');
+//   } else {
+//     const elements = signature.split('=');
+//     const method = elements[0];
+//     const signatureHash = elements[1];
+
+//     const expectedHash = crypto.createHmac('sha1', FB_APP_SECRET)
+//                         .update(buf)
+//                         .digest('hex');
+
+//     if (signatureHash != expectedHash) {
+//       throw new Error('Couldn\'t validate the request signature.');
+//     }
+//   }
+// }
