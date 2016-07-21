@@ -224,7 +224,10 @@ describe('MemoryStore for Messenger Bots', function() {
       options.headers['x-hub-signature'] = getMessengerSignatureHeader(
         options.body, FACEBOOK_APP_SECRET)
 
-      request(options);
+      request(options)
+      .then(function(body) {
+        console.log(body);
+      })
     });
 
   });
