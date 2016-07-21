@@ -179,11 +179,10 @@ describe('MemoryStore for Messenger Bots', function() {
         pageToken: MESSENGER_PAGE_TOKEN,
         fbAppSecret: FACEBOOK_APP_SECRET
       },
-      webhookEndpoint: '/webhook',
-      sessionStore: new SessionStore()
+      webhookEndpoint: '/webhook'
     };
     const botsSettings = [{ messenger: messengerSettings }];
-    botmaster = new Botmaster(botsSettings, app);
+    botmaster = new Botmaster(botsSettings, app, new SessionStore());
   })
 
   describe('when receiving an update from telegram', function() {
@@ -224,34 +223,8 @@ describe('MemoryStore for Messenger Bots', function() {
       options.headers['x-hub-signature'] = getMessengerSignatureHeader(
         options.body, FACEBOOK_APP_SECRET)
 
-      request(options)
-      .then(function(body) {
-        console.log(body);
-      })
+      request(options);
     });
 
   });
 })
-
-// function verifyRequestSignature(req, res, buf) {
-//   const signature = req.headers['x-hub-signature'];
-//   console.log("regfceds");
-
-//   if (!signature) {
-//     // For testing, let's log an error. In production, you should throw an
-//     // error.
-//     console.error('Couldn\'t validate the signature.');
-//   } else {
-//     const elements = signature.split('=');
-//     const method = elements[0];
-//     const signatureHash = elements[1];
-
-//     const expectedHash = crypto.createHmac('sha1', FB_APP_SECRET)
-//                         .update(buf)
-//                         .digest('hex');
-
-//     if (signatureHash != expectedHash) {
-//       throw new Error('Couldn\'t validate the request signature.');
-//     }
-//   }
-// }
