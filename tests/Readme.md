@@ -1,23 +1,44 @@
-In order to run the tests, please do the following
+In order to run the tests, please create a config.js file in this folder 
+that looks like this:
 ---
 
 # For Telegram
 
-```bash
-export TELEGRAM_TEST_TOKEN=<YOUR_TELEGRAM_BOT_TOKEN>
-# User Id which you want to send the messages.
-export TELEGRAM_TEST_USER_ID=<YOUR_TELEGRAM_USER_ID>
+```js
+
+const config = {
+
+  telegramCredentials: {
+    authToken: 'YOUR_OWN_INFO_HERE,
+  },
+
+  telegramUserId: 'YOUR_OWN_INFO_HERE',
+
+  messengerCredentials: {
+    verifyToken: 'YOUR_OWN_INFO_HERE,
+    pageToken: 'YOUR_OWN_INFO_HERE,
+    fbAppSecret: 'YOUR_OWN_INFO_HERE,
+  },
+
+  twitterCredentials1: {
+    // too_cool_for_you
+    consumer_key: 'YOUR_OWN_INFO_HERE,
+    consumer_secret: 'YOUR_OWN_INFO_HERE,
+    access_token: ''YOUR_OWN_INFO_HERE,
+    access_token_secret: 'YOUR_OWN_INFO_HERE,
+  },
+
+  twitterCredentials2: {
+    // watson_chat_demo bot
+    consumer_key: 'YOUR_OWN_INFO_HERE,
+    consumer_secret: 'YOUR_OWN_INFO_HERE,
+    access_token: 'YOUR_OWN_INFO_HERE,
+    access_token_secret: 'YOUR_OWN_INFO_HERE,
+  }
+
+}
+
+config.twitterCredentials = config.twitterCredentials1; // just easier and default
+
+module.exports = config;
 ```
-
-# For Messenger
-
-```bash
-export MESSENGER_VERIFY_TOKEN=<YOUR_MESSENGER_VERIFY_TOKEN>
-export MESSENGER_PAGE_TOKEN=<YOUR_MESSENGER_PAGE_TOKEN>
-export FACEBOOK_APP_SECRET=<YOUR_FACEBOOK_APP_SECRET>
-```
-
-# For Twitter
-
-
-# For Slack

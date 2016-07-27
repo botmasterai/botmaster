@@ -12,6 +12,7 @@ Thumbs.db
 
 example_jd.js
 testing_creds.md
+tests/config.js
 
 # Application specific files
 node_modules

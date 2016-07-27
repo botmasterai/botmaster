@@ -4,34 +4,26 @@ const app = require('express')();
 const assert = require('chai').assert;
 const expect = require('chai').expect;
 const request = require('request-promise');
-const req = require('request');
 require('chai').should();
 const _ = require('lodash');
 const TelegramBot = require('../../lib').botTypes.TelegramBot;
-const MemoryStore = require('../../lib/storage/memory_store');
+const config = require('../config.js')
 
-const TOKEN = process.env.TELEGRAM_TEST_TOKEN;
-if (TOKEN === undefined) {
-  throw new Error('Telegram Bot token must be defined. See Readme.md in ./tests');
-}
-const USERID = process.env.TELEGRAM_TEST_USER_ID;
-if (USERID == undefined) {
-  throw new Error('Telegram test user must be defined. See Readme.md in ./tests');
-}
+const credentials = config.telegramCredentials;
+const userId = config.telegramUserId;
+
 
 describe('Telegram Bot', function() {
   const telegramSettings = {
-    credentials: {
-      authToken: TOKEN
-    },
+    credentials,
     webhookEndpoint: '/telegram/webhook'
   };
 
   const baseIncommingMessage = { 
     message_id: 1,
-    from: {id: USERID, first_name: 'Biggie', last_name: 'Smalls'},
+    from: {id: userId, first_name: 'Biggie', last_name: 'Smalls'},
     chat: { 
-      id: USERID,
+      id: userId,
       first_name: 'Biggie',
       last_name: 'Smalls',
       type: 'private' 
@@ -168,7 +160,7 @@ describe('Telegram Bot', function() {
             'id': rawUpdate.message.from.id
           },
           'recipient': {
-            'id': TOKEN
+            'id': credentials.authToken
           },
           'timestamp': rawUpdate.message.date * 1000,
           'message': {

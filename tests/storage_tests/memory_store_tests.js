@@ -5,15 +5,13 @@ const assert = require('chai').assert;
 const expect = require('chai').expect;
 const request = require('request-promise');
 const crypto = require('crypto');
-const req = require('request');
 require('chai').should();
 const _ = require('lodash');
 const Botmaster = require('../../lib');
 const SessionStore = Botmaster.storage.MemoryStore;
+const config = require('../config.js')
 
-const bodyParser = require('body-parser');
 
-    // app.use(bodyParser.json({ verify: verifyRequestSignature }));
 /*
 * just start a server listening on port 3000 locally
 * then close connection and create the botmaster object
@@ -30,22 +28,16 @@ after(function(done) {
 
 describe('MemoryStore for Telegram Bots', function() {
 
-  const TOKEN = process.env.TELEGRAM_TEST_TOKEN;
-  if (TOKEN === undefined) {
-    throw new Error('Telegram Bot token must be defined. See Readme.md in ./tests');
-  }
-  const USERID = process.env.TELEGRAM_TEST_USER_ID;
-  if (USERID == undefined) {
-    throw new Error('Telegram test user must be defined. See Readme.md in ./tests');
-  }
+  const telegramCredentials = config.telegramCredentials;
+  const telegramUserId = config.telegramUserId;
 
   const updateData = { 
     update_id: 100,
     message: { 
       message_id: 1,
-      from: {id: USERID, first_name: 'Biggie', last_name: 'Smalls'},
+      from: {id: telegramUserId, first_name: 'Biggie', last_name: 'Smalls'},
       chat: { 
-        id: USERID,
+        id: telegramUserId,
         first_name: 'Biggie',
         last_name: 'Smalls',
         type: 'private' 
@@ -65,9 +57,7 @@ describe('MemoryStore for Telegram Bots', function() {
   let botmaster = null;
   before(function() {
     const telegramSettings = {
-      credentials: {
-        authToken: TOKEN
-      },
+      credentials: telegramCredentials,
       webhookEndpoint: '/webhook',
       sessionStore: new SessionStore()
     };
@@ -78,8 +68,8 @@ describe('MemoryStore for Telegram Bots', function() {
   describe('when receiving an update from telegram', function() {
     it('should result in the update object having the right session on first message', function(done) {
       const expectedSession = {
-        id: USERID,
-        botId: TOKEN,
+        id: telegramUserId,
+        botId: telegramCredentials.authToken,
         latestMid: 100,
         latestSeq: 1,
         lastActive: 1468325836000
@@ -93,10 +83,10 @@ describe('MemoryStore for Telegram Bots', function() {
       request(requestOptions);
     });
 
-    it('should result in the update object having the right session', function(done) {
+    it('should result in the update object having the right session on second message', function(done) {
       const expectedSession = {
-        id: USERID,
-        botId: TOKEN,
+        id: telegramUserId,
+        botId: telegramCredentials.authToken,
         latestMid: 101,
         latestSeq: 2,
         lastActive: 1468325836000
@@ -117,28 +107,17 @@ describe('MemoryStore for Telegram Bots', function() {
   });
 })
 
-function getMessengerSignatureHeader(updateData, fbAppSecret) {
-  const hash = crypto.createHmac('sha1', fbAppSecret)
-    .update(JSON.stringify(updateData))
-    .digest('hex');
-
-  return `sha1=${hash}`;
-}
-
 describe('MemoryStore for Messenger Bots', function() {
 
-  const MESSENGER_VERIFY_TOKEN = process.env.MESSENGER_VERIFY_TOKEN;
-  if (MESSENGER_VERIFY_TOKEN === undefined) {
-    throw new Error('MESSENGER_VERIFY_TOKEN must be defined. See Readme.md in ./tests');
+  function getMessengerSignatureHeader(updateData, fbAppSecret) {
+    const hash = crypto.createHmac('sha1', fbAppSecret)
+      .update(JSON.stringify(updateData))
+      .digest('hex');
+
+    return `sha1=${hash}`;
   }
-  const MESSENGER_PAGE_TOKEN = process.env.MESSENGER_PAGE_TOKEN;
-  if (MESSENGER_PAGE_TOKEN == undefined) {
-    throw new Error('MESSENGER_PAGE_TOKEN must be defined. See Readme.md in ./tests');
-  }
-  const FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET;
-  if (FACEBOOK_APP_SECRET == undefined) {
-    throw new Error('FACEBOOK_APP_SECRET must be defined. See Readme.md in ./tests');
-  }
+
+  const messengerCredentials = config.messengerCredentials;
 
   const userId = '134449875';
   const botId = '123124412'
@@ -167,25 +146,22 @@ describe('MemoryStore for Messenger Bots', function() {
     body: updateData,
     json: true,
     headers: {
-        'x-hub-signature': getMessengerSignatureHeader(updateData, FACEBOOK_APP_SECRET)
+        'x-hub-signature': getMessengerSignatureHeader(
+          updateData, messengerCredentials.fbAppSecret)
     }
   };
 
   let botmaster = null;
   before(function() {
     const messengerSettings = {
-      credentials: {
-        verifyToken: MESSENGER_VERIFY_TOKEN,
-        pageToken: MESSENGER_PAGE_TOKEN,
-        fbAppSecret: FACEBOOK_APP_SECRET
-      },
+      credentials: messengerCredentials,
       webhookEndpoint: '/webhook'
     };
     const botsSettings = [{ messenger: messengerSettings }];
     botmaster = new Botmaster(botsSettings, app, new SessionStore());
   })
 
-  describe('when receiving an update from telegram', function() {
+  describe('when receiving an update from messenger', function() {
     it('should result in the update object having the right session on first message', function(done) {
       const expectedSession = {
         id: userId,
@@ -203,7 +179,7 @@ describe('MemoryStore for Messenger Bots', function() {
       request(requestOptions);
     });
 
-    it('should result in the update object having the right session', function(done) {
+    it('should result in the update object having the right session on second message', function(done) {
       const expectedSession = {
         id: userId,
         botId: botId,
@@ -221,7 +197,7 @@ describe('MemoryStore for Messenger Bots', function() {
       options.body.entry[0].messaging[0].message.mid = 101;
       options.body.entry[0].messaging[0].message.seq = 2;
       options.headers['x-hub-signature'] = getMessengerSignatureHeader(
-        options.body, FACEBOOK_APP_SECRET)
+        options.body, messengerCredentials.fbAppSecret)
 
       request(options);
     });
