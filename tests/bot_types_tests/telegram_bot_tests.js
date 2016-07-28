@@ -21,7 +21,7 @@ describe('Telegram Bot', function() {
 
   const baseIncommingMessage = { 
     message_id: 1,
-    from: {id: userId, first_name: 'Biggie', last_name: 'Smalls'},
+    from: { id: userId, first_name: 'Biggie', last_name: 'Smalls' },
     chat: { 
       id: userId,
       first_name: 'Biggie',
