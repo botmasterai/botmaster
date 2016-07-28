@@ -7,7 +7,7 @@
     "start": "nodemon --legacy-watch ./example_jd.js",
     "test": "./node_modules/mocha/bin/mocha --recursive tests",
     "preversion": "npm test",
-    "postversion git push && git push --tags && rm -rf build/temp"
+    "postversion": "git push && git push --tags && rm -rf build/temp"
   },
   "directories": {
     "tests": "test"
