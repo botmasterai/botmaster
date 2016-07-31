@@ -13,7 +13,7 @@ const config = require('../config.js')
 
 
 /*
-* just start a server listening on port 3000 locally
+* just start a server listening on port 3001 locally
 * then close connection and create the botmaster object
 */
 let server = null
@@ -62,7 +62,11 @@ describe('MemoryStore for Telegram Bots', function() {
       sessionStore: new SessionStore()
     };
     const botsSettings = [{ telegram: telegramSettings }];
-    botmaster = new Botmaster(botsSettings, app);
+    const botmasterSettings = {
+      botsSettings,
+      app
+    }
+    botmaster = new Botmaster(botmasterSettings);
   })
 
   describe('when receiving an update from telegram', function() {
@@ -158,7 +162,12 @@ describe('MemoryStore for Messenger Bots', function() {
       webhookEndpoint: '/webhook'
     };
     const botsSettings = [{ messenger: messengerSettings }];
-    botmaster = new Botmaster(botsSettings, app, new SessionStore());
+    const botmasterSettings = {
+      botsSettings,
+      app,
+      sessionStore: new SessionStore()
+    }
+    botmaster = new Botmaster(botmasterSettings);
   })
 
   describe('when receiving an update from messenger', function() {

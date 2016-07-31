@@ -1,11 +1,17 @@
 Bot framework
 ---
 
-This is a lightweight bot framework that can be used for creating bots on a variety of different platforms. 
+This is a lightweight bot framework that can be used for creating bots on a variety of different platforms.
 
-## hot so use botmaster
+## install
+
+```bash
+npm install --save botmaster
+```
+
+## how so use botmaster
 ```js
-const botmaster = new Botmaster(botsSettings, app);
+const botmaster = new Botmaster(botmasterSettings);
 
 botmaster.on('update', (bot, update) => {
   bot.sendMessage({
@@ -19,9 +25,63 @@ botmaster.on('update', (bot, update) => {
 });
 ```
 
-As you can see here, the Botmaster constructor takes two arguments, botsSettings and app. Here is a full example with the arguments set for a simple bot
+As you can see here, the Botmaster constructor takes a botmasterSettigns argument. 
+This object is of the following form:
 
-## how to use (speaking with both a telegram and a messenger bot)
+```js
+botmasterSettings = {
+  botsSettings: botsSettings, // see below for a definition of botsSettings
+  app: app, // optional, an express app object if you are running your own server
+  port: port, // optional, only used if "app" is not defined. Defaults t0 3000 in that case
+  sessionStore: sessionStore // optional. Define if you will be dealing with sessions
+}
+```
+Here is a full example assuming you are not running your own express server. If you are, see example right below this one
+
+## Without own server object (speaking with both a telegram and a messenger bot)
+```js
+const express = require('express');
+const Botmaster = require('botmaster');
+
+const telegramSettings = {
+  credentials: {
+    authToken: process.env.TELEGRAM_TEST_TOKEN,
+  },
+  // !! botmaster will mount your webhooks on /<botType>/webhookEndpoint.
+  // so in this case, it will mount it on: /telegram/webhook1234.
+  // If using localtunnel as specified below the whole path will be:
+  // https://botmastersubdomain.localtunnel.me/telegram/webhook1234/
+  webhookEndpoint: '/webhook1234/',
+};
+
+const messengerSettings = {
+  credentials: {
+    verifyToken: process.env.MESSENGER_VERIFY_TOKEN,
+    pageToken: process.env.MESSENGER_PAGE_TOKEN,
+    fbAppSecret: process.env.FACEBOOK_APP_SECRET,
+  },
+  webhookEndpoint: '/webhook1234/',
+};
+
+const botsSettings = [{ telegram: telegramSettings },
+                      { messenger: messengerSettings }];
+const botmasterSettings = { botsSettings: botsSettings } // will start on port 3000 unless specified otherwise
+
+const botmaster = new Botmaster(botmasterSettings);
+
+botmaster.on('update', (bot, update) => {
+  bot.sendMessage({
+    recipient: {
+      id: update.sender.id,
+    },
+    message: {
+      text: 'Well right back at you!',
+    },
+  });
+});
+
+```
+
 ```js
 const express = require('express');
 const app = express();
@@ -51,6 +111,13 @@ const messengerSettings = {
 
 const botsSettings = [{ telegram: telegramSettings },
                       { messenger: messengerSettings }];
+
+const botmasterSettings = { 
+  botsSettings: botsSettings,
+  app: app,
+}
+
+const botmasterSettings = 
 
 const botmaster = new Botmaster(botsSettings, app);
 
