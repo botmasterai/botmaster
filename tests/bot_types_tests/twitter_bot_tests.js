@@ -31,9 +31,10 @@ describe('Twitter Bot', function() {
 
   describe('#constructor()', function() {
     it('should throw an error when authToken credential is missing', function(done) {
-      const badSettings = {};
-      // expect(() => new TwitterBot(badSettings)).to.throw(
-      //   'Credentials must have consumer Key');
+      const badSettings = _.cloneDeep(settings);
+      badSettings.credentials.consumerKey = undefined;
+      expect(() => new TwitterBot(badSettings)).to.throw(
+        'ERROR: bots of type twitter are expected to have consumerKey credentials');
       done();
     });
   });

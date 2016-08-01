@@ -158,7 +158,7 @@ describe('Messenger Bot', function() {
       request(options);
     })
 
-    it.only('should emit a standard error event to the bot object when ' +
+    it('should emit a standard error event to the bot object when ' +
        'developer codes error in on("update") block', function(done) {
 
       bot.once('update', function(update) {

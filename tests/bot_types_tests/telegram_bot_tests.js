@@ -51,11 +51,19 @@ describe('Telegram Bot', function() {
   });
 
   describe('#constructor()', function() {
+    it('should throw an error when webhookEndPoint is missing', function(done) {
+      const badSettings = _.cloneDeep(telegramSettings);
+      badSettings.webhookEndpoint = undefined;
+      expect(() => new TelegramBot(badSettings)).to.throw(
+        'ERROR: bots of type telegram must be defined with webhookEndpoint in their settings');
+      done();
+    });
+
     it('should throw an error when authToken credential is missing', function(done) {
       const badSettings = _.cloneDeep(telegramSettings);
       badSettings.credentials.authToken = undefined;
       expect(() => new TelegramBot(badSettings)).to.throw(
-        'Credentials must have authToken');
+        'ERROR: bots of type telegram are expected to have authToken credentials');
       done();
     });
   });
