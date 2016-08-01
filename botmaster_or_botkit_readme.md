@@ -11,12 +11,10 @@ Although it might seem at first glance like the two frameworks (and other simila
 
 Botkit was initially created to allow developers to easily build bots of all types that would be available on Slack. Although it now allows developers to build bots for twilio IP messaging and Facebook Messenger too. It was first published in December 2015
 
-Botmaster, no the other hand, is an opinionated lightweight framework created after answering the following question: How can I minimise the amount of code a developer has to write in order to create a 1-on-1 conversational chatbot that works on multiple different platforms. It was first published to Github on August 2016.
+Botmaster, on the other hand, is an opinionated lightweight framework created after answering the following question: How can I minimise the amount of code a developer has to write in order to create a 1-on-1 conversational chatbot that works on multiple different platforms. It was first published to Github on August 2016.
 
 Due to the differences in application intents between both frameworks, the design differs in many ways.
 
-### Main differences
----
 
 Message format
 ---

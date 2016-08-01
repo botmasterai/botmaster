@@ -48,5 +48,5 @@
     "nodemon": "^1.9.2"
   },
   "author": "JD Wuarin <john.dwuarin@gmail.com>",
-  "license": "ISC"
+  "license": "MIT"
 }
