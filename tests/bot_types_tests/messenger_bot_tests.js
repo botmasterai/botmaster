@@ -64,7 +64,7 @@ describe('Messenger Bot', function() {
       const badSettings = _.cloneDeep(settings);
       badSettings.webhookEndpoint = undefined;
       expect(() => new MessengerBot(badSettings)).to.throw(
-        'ERROR: bots of type messenger must be defined with webhookEndpoint in their settings');
+        'ERROR: bots of type \'messenger\' must be defined with webhookEndpoint in their settings');
       done();
     });
 
@@ -72,7 +72,7 @@ describe('Messenger Bot', function() {
       const badSettings = _.cloneDeep(settings);
       badSettings.credentials.verifyToken = undefined;
       expect(() => new MessengerBot(badSettings)).to.throw(
-        'ERROR: bots of type messenger are expected to have verifyToken credentials');
+        'ERROR: bots of type \'messenger\' are expected to have \'verifyToken\' credentials');
       done();
     });
   });
@@ -93,10 +93,6 @@ describe('Messenger Bot', function() {
     let server = null
     before(function(done) {
       server = app.listen(3000, function() { done(); });
-    })
-
-    after(function(done) {
-      server.close(function() { done(); });
     })
 
     it('should return a 200 statusCode when doing a standard request', function() {
@@ -127,24 +123,13 @@ describe('Messenger Bot', function() {
       });
     })
 
-    it('should not return an error in the response body if signature is right', function() {
-      const options = _.cloneDeep(requestOptions);
-      options.body = baseIncommingUpdate;
-      options.headers = {
-        'x-hub-signature': getMessengerSignatureHeader(
-        baseIncommingUpdate, credentials.fbAppSecret)
-      }
-
-      return request(options)
-      .then(function(res) {
-        assert.equal(undefined, res.body.error);
-      });
-    })
-
     it('should emit an update event to the bot object when ' +
-       'update is well formatted', function(done) {
+            'update is well formatted.', function(done) {
+
+      expect(bot.id).to.equal(undefined); // before the first request is done
 
       bot.once('update', function(update) {
+        expect(bot.id).to.not.equal(undefined); // after the first request is done
         done();
       })
 
@@ -155,7 +140,10 @@ describe('Messenger Bot', function() {
         baseIncommingUpdate, credentials.fbAppSecret)
       }
 
-      request(options);
+      return request(options)
+      .then(function(res) {
+        assert.equal(undefined, res.body.error); // no error returned
+      });
     })
 
     it('should emit a standard error event to the bot object when ' +
@@ -178,6 +166,10 @@ describe('Messenger Bot', function() {
       }
 
       request(options);
+    })
+
+    after(function(done) {
+      server.close(function() { done(); });
     })
 
   })

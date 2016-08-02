@@ -34,7 +34,7 @@ describe('Twitter Bot', function() {
       const badSettings = _.cloneDeep(settings);
       badSettings.credentials.consumerKey = undefined;
       expect(() => new TwitterBot(badSettings)).to.throw(
-        'ERROR: bots of type twitter are expected to have consumerKey credentials');
+        'ERROR: bots of type \'twitter\' are expected to have \'consumerKey\' credentials');
       done();
     });
   });
