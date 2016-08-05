@@ -43,11 +43,11 @@ describe('Telegram Bot', function() {
   * accessible in the following tests.
   * And also set up the mountpoint to make the calls.
   */
-  let telegramBot= null;
+  let bot= null;
 
   before(function(){
-    telegramBot = new TelegramBot(telegramSettings);
-    app.use('/', telegramBot.app);
+    bot = new TelegramBot(telegramSettings);
+    app.use('/', bot.app);
   });
 
   describe('#constructor()', function() {
@@ -94,7 +94,7 @@ describe('Telegram Bot', function() {
 
       // an error will occur here as request is badly formatted. but we don't
       // care. So I eat the error up here.
-      telegramBot.once('error', () => {});
+      bot.once('error', () => {});
 
       return request(requestOptions)
       .then(function(res) {
@@ -105,7 +105,7 @@ describe('Telegram Bot', function() {
     it('should emit an error event to the bot object when ' +
        'update is badly formatted', function(done) {
 
-      telegramBot.once('error', function(err) {
+      bot.once('error', function(err) {
         err.message.should.equal(`Error in __formatUpdate "Cannot read property 'from' of undefined". Please report this.`);
         done();
       })
@@ -119,7 +119,7 @@ describe('Telegram Bot', function() {
     it('should emit an update event to the bot object when ' +
        'update is well formatted', function(done) {
 
-      telegramBot.once('update', function(update) {
+      bot.once('update', function(update) {
         done();
       })
 
@@ -135,12 +135,12 @@ describe('Telegram Bot', function() {
     it('should emit a standard error event to the bot object when ' +
        'developer codes error in on("update") block', function(done) {
 
-      telegramBot.once('update', function(update) {
-        telegramBot.blob(); // this is not an actual funcion => error expected
+      bot.once('update', function(update) {
+        bot.blob(); // this is not an actual funcion => error expected
       })
 
-      telegramBot.once('error', function(err) {
-        err.message.should.equal(`Uncaught error: "telegramBot.blob is not a function". This is most probably on your end.`);
+      bot.once('error', function(err) {
+        err.message.should.equal(`Uncaught error: "bot.blob is not a function". This is most probably on your end.`);
         done();
       })
 
@@ -160,7 +160,7 @@ describe('Telegram Bot', function() {
       const rawUpdate = _.cloneDeep(baseUpdateData);
       rawUpdate.message = incommingTextMessage;
 
-      return telegramBot.__formatUpdate(rawUpdate)
+      return bot.__formatUpdate(rawUpdate)
       .then(function(update) {
         const expectedUpdate = {
           'raw': rawUpdate,
@@ -215,11 +215,4 @@ describe('Telegram Bot', function() {
     })
   })
 
-  // TODO: probably better off doing the messenger one tests before so I know
-  // what the function looks like already and what to convert it to
-  describe('#sendMessage(message)', function() {
-    it('should succeed in sending a standard text message', function() {
-      this.skip();
-    })
-  })
 });

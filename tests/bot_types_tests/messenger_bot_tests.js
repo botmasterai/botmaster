@@ -4,21 +4,13 @@ const app = require('express')();
 const assert = require('chai').assert;
 const expect = require('chai').expect;
 const request = require('request-promise');
-const crypto = require('crypto');
 require('chai').should();
 const _ = require('lodash');
 const MessengerBot = require('../../lib').botTypes.MessengerBot;
 const config = require('../config.js')
+const getMessengerSignatureHeader = require('../tests_utils').getMessengerSignatureHeader;
 
 const credentials = config.messengerCredentials;
-
-function getMessengerSignatureHeader(updateData, fbAppSecret) {
-  const hash = crypto.createHmac('sha1', fbAppSecret)
-    .update(JSON.stringify(updateData))
-    .digest('hex');
-
-  return `sha1=${hash}`;
-}
 
 describe('Messenger Bot', function() {
   const settings = {
@@ -233,18 +225,18 @@ describe('Messenger Bot', function() {
       });
     })
 
-    it.only('should succeed in sending a message with default buttons #sendDefaultButtonMessageTo', function(done) {
+    it('should succeed in sending a message with default buttons #sendDefaultButtonMessageTo', function(done) {
       const buttons = ['option One', 'Option Two', 'Option Three'];
 
       Promise.all([
         bot.sendDefaultButtonMessageTo(buttons, config.messengerUserId),
         bot.sendDefaultButtonMessageTo(buttons, config.messengerUserId, 'Don\'t select any of:')
       ])
-      .then(function(responses) {
-        expect(responses[0].message_id).to.not.equal(undefined);
-        expect(responses[0].recipient_id).to.not.equal(undefined);
-        expect(responses[1].message_id).to.not.equal(undefined);
-        expect(responses[1].recipient_id).to.not.equal(undefined);
+      .then(function(bodies) {
+        expect(bodies[0].message_id).to.not.equal(undefined);
+        expect(bodies[0].recipient_id).to.not.equal(undefined);
+        expect(bodies[1].message_id).to.not.equal(undefined);
+        expect(bodies[1].recipient_id).to.not.equal(undefined);
         done()
       });
     })
@@ -252,7 +244,7 @@ describe('Messenger Bot', function() {
   })
 
   after(function(done) {
-    server.close(function() { done(); });
+    server.close(() => done());
   })
 
 });
