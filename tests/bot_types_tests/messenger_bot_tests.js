@@ -12,7 +12,7 @@ const getMessengerSignatureHeader = require('../tests_utils').getMessengerSignat
 
 const credentials = config.messengerCredentials;
 
-describe('Messenger Bot', function() {
+describe('Messenger Bot tests', function() {
   const settings = {
     credentials,
     webhookEndpoint: '/messenger/webhook'
@@ -153,92 +153,6 @@ describe('Messenger Bot', function() {
       }
 
       request(options);
-    })
-
-  })
-
-  describe('sending messages work', function() {
-    it('should succeed in sending a standard message #sendMessage', function(done) {
-      const message = { 
-        recipient: {
-          id: config.messengerUserId
-        },
-        message: {
-          text: 'Party & bullshit'
-        }
-      }
-
-      bot.sendMessage(message)
-
-      .then(function(body) {
-        expect(body.message_id).to.not.equal(undefined);
-        expect(body.recipient_id).to.not.equal(undefined);
-        done();
-      })
-    })
-
-    it('should succeed in sending message to #sendMessageTo', function(done) {
-      const message = { 
-        text: 'Party & bullshit'
-      }
-
-      bot.sendMessageTo(message, config.messengerUserId)
-
-      .then(function(body) {
-        expect(body.message_id).to.not.equal(undefined);
-        expect(body.recipient_id).to.not.equal(undefined);
-        done();
-      })
-    })
-
-    it('should succeed in sending a standard text message #sendTextMessageTo', function(done) {
-      bot.sendTextMessageTo('Party & bullshit', config.messengerUserId)
-
-      .then(function(body) {
-        expect(body.message_id).to.not.equal(undefined);
-        expect(body.recipient_id).to.not.equal(undefined);
-        done();
-      })
-    })
-
-    it('should succeed in replying to any message #reply', function(done) {
-      bot.once('update', function(update) {
-        bot.reply(update, 'replying to update')
-
-        .then(function(body) {
-          expect(body.message_id).to.not.equal(undefined);
-          expect(body.recipient_id).to.not.equal(undefined);
-          done();
-        });
-      })
-
-      const options = _.cloneDeep(requestOptions);
-      options.body = baseIncommingUpdate;
-      options.headers = {
-        'x-hub-signature': getMessengerSignatureHeader(
-        baseIncommingUpdate, credentials.fbAppSecret)
-      }
-
-      return request(options)
-      .then(function(res) {
-        assert.equal(undefined, res.body.error); // no error returned
-      });
-    })
-
-    it('should succeed in sending a message with default buttons #sendDefaultButtonMessageTo', function(done) {
-      const buttons = ['option One', 'Option Two', 'Option Three'];
-
-      Promise.all([
-        bot.sendDefaultButtonMessageTo(buttons, config.messengerUserId),
-        bot.sendDefaultButtonMessageTo(buttons, config.messengerUserId, 'Don\'t select any of:')
-      ])
-      .then(function(bodies) {
-        expect(bodies[0].message_id).to.not.equal(undefined);
-        expect(bodies[0].recipient_id).to.not.equal(undefined);
-        expect(bodies[1].message_id).to.not.equal(undefined);
-        expect(bodies[1].recipient_id).to.not.equal(undefined);
-        done()
-      });
     })
 
   })

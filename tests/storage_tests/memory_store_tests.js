@@ -24,7 +24,6 @@ describe('MemoryStore', function() {
   })
 
   describe('for Telegram Bots', function() {
-
     const telegramCredentials = config.telegramCredentials;
     const telegramUserId = config.telegramUserId;
 
@@ -109,7 +108,6 @@ describe('MemoryStore', function() {
   })
 
   describe('for Messenger Bots', function() {
-
     const messengerCredentials = config.messengerCredentials;
 
     const userId = '134449875';

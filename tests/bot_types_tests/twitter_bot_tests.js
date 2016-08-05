@@ -13,7 +13,7 @@ const config = require('../config.js');
 const botCredentials = config.twitterCredentials1;
 const senderCredentials = config.twitterCredentials2;
 
-describe('Twitter Bot', function() {
+describe('Twitter Bot tests', function() {
   const settings = {
     credentials: botCredentials
   };

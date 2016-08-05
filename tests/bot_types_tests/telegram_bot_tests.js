@@ -13,7 +13,7 @@ const credentials = config.telegramCredentials;
 const userId = config.telegramUserId;
 
 
-describe('Telegram Bot', function() {
+describe('Telegram Bot tests', function() {
   const telegramSettings = {
     credentials,
     webhookEndpoint: '/telegram/webhook'
