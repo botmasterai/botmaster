@@ -47,16 +47,28 @@ describe('Messenger Bot', function() {
     }]
   }
 
+  const requestOptions = {
+    method: 'POST',
+    uri: 'http://localhost:3000/messenger/webhook',
+    body: {},
+    json: true,
+    resolveWithFullResponse: true
+  };
+
   /*
   * Before all tests, create an instance of the bot which is
   * accessible in the following tests.
   * And also set up the mountpoint to make the calls.
+  * Also start a server listening on port 3000 locally
+  * then close connection
   */
   let bot= null;
+  let server = null
 
-  before(function(){
+  before(function(done){
     bot = new MessengerBot(settings);
     app.use('/', bot.app);
+    server = app.listen(3000, function() { done(); });
   });
 
   describe('#constructor()', function() {
@@ -78,23 +90,6 @@ describe('Messenger Bot', function() {
   });
 
   describe('/webhook endpoint works', function() {
-    const requestOptions = {
-      method: 'POST',
-      uri: 'http://localhost:3000/messenger/webhook',
-      body: {},
-      json: true,
-      resolveWithFullResponse: true
-    };
-
-    /*
-    * just start a server listening on port 3000 locally
-    * then close connection
-    */
-    let server = null
-    before(function(done) {
-      server = app.listen(3000, function() { done(); });
-    })
-
     it('should return a 200 statusCode when doing a standard request', function() {
       return request(requestOptions)
       .then(function(res) {
@@ -124,7 +119,7 @@ describe('Messenger Bot', function() {
     })
 
     it('should emit an update event to the bot object when ' +
-            'update is well formatted.', function(done) {
+            'update is well formatted. Also, bot.id should be set', function(done) {
 
       expect(bot.id).to.equal(undefined); // before the first request is done
 
@@ -168,17 +163,96 @@ describe('Messenger Bot', function() {
       request(options);
     })
 
-    after(function(done) {
-      server.close(function() { done(); });
+  })
+
+  describe('sending messages work', function() {
+    it('should succeed in sending a standard message #sendMessage', function(done) {
+      const message = { 
+        recipient: {
+          id: config.messengerUserId
+        },
+        message: {
+          text: 'Party & bullshit'
+        }
+      }
+
+      bot.sendMessage(message)
+
+      .then(function(body) {
+        expect(body.message_id).to.not.equal(undefined);
+        expect(body.recipient_id).to.not.equal(undefined);
+        done();
+      })
+    })
+
+    it('should succeed in sending message to #sendMessageTo', function(done) {
+      const message = { 
+        text: 'Party & bullshit'
+      }
+
+      bot.sendMessageTo(message, config.messengerUserId)
+
+      .then(function(body) {
+        expect(body.message_id).to.not.equal(undefined);
+        expect(body.recipient_id).to.not.equal(undefined);
+        done();
+      })
+    })
+
+    it('should succeed in sending a standard text message #sendTextMessageTo', function(done) {
+      bot.sendTextMessageTo('Party & bullshit', config.messengerUserId)
+
+      .then(function(body) {
+        expect(body.message_id).to.not.equal(undefined);
+        expect(body.recipient_id).to.not.equal(undefined);
+        done();
+      })
+    })
+
+    it('should succeed in replying to any message #reply', function(done) {
+      bot.once('update', function(update) {
+        bot.reply(update, 'replying to update')
+
+        .then(function(body) {
+          expect(body.message_id).to.not.equal(undefined);
+          expect(body.recipient_id).to.not.equal(undefined);
+          done();
+        });
+      })
+
+      const options = _.cloneDeep(requestOptions);
+      options.body = baseIncommingUpdate;
+      options.headers = {
+        'x-hub-signature': getMessengerSignatureHeader(
+        baseIncommingUpdate, credentials.fbAppSecret)
+      }
+
+      return request(options)
+      .then(function(res) {
+        assert.equal(undefined, res.body.error); // no error returned
+      });
+    })
+
+    it.only('should succeed in sending a message with default buttons #sendDefaultButtonMessageTo', function(done) {
+      const buttons = ['option One', 'Option Two', 'Option Three'];
+
+      Promise.all([
+        bot.sendDefaultButtonMessageTo(buttons, config.messengerUserId),
+        bot.sendDefaultButtonMessageTo(buttons, config.messengerUserId, 'Don\'t select any of:')
+      ])
+      .then(function(responses) {
+        expect(responses[0].message_id).to.not.equal(undefined);
+        expect(responses[0].recipient_id).to.not.equal(undefined);
+        expect(responses[1].message_id).to.not.equal(undefined);
+        expect(responses[1].recipient_id).to.not.equal(undefined);
+        done()
+      });
     })
 
   })
 
-  // TODO: probably better off doing the messenger one tests before so I know
-  // what the function looks like already and what to convert it to
-  describe('#sendMessage(message)', function() {
-    it('should succeed in sending a standard text message', function() {
-      this.skip();
-    })
+  after(function(done) {
+    server.close(function() { done(); });
   })
+
 });
