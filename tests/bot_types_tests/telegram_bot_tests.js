@@ -168,7 +168,7 @@ describe('Telegram Bot tests', function() {
             'id': rawUpdate.message.from.id
           },
           'recipient': {
-            'id': credentials.authToken
+            'id': config.telegramBotId
           },
           'timestamp': rawUpdate.message.date * 1000,
           'message': {

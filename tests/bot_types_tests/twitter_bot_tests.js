@@ -76,6 +76,8 @@ describe('Twitter Bot tests', function() {
           sentDmId = reply.id_str;
 
           console.log('successfully posted DM:', reply.text, reply.id_str)
+          // Lost the race to 'update' listener which was able to push
+          // the DmId into receivedDmIds. Finish test now as a consequence.
           if (receivedDmIds.indexOf(sentDmId) !== -1) {
             done();
           }
@@ -120,7 +122,6 @@ describe('Twitter Bot tests', function() {
           assert.equal(reply.id, sentDmId);
           done();
         })
-        // bot.twit.post('direct_messages/destroy', params);
       })
     })
 

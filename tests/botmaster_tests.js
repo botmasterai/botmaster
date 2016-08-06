@@ -45,21 +45,30 @@ describe('Botmaster', function() {
 
   let server = null;
   before(function(done) {
-    // botmaster = new  Botmaster(botmasterSettings);
     server = app.listen(3000, function() { done(); });
   })
 
   describe('sending messages', function() {
 
     for (const bot of botmaster.bots) {
-      if (bot.type !== 'messenger') continue; // for now
+      if (bot.type === 'twitter') continue; // for now
+
+      let recipientId = null
+      if (bot.type === 'telegram') {
+        recipientId = config.telegramUserId
+      } else if (bot.type === 'messenger') {
+        recipientId = config.messengerUserId;
+      } else if (bot.type === 'twitter') {
+        recipientId = config.twitterUserId;
+      }
+
 
       describe(`to the ${bot.type} platform`, function() {
 
         specify('using #sendMessage', function(done) {
           const message = { 
             recipient: {
-              id: config.messengerUserId
+              id: recipientId
             },
             message: {
               text: 'Party & bullshit'
@@ -80,7 +89,7 @@ describe('Botmaster', function() {
             text: 'Party & bullshit'
           }
 
-          bot.sendMessageTo(message, config.messengerUserId)
+          bot.sendMessageTo(message, recipientId)
 
           .then(function(body) {
             expect(body.message_id).to.not.equal(undefined);
@@ -90,7 +99,7 @@ describe('Botmaster', function() {
         })
 
         specify('using #sendTextMessageTo', function(done) {
-          bot.sendTextMessageTo('Party & bullshit', config.messengerUserId)
+          bot.sendTextMessageTo('Party & bullshit', recipientId)
 
           .then(function(body) {
             expect(body.message_id).to.not.equal(undefined);
@@ -104,13 +113,7 @@ describe('Botmaster', function() {
           // that's all that's needed for this test
           const update = {};
           update.sender = {};
-          if (bot.type === 'telegram') {
-            update.sender.id = config.telegramUserId
-          } else if (bot.type === 'messenger') {
-            update.sender.id = config.messengerUserId;
-          } else if (bot.type === 'twitter') {
-            update.sender.id = config.twitterUserId;
-          }
+          update.sender.id = recipientId;
 
           bot.reply(update, 'replying to update')
 
@@ -122,11 +125,11 @@ describe('Botmaster', function() {
         })
 
         specify('using #sendDefaultButtonMessageTo', function(done) {
-          const buttons = ['option One', 'Option Two', 'Option Three'];
+          const buttons = ['option One', 'Option Two', 'Option Three', 'Option Four'];
 
           Promise.all([
-            bot.sendDefaultButtonMessageTo(buttons, config.messengerUserId),
-            bot.sendDefaultButtonMessageTo(buttons, config.messengerUserId, 'Don\'t select any of:')
+            bot.sendDefaultButtonMessageTo(buttons, recipientId),
+            bot.sendDefaultButtonMessageTo(buttons, recipientId, 'Don\'t select any of:')
           ])
           .then(function(bodies) {
             expect(bodies[0].message_id).to.not.equal(undefined);

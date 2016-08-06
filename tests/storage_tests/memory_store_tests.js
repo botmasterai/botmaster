@@ -69,7 +69,7 @@ describe('MemoryStore', function() {
       it('should result in the update object having the right session on first message', function(done) {
         const expectedSession = {
           id: telegramUserId,
-          botId: telegramCredentials.authToken,
+          botId: config.telegramBotId,
           latestMid: 100,
           latestSeq: 1,
           lastActive: 1468325836000
@@ -86,7 +86,7 @@ describe('MemoryStore', function() {
       it('should result in the update object having the right session on second message', function(done) {
         const expectedSession = {
           id: telegramUserId,
-          botId: telegramCredentials.authToken,
+          botId: config.telegramBotId,
           latestMid: 101,
           latestSeq: 2,
           lastActive: 1468325836000
