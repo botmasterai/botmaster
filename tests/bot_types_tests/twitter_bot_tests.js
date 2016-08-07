@@ -52,7 +52,6 @@ describe('Twitter Bot tests', function() {
 
     it('should emit an update event to the bot object when ' +
             'receiving a text update', function (done) {
-
       this.timeout(5000);
       let sentDmId;
       let receivedDmIds = [];
@@ -84,7 +83,7 @@ describe('Twitter Bot tests', function() {
         })
       })
 
-      bot.on('update', function (update) {
+      bot.once('update', function (update) {
         receivedDmIds.push(update.message.mid);
         console.log('got DM event. id:', update.message.mid);
 
