@@ -51,7 +51,7 @@ describe('Botmaster', function() {
   describe('sending messages', function() {
 
     for (const bot of botmaster.bots) {
-      if (bot.type !== 'messenger') continue; // for now
+      if (bot.type !== 'twitter') continue; // for now
 
       let recipientId = null
       if (bot.type === 'telegram') {
@@ -124,7 +124,7 @@ describe('Botmaster', function() {
           });
         })
 
-        specify('using #sendDefaultButtonMessageTo with good arguments', function(done) {
+        specify.only('using #sendDefaultButtonMessageTo with good arguments', function(done) {
           const buttons = ['option One', 'Option Two', 'Option Three', 'Option Four'];
 
           Promise.all([
@@ -152,7 +152,7 @@ describe('Botmaster', function() {
 
         })
 
-        specify.only('using #sendDefaultButtonMessageTo with too many buttons', function(done) {
+        specify('using #sendDefaultButtonMessageTo with too many buttons', function(done) {
           const tooManyButtons = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
 
           bot.sendDefaultButtonMessageTo(tooManyButtons, recipientId)
