@@ -9,6 +9,7 @@ const _ = require('lodash');
 const TwitterBot = require('../../lib').botTypes.TwitterBot;
 const Twit = require('twit');
 const config = require('../config.js');
+const twitterIncomingDms = require('./twitter_incoming_dms');
 
 const botCredentials = config.twitterCredentials1;
 const senderCredentials = config.twitterCredentials2;
@@ -51,7 +52,7 @@ describe('Twitter Bot tests', function() {
     })
 
     it('should emit an update event to the bot object when ' +
-            'receiving a text update', function (done) {
+       'receiving a text update', function (done) {
       this.timeout(5000);
       let sentDmId;
       let receivedDmIds = [];
@@ -123,46 +124,190 @@ describe('Twitter Bot tests', function() {
         })
       })
     })
+  })
 
+  describe('twitter #__formatUpdate(rawUpdate)', function () {
 
-    it('should format an audio message update in the expected way', function() {
-      this.skip();
+    it('should format a twitter text only message in the expected way', function() {
+      const rawUpdate = twitterIncomingDms.textOnly;
+      const expectedUpdate = {
+        raw: rawUpdate,
+        sender: {
+          id: rawUpdate.direct_message.sender_id_str
+        },
+        recipient: {
+          id: rawUpdate.direct_message.recipient_id_str
+        },
+        timestamp: (new Date(rawUpdate.direct_message.created_at)).getTime(),
+        message: {
+          mid: rawUpdate.direct_message.id_str,
+          seq: null,
+          text: "Party & Bullshit"
+        }
+      };
+
+      const formattedUpdate = bot.__formatUpdate(rawUpdate);
+
+      expect(formattedUpdate).to.deep.equal(expectedUpdate);
     })
 
-    it('should format a voice message update in the expected way', function() {
-      this.skip();
+    it('should format a twitter photo message update in the expected way', function() {
+      const rawUpdate = twitterIncomingDms.imageOnly;
+      const expectedUpdate = {
+        raw: rawUpdate,
+        sender: {
+          id: rawUpdate.direct_message.sender_id_str
+        },
+        recipient: {
+          id: rawUpdate.direct_message.recipient_id_str
+        },
+        timestamp: (new Date(rawUpdate.direct_message.created_at)).getTime(),
+        message: {
+          mid: rawUpdate.direct_message.id_str,
+          seq: null,
+          attachments: [
+            {
+              type: 'image',
+              payload: {
+                url: rawUpdate.direct_message.entities.media[0].media_url_https
+              }
+            }
+          ]
+        }
+      };
+
+      const formattedUpdate = bot.__formatUpdate(rawUpdate);
+
+      expect(formattedUpdate).to.deep.equal(expectedUpdate);
     })
 
-    it('should format a document message update in the expected way', function() {
-      this.skip();
+    it('should format a twitter photo with text message update in the expected way', function() {
+      const rawUpdate = twitterIncomingDms.imageWithText;
+      const expectedUpdate = {
+        raw: rawUpdate,
+        sender: {
+          id: rawUpdate.direct_message.sender_id_str
+        },
+        recipient: {
+          id: rawUpdate.direct_message.recipient_id_str
+        },
+        timestamp: (new Date(rawUpdate.direct_message.created_at)).getTime(),
+        message: {
+          mid: rawUpdate.direct_message.id_str,
+          seq: null,
+          text: "Party & Bullshit",
+          attachments: [
+            {
+              type: 'image',
+              payload: {
+                url: rawUpdate.direct_message.entities.media[0].media_url_https
+              }
+            }
+          ]
+        }
+      };
+
+      const formattedUpdate = bot.__formatUpdate(rawUpdate);
+
+      expect(formattedUpdate).to.deep.equal(expectedUpdate);
     })
 
-    it('should format a photo message update in the expected way', function() {
-      this.skip();
+    it('should format a twitter video message update in the expected way', function() {
+      const rawUpdate = twitterIncomingDms.videoOnly;
+      const expectedUpdate = {
+        raw: rawUpdate,
+        sender: {
+          id: rawUpdate.direct_message.sender_id_str
+        },
+        recipient: {
+          id: rawUpdate.direct_message.recipient_id_str
+        },
+        timestamp: (new Date(rawUpdate.direct_message.created_at)).getTime(),
+        message: {
+          mid: rawUpdate.direct_message.id_str,
+          seq: null,
+          attachments: [
+            {
+              type: 'video',
+              payload: {
+                url: rawUpdate.direct_message.entities.media[0].video_info.variants[4].url
+              }
+            }
+          ]
+        }
+      };
+
+      const formattedUpdate = bot.__formatUpdate(rawUpdate);
+
+      expect(formattedUpdate).to.deep.equal(expectedUpdate);
     })
 
-    it('should format a sticker message update in the expected way', function() {
-      this.skip();
+    it('should format a twitter update with video, image and text in the expected way', function() {
+      const rawUpdate = twitterIncomingDms.videoWithImageWithText;
+      const expectedUpdate = {
+        raw: rawUpdate,
+        sender: {
+          id: rawUpdate.direct_message.sender_id_str
+        },
+        recipient: {
+          id: rawUpdate.direct_message.recipient_id_str
+        },
+        timestamp: (new Date(rawUpdate.direct_message.created_at)).getTime(),
+        message: {
+          mid: rawUpdate.direct_message.id_str,
+          seq: null,
+          text: "Party & Bullshit",
+          attachments: [
+            {
+              type: 'video',
+              payload: {
+                url: rawUpdate.direct_message.entities.media[0].video_info.variants[4].url
+              }
+            },
+            {
+              type: 'image',
+              payload: {
+                url: rawUpdate.direct_message.entities.media[1].media_url_https
+              }
+            }
+          ]
+        }
+      };
+
+      const formattedUpdate = bot.__formatUpdate(rawUpdate);
+
+      expect(formattedUpdate).to.deep.equal(expectedUpdate);
     })
 
-    it('should format a video message update in the expected way', function() {
-      this.skip();
-    })
+    it('should format a twitter gif message update in the expected way', function() {
+      const rawUpdate = twitterIncomingDms.gifOnly;
+      const expectedUpdate = {
+        raw: rawUpdate,
+        sender: {
+          id: rawUpdate.direct_message.sender_id_str
+        },
+        recipient: {
+          id: rawUpdate.direct_message.recipient_id_str
+        },
+        timestamp: (new Date(rawUpdate.direct_message.created_at)).getTime(),
+        message: {
+          mid: rawUpdate.direct_message.id_str,
+          seq: null,
+          attachments: [
+            {
+              type: 'image',
+              payload: {
+                url: rawUpdate.direct_message.entities.media[0].video_info.variants[0].url
+              }
+            }
+          ]
+        }
+      };
 
-    it('should format a location message update in the expected way', function() {
-      this.skip();
-    })
+      const formattedUpdate = bot.__formatUpdate(rawUpdate);
 
-    it('should format a photo with text message update in the expected way', function() {
-      this.skip();
+      expect(formattedUpdate).to.deep.equal(expectedUpdate);
     })
   })
 
-  // TODO: probably better off doing the messenger one tests before so I know
-  // what the function looks like already and what to convert it to
-  describe('#sendMessage(message)', function() {
-    it('should succeed in sending a standard text message', function() {
-      this.skip();
-    })
-  })
 });

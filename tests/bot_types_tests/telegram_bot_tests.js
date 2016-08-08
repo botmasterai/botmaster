@@ -31,8 +31,8 @@ describe('Telegram Bot tests', function() {
     date: 1468325836
   }
 
-  const incommingTextMessage = _.cloneDeep(baseIncommingMessage);
-  incommingTextMessage.text = "Party & Bullshit";
+  const incomingTextMessage = _.cloneDeep(baseIncommingMessage);
+  incomingTextMessage.text = "Party & Bullshit";
 
   const baseUpdateData = { 
     update_id: '466607164'
@@ -124,7 +124,7 @@ describe('Telegram Bot tests', function() {
       })
 
       const updateData = _.cloneDeep(baseUpdateData);
-      updateData.message = incommingTextMessage;
+      updateData.message = incomingTextMessage;
 
       const options = _.cloneDeep(requestOptions);
       options.body = updateData;
@@ -145,7 +145,7 @@ describe('Telegram Bot tests', function() {
       })
 
       const updateData = _.cloneDeep(baseUpdateData);
-      updateData.message = incommingTextMessage;
+      updateData.message = incomingTextMessage;
 
       const options = _.cloneDeep(requestOptions);
       options.body = updateData;
@@ -155,26 +155,26 @@ describe('Telegram Bot tests', function() {
 
   })
 
-  describe('#__formatUpdate(rawUpdate)', function() {
+  describe('telegram #__formatUpdate(rawUpdate)', function() {
     it('should format a text message update in the expected way', function() {
       const rawUpdate = _.cloneDeep(baseUpdateData);
-      rawUpdate.message = incommingTextMessage;
+      rawUpdate.message = incomingTextMessage;
 
       return bot.__formatUpdate(rawUpdate)
       .then(function(update) {
         const expectedUpdate = {
-          'raw': rawUpdate,
-          'sender': {
-            'id': rawUpdate.message.from.id
+          raw: rawUpdate,
+          sender: {
+            id: rawUpdate.message.from.id
           },
-          'recipient': {
-            'id': config.telegramBotId
+          recipient: {
+            id: config.telegramBotId
           },
-          'timestamp': rawUpdate.message.date * 1000,
-          'message': {
-            'mid': rawUpdate.update_id,
-            'seq': rawUpdate.message.message_id,
-            'text': rawUpdate.message.text
+          timestamp: rawUpdate.message.date * 1000,
+          message: {
+            mid: rawUpdate.update_id,
+            seq: rawUpdate.message.message_id,
+            text: rawUpdate.message.text
           }
         };
         expect(update).to.deep.equal(expectedUpdate);
