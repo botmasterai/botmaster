@@ -51,7 +51,7 @@ describe('Botmaster', function() {
   describe('sending messages', function() {
 
     for (const bot of botmaster.bots) {
-      // if (bot.type !== 'twitter') continue; // for now
+      // if (bot.type !== 'telegram') continue; // for now
 
       let recipientId = null
       if (bot.type === 'telegram') {
@@ -164,6 +164,17 @@ describe('Botmaster', function() {
 
         })
 
+        specify('using #sendAttachmentFromURLTo', function() {
+          this.timeout(3000);
+          const url = 'https://raw.githubusercontent.com/ttezel/twit/master/tests/img/bigbird.jpg';
+
+          return bot.sendAttachmentFromURLTo('image', url, recipientId)
+
+          .then(function(body) {
+            expect(body.message_id).to.not.equal(undefined);
+            expect(body.recipient_id).to.not.equal(undefined);
+          });
+        })
       })
 
     }
