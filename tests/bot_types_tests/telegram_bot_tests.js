@@ -225,6 +225,19 @@ describe.only('Telegram Bot tests', function() {
         },
         "file_id": "BAADBAADCgADut_4CRewGd5pvd37Ag",
         "file_size": 68673
+      },
+      "location": {
+        "latitude": 51.524498,
+        "longitude": -0.076595
+      },
+      "venue": {
+        "location": {
+          "latitude": 51.524498,
+          "longitude": -0.076595
+        },
+        "title": "The Albion",
+        "address": "2-4 Boundary St",
+        "foursquare_id": "4aeffc1ef964a5206eda21e3"
       }
     }
 
@@ -286,7 +299,7 @@ describe.only('Telegram Bot tests', function() {
       });
     })
 
-    it('should format a voice message update in the expected way', function() {
+    it('should format a telegram voice message update in the expected way', function() {
       const rawUpdate = _.cloneDeep(baseIncomingUpdate);
       rawUpdate.message.voice = attachmentsInfo.voice;
 
@@ -300,7 +313,7 @@ describe.only('Telegram Bot tests', function() {
       });
     })
 
-    it('should format a document message update in the expected way', function() {
+    it('should format a telegram document message update in the expected way', function() {
       const rawUpdate = _.cloneDeep(baseIncomingUpdate);
       rawUpdate.message.document = attachmentsInfo.document;
 
@@ -312,7 +325,7 @@ describe.only('Telegram Bot tests', function() {
       });
     })
 
-    it('should format a photo message update in the expected way', function() {
+    it('should format a telegram photo message update in the expected way', function() {
       const rawUpdate = _.cloneDeep(baseIncomingUpdate);
       rawUpdate.message.photo = attachmentsInfo.photo;
 
@@ -324,7 +337,7 @@ describe.only('Telegram Bot tests', function() {
       });
     })
 
-    it('should format a sticker message update in the expected way', function() {
+    it('should format a telegram sticker message update in the expected way', function() {
       const rawUpdate = _.cloneDeep(baseIncomingUpdate);
       rawUpdate.message.sticker = attachmentsInfo.sticker;
 
@@ -336,7 +349,7 @@ describe.only('Telegram Bot tests', function() {
       });
     })
 
-    it('should format a video message update in the expected way', function() {
+    it('should format a telegram video message update in the expected way', function() {
       const rawUpdate = _.cloneDeep(baseIncomingUpdate);
       rawUpdate.message.video = attachmentsInfo.video;
 
@@ -348,7 +361,7 @@ describe.only('Telegram Bot tests', function() {
       });
     })
 
-    it('should format a location message update in the expected way', function() {
+    it('should format a telegram image with text message update in the expected way', function() {
       const rawUpdate = _.cloneDeep(incomingTextUpdate);
       rawUpdate.message.photo = attachmentsInfo.photo;
 
@@ -360,6 +373,90 @@ describe.only('Telegram Bot tests', function() {
         expect(update.message.attachments[0].payload.url).to.not.equal(undefined);
       });
     })
+
+    it('should format a location message update in the expected way', function() {
+      const rawUpdate = _.cloneDeep(baseIncomingUpdate);
+      rawUpdate.message.location = attachmentsInfo.location;
+
+      const lat = attachmentsInfo.location.latitude;
+      const long = attachmentsInfo.location.longitude;
+
+      return bot.__formatUpdate(rawUpdate)
+
+      .then(function(update) {
+        const expectedUpdate = {
+          raw: rawUpdate,
+          sender: {
+            id: rawUpdate.message.from.id
+          },
+          recipient: {
+            id: config.telegramBotId
+          },
+          timestamp: rawUpdate.message.date * 1000,
+          message: {
+            mid: rawUpdate.update_id,
+            seq: rawUpdate.message.message_id,
+            attachments: [
+              {
+                title: 'Pinned Location',
+                url: `https://maps.google.com/?q=${lat},${long}`,
+                type: 'location',
+                payload: {
+                  coordinates: {
+                    lat: lat,
+                    long: long
+                  }
+                }
+              }
+            ]
+          }
+        };
+        expect(update).to.deep.equal(expectedUpdate);
+      });
+    })
+
+    it('should format a venue message update in the expected way', function() {
+      const rawUpdate = _.cloneDeep(baseIncomingUpdate);
+      rawUpdate.message.location = attachmentsInfo.location;
+      rawUpdate.message.venue = attachmentsInfo.venue;
+
+      const lat = attachmentsInfo.venue.location.latitude;
+      const long = attachmentsInfo.venue.location.longitude;
+
+      return bot.__formatUpdate(rawUpdate)
+
+      .then(function(update) {
+        const expectedUpdate = {
+          raw: rawUpdate,
+          sender: {
+            id: rawUpdate.message.from.id
+          },
+          recipient: {
+            id: config.telegramBotId
+          },
+          timestamp: rawUpdate.message.date * 1000,
+          message: {
+            mid: rawUpdate.update_id,
+            seq: rawUpdate.message.message_id,
+            attachments: [
+              {
+                title: 'The Albion',
+                url: `https://maps.google.com/?q=${lat},${long}`,
+                type: 'location',
+                payload: {
+                  coordinates: {
+                    lat: lat,
+                    long: long
+                  }
+                }
+              }
+            ]
+          }
+        };
+        expect(update).to.deep.equal(expectedUpdate);
+      });
+    })
+  // end of describe(formatUpdate)
   })
 
 });
