@@ -13,30 +13,33 @@ const credentials = config.telegramCredentials;
 const userId = config.telegramUserId;
 
 
-describe('Telegram Bot tests', function() {
+describe.only('Telegram Bot tests', function() {
   const telegramSettings = {
     credentials,
     webhookEndpoint: '/telegram/webhook'
   };
 
-  const baseIncommingMessage = { 
-    message_id: 1,
-    from: { id: userId, first_name: 'Biggie', last_name: 'Smalls' },
-    chat: { 
-      id: userId,
-      first_name: 'Biggie',
-      last_name: 'Smalls',
-      type: 'private' 
-    },
-    date: 1468325836
+  const baseIncomingUpdate = {
+    update_id: '466607164',
+    message: {
+      message_id: 1,
+      from: {
+        id: userId,
+        first_name: 'Biggie',
+        last_name: 'Smalls' 
+      },
+      chat: { 
+        id: userId,
+        first_name: 'Biggie',
+        last_name: 'Smalls',
+        type: 'private' 
+      },
+      date: 1468325836
+    }
   }
 
-  const incomingTextMessage = _.cloneDeep(baseIncommingMessage);
-  incomingTextMessage.text = "Party & Bullshit";
-
-  const baseUpdateData = { 
-    update_id: '466607164'
-  };
+  const incomingTextUpdate = _.cloneDeep(baseIncomingUpdate);
+  incomingTextUpdate.message.text = "Party & Bullshit";
 
   /*
   * Before all tests, create an instance of the bot which is
@@ -111,7 +114,9 @@ describe('Telegram Bot tests', function() {
       })
 
       const options = _.cloneDeep(requestOptions);
-      options.body = baseUpdateData;
+      const invalidIncomingUpdate = _.cloneDeep(baseIncomingUpdate);
+      delete invalidIncomingUpdate.message;
+      options.body = invalidIncomingUpdate;
 
       request(options);
     })
@@ -123,11 +128,8 @@ describe('Telegram Bot tests', function() {
         done();
       })
 
-      const updateData = _.cloneDeep(baseUpdateData);
-      updateData.message = incomingTextMessage;
-
       const options = _.cloneDeep(requestOptions);
-      options.body = updateData;
+      options.body = incomingTextUpdate;
 
       request(options);
     })
@@ -144,11 +146,8 @@ describe('Telegram Bot tests', function() {
         done();
       })
 
-      const updateData = _.cloneDeep(baseUpdateData);
-      updateData.message = incomingTextMessage;
-
       const options = _.cloneDeep(requestOptions);
-      options.body = updateData;
+      options.body = incomingTextUpdate;
 
       request(options);
     })
@@ -156,9 +155,81 @@ describe('Telegram Bot tests', function() {
   })
 
   describe('telegram #__formatUpdate(rawUpdate)', function() {
+
+    // TODO at some point:
+    // Not too sure these filIds will work with other bots than mine because
+    // I made the request. Ask someone to verify
+    const attachmentsInfo = {
+      "audio": {
+        "duration": 233,
+        "mime_type": "audio/mp3",
+        "title": "40 Day Dream",
+        "performer": "Edward Sharpe & The Magnetic Zeros",
+        "file_id": "BQADBAADCAADut_4CSHXUotBWaigAg",
+        "file_size": 7808710
+      },
+      "voice": {
+        "duration": 2,
+        "mime_type": "audio/ogg",
+        "file_id": "AwADBAADCQADut_4CQn6ffh8-EVYAg",
+        "file_size": 6012
+      },
+      "document": {
+        "file_name": "blog.pdf",
+        "mime_type": "application/pdf",
+        "file_id": "BQADBAADBQAD04oDCB9FixWtNqdSAg",
+        "file_size": 70304
+      },
+      "photo": [
+        {
+          "file_id": "AgADBAADqqcxG9OKAwilfpTK31YbwTF3WBkABKBSDnZ0jJU9z6UBAAEC",
+          "file_size": 1476,
+          "width": 90,
+          "height": 68
+        },
+        {
+          "file_id": "AgADBAADqqcxG9OKAwilfpTK31YbwTF3WBkABFp82PuMHFIJ0KUBAAEC",
+          "file_size": 9401,
+          "width": 320,
+          "height": 241
+        },
+        {
+          "file_id": "AgADBAADqqcxG9OKAwilfpTK31YbwTF3WBkABB-k8xVfo6xyzqUBAAEC",
+          "file_size": 13354,
+          "width": 450,
+          "height": 339
+        }
+      ],
+      "sticker": {
+        "width": 354,
+        "height": 512,
+        "emoji": "😑",
+        "thumb": {
+          "file_id": "AAQEABMGbGMwAARSZNANBNBQvBkxAQABAg",
+          "file_size": 2176,
+          "width": 62,
+          "height": 90
+        },
+        "file_id": "BQADBAADOQADyIsGAAEn0bvAsmlYhAI",
+        "file_size": 34714
+      },
+      "video": {
+        "duration": 1,
+        "width": 480,
+        "height": 720,
+        "thumb": {
+          "file_id": "AAQEABMRumQZAASITqE_NHfHG9sFAAIC",
+          "file_size": 1793,
+          "width": 59,
+          "height": 90
+        },
+        "file_id": "BAADBAADCgADut_4CRewGd5pvd37Ag",
+        "file_size": 68673
+      }
+    }
+
     it('should format a text message update in the expected way', function() {
-      const rawUpdate = _.cloneDeep(baseUpdateData);
-      rawUpdate.message = incomingTextMessage;
+      const rawUpdate = incomingTextUpdate;
 
       return bot.__formatUpdate(rawUpdate)
       .then(function(update) {
@@ -179,39 +250,115 @@ describe('Telegram Bot tests', function() {
         };
         expect(update).to.deep.equal(expectedUpdate);
       });
-
     })
 
-    it('should format an audio message update in the expected way', function() {
-      this.skip();
+    it('should format a telegram audio message update in the expected way', function() {
+      const rawUpdate = _.cloneDeep(baseIncomingUpdate);
+      rawUpdate.message.audio = attachmentsInfo.audio;
+
+      return bot.__formatUpdate(rawUpdate)
+
+      .then(function(update) {
+        const expectedUpdate = {
+          raw: rawUpdate,
+          sender: {
+            id: rawUpdate.message.from.id
+          },
+          recipient: {
+            id: config.telegramBotId
+          },
+          timestamp: rawUpdate.message.date * 1000,
+          message: {
+            mid: rawUpdate.update_id,
+            seq: rawUpdate.message.message_id,
+            attachments: [
+              {
+                type: 'audio',
+                payload: {
+                  url: update.message.attachments[0].payload.url
+                }
+              }
+            ]
+          }
+        };
+
+        expect(update).to.deep.equal(expectedUpdate);
+      });
     })
 
     it('should format a voice message update in the expected way', function() {
-      this.skip();
+      const rawUpdate = _.cloneDeep(baseIncomingUpdate);
+      rawUpdate.message.voice = attachmentsInfo.voice;
+
+      // the format is already agreed upon in the other tests. What we are
+      // testing here is just this really
+      return bot.__formatUpdate(rawUpdate)
+
+      .then(function(update) {
+        expect(update.message.attachments[0].type).to.equal('audio');
+        expect(update.message.attachments[0].payload.url).to.not.equal(undefined);
+      });
     })
 
     it('should format a document message update in the expected way', function() {
-      this.skip();
+      const rawUpdate = _.cloneDeep(baseIncomingUpdate);
+      rawUpdate.message.document = attachmentsInfo.document;
+
+      return bot.__formatUpdate(rawUpdate)
+
+      .then(function(update) {
+        expect(update.message.attachments[0].type).to.equal('file');
+        expect(update.message.attachments[0].payload.url).to.not.equal(undefined);
+      });
     })
 
     it('should format a photo message update in the expected way', function() {
-      this.skip();
+      const rawUpdate = _.cloneDeep(baseIncomingUpdate);
+      rawUpdate.message.photo = attachmentsInfo.photo;
+
+      return bot.__formatUpdate(rawUpdate)
+
+      .then(function(update) {
+        expect(update.message.attachments[0].type).to.equal('image');
+        expect(update.message.attachments[0].payload.url).to.not.equal(undefined);
+      });
     })
 
     it('should format a sticker message update in the expected way', function() {
-      this.skip();
+      const rawUpdate = _.cloneDeep(baseIncomingUpdate);
+      rawUpdate.message.sticker = attachmentsInfo.sticker;
+
+      return bot.__formatUpdate(rawUpdate)
+
+      .then(function(update) {
+        expect(update.message.attachments[0].type).to.equal('image');
+        expect(update.message.attachments[0].payload.url).to.not.equal(undefined);
+      });
     })
 
     it('should format a video message update in the expected way', function() {
-      this.skip();
+      const rawUpdate = _.cloneDeep(baseIncomingUpdate);
+      rawUpdate.message.video = attachmentsInfo.video;
+
+      return bot.__formatUpdate(rawUpdate)
+
+      .then(function(update) {
+        expect(update.message.attachments[0].type).to.equal('video');
+        expect(update.message.attachments[0].payload.url).to.not.equal(undefined);
+      });
     })
 
     it('should format a location message update in the expected way', function() {
-      this.skip();
-    })
+      const rawUpdate = _.cloneDeep(incomingTextUpdate);
+      rawUpdate.message.photo = attachmentsInfo.photo;
 
-    it('should format a photo with text message update in the expected way', function() {
-      this.skip();
+      return bot.__formatUpdate(rawUpdate)
+
+      .then(function(update) {
+        expect(update.message.text).to.equal("Party & Bullshit");
+        expect(update.message.attachments[0].type).to.equal('image');
+        expect(update.message.attachments[0].payload.url).to.not.equal(undefined);
+      });
     })
   })
 

@@ -295,7 +295,7 @@ describe('Twitter Bot tests', function() {
           seq: null,
           attachments: [
             {
-              type: 'image',
+              type: 'video',
               payload: {
                 url: rawUpdate.direct_message.entities.media[0].video_info.variants[0].url
               }
