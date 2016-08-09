@@ -376,6 +376,8 @@ botmaster.on('update', (bot, update) => {
 });
 ```
 
+### Attachments
+
 `bot.sendAttachmentTo`
 
 We'll note here really quickly that Messenger only takes in urls for file attachment (video, audio, video, file). because of that, that is the only supported way to do. Telegram doesn't support it that way. So we fall back to sending the url in text. Same goes for Twitter that all out doesn't support attachments.
@@ -419,6 +421,8 @@ botmaster.on('update', (bot, update) => {
 });
 ```
 
+### Status
+
 `bot.sendIsTypingMessageTo`
 
 To indicate that something is happening on your bots end, you can show your users that the bot is 'working' or 'typing' something. to do so, simply invoke sendIsTypingMessageTo.
@@ -438,7 +442,7 @@ botmaster.on('update', (bot, update) => {
 It will only send a request to the platforms that support it. If unsupported, nothing will happen.
 
 
-### buttons
+### Buttons
 
 Buttons are important and this is one a the many places where Botmaster is opinionated. It provides a method that will send what is assumed to be a decent way to display buttons throughout all platforms.
 
@@ -453,7 +457,7 @@ Buttons are important and this is one a the many places where Botmaster is opini
 The function defaults to sending `quick_replies` in Messenger, setting Keyboard buttons in Telegram and simply prints button titles one on each line in Twitter as it deosn't support buttons. The user is expecting to type in their choice in Twitter.
 
 
-## sessions
+## Sessions
 
 ## webhooks
 
