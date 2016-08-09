@@ -51,7 +51,7 @@ describe('Botmaster', function() {
   describe('sending messages', function() {
 
     for (const bot of botmaster.bots) {
-      // if (bot.type !== 'telegram') continue; // for now
+      // if (bot.type !== 'twitter') continue; // for now
 
       let recipientId = null
       if (bot.type === 'telegram') {
@@ -175,8 +175,17 @@ describe('Botmaster', function() {
             expect(body.recipient_id).to.not.equal(undefined);
           });
         })
-      })
 
+        specify('using #sendIsTypingMessageTo', function() {
+
+          return bot.sendIsTypingMessageTo(recipientId)
+
+          .then(function(body) {
+            expect(body.recipient_id).to.equal(recipientId);
+          });
+        })
+
+      })
     }
   });
 
