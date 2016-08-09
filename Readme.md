@@ -1,8 +1,10 @@
 # Botmaster
 
-Botmaster is an opinionated lightweight chatbot framework. Botmaster is platform agnostic, which means that in its current state, developers can have bots running on Facebook Messenger, Twitter DM and Telegram with just one integration.
+Botmaster is an opinionated lightweight chatbot framework. Its purpose is to integrate your existing chatbot into a variety of messaging channels - currently Facebook Messenger, Twitter DM and Telegram. 
 
-Its purpose is to minimise the amount of code developers have to write in order to create a 1-on-1 conversational chatbot that works on multiple different platforms. It does so by defining a standard with respect to what format messages take and how 1-on-1 conversations occur.
+Botmaster is platform agnostic in two important ways. Firstly, in its current state, developers can have bots running on Facebook Messenger, Twitter DM and Telegram - with just one integration. Secondly, BotMaster makes no assumptions about the back-end bot itself - you can write code that allows BotMaster to call engines such as IBM Watson, open source frameworks or even write the bot yourself.
+
+Its philosophy is to minimise the amount of code developers have to write in order to create a 1-on-1 conversational chatbot that works on multiple different platforms. It does so by defining a standard with respect to what format messages take and how 1-on-1 conversations occur. Messages to/from the various messaging apps supported are all mapped onto this botmaster standard, meaning the code you write is much reduced when compared to a set of point:point integrations.
 
 ## install
 
