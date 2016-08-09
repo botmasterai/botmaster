@@ -394,7 +394,7 @@ botmaster.on('update', (bot, update) => {
     const attachment = {
       type: 'image'
       payload: {
-        url: 'some image url you've got,
+        url: "some image url you've got",
       },
     };
     bot.sendAttachment(attachment, update.sender.id);
@@ -415,7 +415,7 @@ This is typically used as such for sending an image url.
 
 ```js
 botmaster.on('update', (bot, update) => {
-    bot.sendAttachment('image', 'some image url you've got', update.sender.id);
+    bot.sendAttachment('image', "some image url you've got", update.sender.id);
 });
 ```
 
@@ -443,6 +443,7 @@ It will only send a request to the platforms that support it. If unsupported, no
 Buttons are important and this is one a the many places where Botmaster is opinionated. It provides a method that will send what is assumed to be a decent way to display buttons throughout all platforms.
 
 `bot.sendDefaultButtonMessageTo`
+
 | Argument | Description
 |--- |---
 | buttonTitles | array of button titles (no longer than 10 in size).
