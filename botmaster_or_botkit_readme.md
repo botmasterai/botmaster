@@ -215,7 +215,7 @@ Supported Platforms
 |Facebook Messenger| x | x |
 |Slack|| x |
 |Twilio IPM| | x |
-|Twitter| x |  |
+|Twitter DM| x |  |
 |Telegram| x |  |
 |Line| coming soon |  |
 

@@ -139,6 +139,16 @@ Basically, you'll need to send a '/newbot' command to Botfather (go talk to him 
 
 And you can find the telegram api docs [here](https://core.telegram.org/bots/api)
 
+Setting up your webhook requires you to make the following request outside of Botmaster (using curl for instance or a browser): 
+
+```http
+https://api.telegram.org/<authToken>/setWebhook?url=<'Your Base URL'>/telegram/webhook1234
+```
+
+!!Because Telegram doesn't send any type of information to verify the identity of the origin of the update, it is highly recommended that you include a sort of hash in your webhookEndpoint. I.e., rather that having this: `webhookEndpoint: '/webhook/'`, do something more like this: `webhookEndpoint: '/webhook92ywrnc9qm4qoiuthecvasdf42FG/'`. This will assure that you know where the request is coming from.
+
+If you are not too sure how webhooks work and/or how to get it to run locally, go to the section about webhooks.
+
 ### Getting set up with Twitter
 
 We've seen a twitter settings object looks like:
@@ -257,11 +267,12 @@ twitterBot.on('update', (update) => {
 
 The update object will be of the same format as the ones you'll get using `botmaster.on('update', ...)`.
 
-If for some reason you created a bot this way but now want it to be in a botmaster object, you can do this eaily this way:
+If for some reason you created a bot this way but now want it to be in a botmaster object, you can do this easily this way:
 
 ```js
 botmaster.addBot(twitterBot);
 ```
+This is important if you create your own Bot that extends the `Botmaster.botTypes.BaseBot` class. For instance, you might want to create your own class that supports your pre-existing messaging standards. Have a look in the `writing_a_botmaster_supported_bot-class.ms` file to learn how to do this.
 
 ## Message/Update format
 
@@ -485,9 +496,138 @@ The function defaults to sending `quick_replies` in Messenger, setting Keyboard 
 
 ## Sessions
 
+Anyone wanting to write a decent bot will have to use storage in one way or another.
+
+Botmaster has the concept of a `SessionStore` which enables developers to store some information as updates come in. In order to use Botmaster with a SessionStore, do the following:
+
+```js
+const Botmaster = require('botmaster');
+const SessionStore = Botmaster.storage.MemoryStore;
+const sessionStore = new SessionStore();
+
+const botmasterSettings = {
+  botsSettings: botsSettings, // some botsSettings you've specified as in the first example
+  sessionStore: sessionStore,
+};
+
+const botmaster = new Botmaster(botmasterSettings);
+```
+
+Now upon receiving an event, the `update` will have an `update.session` object.
+I.e. this will __not__ print `undefined`:
+
+```js
+botmaster.on('update', (bot, update) => {
+  console.log(update.session);
+});
+
+Here we simply added the sessionStore object to our settings passed into the Botmaster constructor.
+
+You can see that we have the following line:
+
+```js
+const SessionStore = Botmaster.storage.MemoryStore;
+```
+
+Botmaster comes bundled in with a MemoryStore class that stores basic data on the user sending messages to the bot and on the latest messages. This stores the data in memory and shouldn't be used in a production environment. The class looks like this:
+
+```js
+'use strict';
+
+class MemoryStore {
+  constructor() {
+    this.sessions = {};
+  }
+
+  createOrUpdateSession(update) {
+    if (!this.sessions[update.sender.id]) {
+      return this.createSession(update);
+    }
+    return this.updateSession(update);
+  }
+
+  // using promises here because dbs would typically usually work like that
+  createSession(update) {
+    const promise = new Promise((resolve) => {
+      const id = update.sender.id;
+      const session = {
+        id: update.sender.id,
+        botId: update.recipient.id,
+        latestMid: update.message.mid,
+        latestSeq: update.message.seq,
+        lastActive: update.timestamp,
+      };
+      this.sessions[id] = session;
+      resolve(session);
+    });
+
+    return promise;
+  }
+
+  updateSession(update) {
+    const promise = new Promise((resolve) => {
+      const id = update.sender.id;
+      const session = this.sessions[id];
+
+      session.latestMid = update.message.mid;
+      session.latestSeq = update.message.seq;
+      session.lastActive = update.timestamp;
+
+      resolve(session);
+    });
+
+    return promise;
+  }
+
+}
+
+module.exports = MemoryStore;
+```
+
+As you can see, `MemoryStore` only stores the following information on each update:
+
+```js
+const session = {
+  id: update.sender.id,
+  botId: update.recipient.id,
+  latestMid: update.message.mid,
+  latestSeq: update.message.seq,
+  lastActive: update.timestamp,
+};
+```
+
+This is almost certainly not what you will want from a store. However, Botmaster allows you to easily include your own or other third party SessionStores. As seen in the `MemoryStore` code. There is a `createOrUpdateSession(update)` method. This method is the only method any `SessionStore` class would have to implement to work with Botmaster.
+
+The `createOrUpdateSession(update)` method takes in a standard Botmaster compatible `update` object and is expected to return an ES6 compatible `Promise`. The promise returned by the method is expected to resolve a `session` object that you might want to use in your `botmaster.on('update')` EventListener. Botmaster will make sure that `update.session` then exists and is the object resolved my your implementation of the `createOrUpdateSession(update)` method.
+
+If you are looking to contribute and make a pull request with a new SessionStore class, you are expected to use the ES6 `Promise` class and to follow the airbnb style guidelines as found [here](https://github.com/airbnb/javascript#strings). 
+
 ## webhooks
 
+Most platforms rely on webhooks to work. As such, you are expected to setup webhooks on the various platforms that use them in order to use Botmaster with these platforms. In the 'Getting set up' part of this documentation, we briefly touched onto that for Telegram and it is mentioned in one of the steps in the Messenger documentation.
+
+If you are unsue what webhooks are and how they work, for the purpose of chatbots, they are simply a URL provided by you where you expect messages and other updates to come in.
+
+Any platform that requires webhooks won't work without a webhookEndpoint parameter in their settings. E.g. for Telegram:
+
+```js
+const telegramSettings = {
+  credentials: {
+    authToken: 'YOUR authToken',
+  },
+  webhookEndpoint: '/webhook1234/',
+};
+```
+
+This will mount your telegram webhook on: `https://Your_Domain_Name/messenger/webhook1234`. And yes, you will need ssl in order to work with most platforms.
+
+As an added layer of security, it is highly recommended that you include a sort of hash in your webhookEndpoint. I.e., rather that having this: `webhookEndpoint: '/webhook/'`, do something more like this: `webhookEndpoint: '/webhook92ywrnc9qm4qoiuthecvasdf42FG/'`. This will assure that you know where the request is coming from. It is more important on Telegram than on other platforms as Telegram doesn't set a header to verify the origin of the update.
+
+Now we realise you will want to develop and test your code without always deploying to a server with a valid url that supports ssl.
+
 ### On a local machine:
+
+We recommend using the great localtunnel tool that proxies one of your ports to their url (with a potential wanted subdomain) using ssh.
 
 Simply install localtunnel on local machine
 
@@ -501,14 +641,22 @@ Then run the localtunnel with a predetermined subdomain. e.g:
 lt -p 3000 -s botmastersubdomain //for example
 ```
 
--l is for the localhost we want to point to. -p is the port and -s is the subdomain we want.
-In this case, your url will be: http://botmastersubdomain.localtunnel.me.
+`-p` is the port and `-s` is the subdomain we want.
+`-l` is for the localhost we want to point to. This is useful is you are using botmaster inside of a container. For instance if using docker-machine, simply `-l` to your docker-machines ip and `-p` to the port that your container exposes.
 
-So if you specified messenger's webhook endpoint to, say, /messenger/webhook1234/, you will have to set up the webhook for your demo app at:
+In the example above, url will be: `http://botmastersubdomain.localtunnel.me`. Localtunnel is great and supports both ssl and non ssl request, which means we will actually wan to use: `https://botmastersubdomain.localtunnel.me`
 
+So if you specified your messenger's bot webhook endpoint to, say, /webhook1234/, you will have to set up the webhook for your demo app at:
+
+```
 https://botmastersubdomain.localtunnel.me/messenger/webhook1234/
-(localtunnel provides both an http and https url. But messenger requires an https one)
+```
 
+For Telegram, it would look something like this:
+
+```
+https://botmastersubdomain.localtunnel.me/telegram/webhook1234/
+```
 
 ## Using Botmaster with your own express() object
 
