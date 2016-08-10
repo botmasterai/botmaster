@@ -298,11 +298,37 @@ Typically, it would look something like this for a message with an image attachm
 };
 ```
 
-!!! Important caveat for Twitter bot developers who are receiving attachments. Image links that will come in from the Twitter API will be provate and not public, which makes using them quite tricky. You might need to make authenticated requests to do so. The twitterBot objects you will receive in the update will have a `bot.twit` object. Documentation for how to use this is available [here](https://github.com/ttezel/twit).
-
 This allows developers to handle these messages in on place only rather than doing it in multiple places. For more info on the various incoming messages formats, read the messenger bot doc on webhooks at: https://developers.facebook.com/docs/messenger-platform/webhook-reference/message-received.
 
-Currently, you will only get updates for `Messages` for all platforms. On Messenger, it is assumed that you don't want to get updates for delivery, read and echo. This can't be turned on at the moment, but will be in later versions as it might be a requirement
+Currently, you will only get updates for `Messages` for all platforms. On Messenger, it is assumed that you don't want to get updates for delivery, read and echo. This can't be turned on at the moment, but will be in later versions as it might be a requirement.
+
+#### Note on attachment types and conversions
+Attachment type conversion works as such for __Twitter__:
+
+| Twitter Type | Botmaster conversion
+|--- |---
+| photo | image
+| video  | video
+| gif  | video
+
+!!!Yes `gif` becomes a `video`. because Twitter doesn't actually use gifs the way you would expect it to. It simply loops over a short `.mp4` video.
+
+Also, here's an important caveat for Twitter bot developers who are receiving attachments. Image links that come in from the Twitter API will be private and not public, which makes using them quite trky. You might need to make authenticated requests to do so. The twitterBot objects you will receive in the update will have a `bot.twit` object. Documentation for how to use this is available [here](https://github.com/ttezel/twit).
+
+Attachment type conversion works as such for __Telegram__:
+
+| Twitter Type | Botmaster conversion
+|--- |---
+| audio | audio
+| voice  | audio
+| photo  | image
+| video  | video
+| location  | location
+| venue  | location
+
+`contact` attachment types aren't supported in Messenger. So in order to deal with them in Botmaster, you will have to look into your `update.raw` object which is the standard Telegram update. You will find your contact object in `update.raw.contact`.
+
+Also, concerning `location` and `venue` attachments. The url received in Botmaster for Telegram is a google maps one with the coordinates as query parameters. It looks something like this: `https://maps.google.com/?q=<lat>,<long>`
 
 ### outgoing messages
 
@@ -337,7 +363,7 @@ botmaster.on('update', (bot, update) => {
 
 The method used is used directly from the bot object and not using the botmaster one.
 
-Because you might not always want to write in a complex json object just to send in a simple text message or photo attachment. Botmaster comes in with a few methods that can be used to send messages with less code:
+Because you might not always want to write in a complex json object just to send in a simple text message or photo attachment, Botmaster comes with a few methods that can be used to send messages with less code:
 
 `bot.sendMessageTo`
 
@@ -357,7 +383,7 @@ Typically used like so to send a text message to the user who just spoke to the 
 
 ```js
 botmaster.on('update', (bot, update) => {
-  bot.sendTextMessageTo('something supe important', update.sender.id);
+  bot.sendTextMessageTo('something super important', update.sender.id);
 });
 ```
 
@@ -372,7 +398,7 @@ This is is typically used like so:
 
 ```js
 botmaster.on('update', (bot, update) => {
-  bot.reply(update, 'something supe important!');
+  bot.reply(update, 'something super important!');
 });
 ```
 
@@ -380,26 +406,26 @@ botmaster.on('update', (bot, update) => {
 
 `bot.sendAttachmentTo`
 
-We'll note here really quickly that Messenger only takes in urls for file attachment (video, audio, video, file). because of that, that is the only supported way to do. Telegram doesn't support it that way. So we fall back to sending the url in text. Same goes for Twitter that all out doesn't support attachments.
+We'll note here really quickly that Messenger only takes in urls for file attachment (image, video, audio, file). Telegram doesn't support attachments in this way. So we fall back to sending the url in text. Same goes for Twitter that doesn't support attachments at all.
 
 | Argument | Description
 |--- |---
 | attachment | a valid Messenger style attachment. See [here](https://developers.facebook.com/docs/messenger-platform/send-api-reference) for more on that.
 | recipientId  | a string representing the id of the user to whom you want to send the message.
 
-This is the general attachment sending method that will always work for Messenger but not obviously for other platforms. So beware when using it. To assure your attachment will be sent to all platforms, use `bot.sendAttachmentTo`.
+This is the general attachment sending method that will always work for Messenger but not necessarily for other platforms. So beware when using it. To assure your attachment will be sent to all platforms, use `bot.sendAttachmentFromURLTo`.
 
 This is typically used as such for sending an image url.
 
 ```js
 botmaster.on('update', (bot, update) => {
-    const attachment = {
-      type: 'image'
-      payload: {
-        url: "some image url you've got",
-      },
-    };
-    bot.sendAttachment(attachment, update.sender.id);
+  const attachment = {
+    type: 'image'
+    payload: {
+      url: "some image url you've got",
+    },
+  };
+  bot.sendAttachment(attachment, update.sender.id);
 });
 ```
 
@@ -417,7 +443,7 @@ This is typically used as such for sending an image url.
 
 ```js
 botmaster.on('update', (bot, update) => {
-    bot.sendAttachment('image', "some image url you've got", update.sender.id);
+  bot.sendAttachment('image', "some image url you've got", update.sender.id);
 });
 ```
 
@@ -452,7 +478,7 @@ Buttons are important and this is one a the many places where Botmaster is opini
 |--- |---
 | buttonTitles | array of button titles (no longer than 10 in size).
 | recipientId  | a string representing the id of the user to whom you want to send the message.
-| textOrAttachment  | (__optional__) a string or an attachment object similar to the ones required in `bot.sendAttachmentTo`. This is meant to provide context wo the buttons. I.e. why are there buttons here. A piece of text or an attachment could detail that. If not provided, a text will be added that read: 'Please select one of:'.
+| textOrAttachment  | (__optional__) a string or an attachment object similar to the ones required in `bot.sendAttachmentTo`. This is meant to provide context to the buttons. I.e. why are there buttons here. A piece of text or an attachment could detail that. If not provided,  text will be added that reads: 'Please select one of:'.
 
 The function defaults to sending `quick_replies` in Messenger, setting Keyboard buttons in Telegram and simply prints button titles one on each line in Twitter as it deosn't support buttons. The user is expecting to type in their choice in Twitter.
 
