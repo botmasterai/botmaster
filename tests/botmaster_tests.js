@@ -228,6 +228,7 @@ describe('Botmaster', function() {
   })
 
   describe('sending messages', function() {
+    this.retries(4);
     // botmaster.server stops listening onto in port 3200 in the after hook
     // of 'sending message'
     const botmasterSettings = { botsSettings: baseBotsSettings, port: 3200 };

@@ -31,6 +31,7 @@ describe('Twitter Bot tests', function() {
 
   describe('receiving updates', function () {
 
+    this.retries(4);
     // TwitterBot is linked to an account that can 
     // receive updates from anyone.
     // In this instance, "anyone" is the sender.
@@ -43,7 +44,7 @@ describe('Twitter Bot tests', function() {
 
     it('should emit an update event to the bot object when ' +
        'receiving a text update', function (done) {
-      this.timeout(20000);
+      this.timeout(5000);
       let sentDmId;
       let receivedDmIds = [];
 
@@ -58,7 +59,6 @@ describe('Twitter Bot tests', function() {
             retry: true
           }
         }
-        console.log(textMessageToSend);
 
         twitSender.post('direct_messages/new', textMessageToSend, function (err, reply) {
           assert(!err, err);
