@@ -1,6 +1,5 @@
 'use strict'
 
-const app = require('express')();
 const assert = require('chai').assert;
 const expect = require('chai').expect;
 const request = require('request-promise');
@@ -19,17 +18,6 @@ describe('Twitter Bot tests', function() {
     credentials: botCredentials
   };
 
-  /*
-  * Before all tests, create an instance of the bot which is
-  * accessible in the following tests.
-  * And also set up the mountpoint to make the calls.
-  */
-  let bot;
-
-  before(function(){
-    bot = new TwitterBot(settings);
-  });
-
   describe('#constructor()', function() {
     it('should throw an error when authToken credential is missing', function(done) {
       const badSettings = _.cloneDeep(settings);
@@ -47,13 +35,15 @@ describe('Twitter Bot tests', function() {
     // receive updates from anyone.
     // In this instance, "anyone" is the sender.
     let twitSender;
+    let bot;
     before(function () {
       twitSender = new Twit(senderCredentials);
+      bot = new TwitterBot(settings);
     })
 
     it('should emit an update event to the bot object when ' +
        'receiving a text update', function (done) {
-      this.timeout(5000);
+      this.timeout(20000);
       let sentDmId;
       let receivedDmIds = [];
 
@@ -68,6 +58,7 @@ describe('Twitter Bot tests', function() {
             retry: true
           }
         }
+        console.log(textMessageToSend);
 
         twitSender.post('direct_messages/new', textMessageToSend, function (err, reply) {
           assert(!err, err);
@@ -127,6 +118,11 @@ describe('Twitter Bot tests', function() {
   })
 
   describe('twitter #__formatUpdate(rawUpdate)', function () {
+
+    let bot;
+    before(function () {
+      bot = new TwitterBot(settings);
+    })
 
     it('should format a twitter text only message in the expected way', function() {
       const rawUpdate = twitterIncomingDms.textOnly;

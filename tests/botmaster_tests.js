@@ -6,15 +6,18 @@ process.on('unhandledRejection', (err, promise) => {
   console.error('UNHANDLED REJECTION', err.stack);
 });
 
-const app = require('express')();
-const assert = require('chai').assert;
+const express = require('express');
 const expect = require('chai').expect;
-const request = require('request-promise');
+const assert = require('chai').assert;
 require('chai').should();
 const _ = require('lodash');
 const Botmaster = require('../lib');
+const MessengerBot = Botmaster.botTypes.MessengerBot;
+const SessionStore = Botmaster.storage.MemoryStore;
 const config = require('./config.js')
+const request = require('request-promise');
 const getMessengerSignatureHeader = require('./tests_utils').getMessengerSignatureHeader;
+
 
 describe('Botmaster', function() {
 
@@ -32,23 +35,203 @@ describe('Botmaster', function() {
     credentials: config.twitterCredentials
   }
 
-  const botsSettings = [{ telegram: telegramSettings },
-                        { messenger: messengerSettings },
-                        { twitter: twitterSettings }];
+  const baseBotsSettings = [{ telegram: telegramSettings },
+                            { messenger: messengerSettings },
+                            { twitter: twitterSettings }];
 
-  const botmasterSettings = {
-    botsSettings,
-    app
-  }
+  describe('#constructor', function() {
+    let server = null;
+    let app = null;
+    beforeEach(function(done) {
+      app = express();
+      server = app.listen(3100, function() { done(); });
+    })
 
-  let botmaster = new  Botmaster(botmasterSettings);
+    it('should throw an error if settings aren\'t specified', function() {
+      expect(() => new Botmaster()).to.throw();
+    })
 
-  let server = null;
-  before(function(done) {
-    server = app.listen(3000, function() { done(); });
+    it('should throw an error if settings.botsSettings aren\'t specified', function() {
+      const settings = {};
+      expect(() => new Botmaster(settings)).to.throw();
+    })
+
+    it('should throw an error if entry in botsSettings has more than one key', function() {
+      const botsSettings = _.cloneDeep(baseBotsSettings);
+      botsSettings[0].unrecognized = 'something';
+      const settings = {
+        botsSettings,
+        app
+      };
+      expect(() => new Botmaster(settings)).to.throw();
+    })
+
+    it('should throw an error if botType isn\'t supported yet', function() {
+      const botsSettings = _.cloneDeep(baseBotsSettings);
+      botsSettings.push({ 'unrecognized': {} });
+      const settings = {
+        botsSettings,
+        app
+      };
+      expect(() => new Botmaster(settings)).to.throw();
+    })
+
+    it('should otherwise properly create and setup the bot objects when no ' +
+       'optional parameters is specified', function(done) {
+      const settings = { botsSettings: baseBotsSettings };
+      const botmaster = new  Botmaster(settings);
+
+      expect(botmaster.bots.length).to.equal(3);
+      expect(botmaster.sessionStore).to.equal(undefined);
+
+      botmaster.once('server running', function(serverMessage) {
+        expect(serverMessage).to.equal(
+          'App parameter not specified. Running new App on port: 3000');
+
+        for (const bot of botmaster.bots) {
+          if (bot.requiresWebhook) {
+            expect(bot.app).to.not.equal(undefined);
+          }
+          expect(bot.sessionStore).to.equal(undefined);
+        }
+
+        botmaster.server.close(function() { done(); });
+      })
+    })
+
+    it('should otherwise properly create and setup the bot objects when ' +
+       'port parameter is specified', function(done) {
+      const settings = {
+        botsSettings: baseBotsSettings,
+        port: 3101
+      };
+      const botmaster = new  Botmaster(settings);
+
+      botmaster.once('server running', function(serverMessage) {
+        expect(serverMessage).to.equal(
+          'App parameter not specified. Running new App on port: 3101');
+
+        botmaster.server.close(function() { done(); });
+      })
+    })
+
+    it('should otherwise properly create and setup the bot objects when ' +
+       'sessionStore is specified', function() {
+      const settings = { 
+        botsSettings: baseBotsSettings,
+        sessionStore: new SessionStore(),
+        app
+      };
+      const botmaster = new  Botmaster(settings);
+
+      expect(botmaster.sessionStore).to.not.equal(undefined);
+
+      for (const bot of botmaster.bots) {
+        expect(bot.sessionStore).to.equal(botmaster.sessionStore);
+      }
+    })
+
+    afterEach(function(done) {
+      server.close(function() { done(); });
+    })
+  })
+
+  describe('#createBot', function() {
+    it('should return a bot with the correct parameters when settings exist', function(done) {
+      const settings = { botsSettings: baseBotsSettings };
+
+      const botmaster = new Botmaster(settings);
+
+      botmaster.once('server running', function() {
+        const messengerBot = botmaster.createBot(MessengerBot, messengerSettings);
+        expect(messengerBot.type).to.equal('messenger');
+
+        botmaster.server.close(function() { done(); });
+      })
+    })
+
+    it('should return a bot with the correct parameters when using settings with sessionStore', function(done) {
+      const settings = { 
+        botsSettings: baseBotsSettings,
+        sessionStore: new SessionStore()
+      };
+
+      const botmaster = new  Botmaster(settings);
+
+      botmaster.once('server running', function() {
+        const messengerBot = botmaster.createBot(MessengerBot, messengerSettings);
+
+        expect(messengerBot.sessionStore).to.not.equal(undefined);
+        expect(messengerBot.sessionStore).to.equal(botmaster.sessionStore);
+
+        botmaster.server.close(function() { done(); });
+      })
+    })
+  })
+
+  describe('#addBot', function() {
+    specify('update events should be received by botmaster object for bots ' +
+            'that were added', function(done) {
+      const botsSettings = _.cloneDeep(baseBotsSettings);
+      botsSettings.splice(1,1); // just remove the messengerSettings as I want to add is myself.
+      assert.equal(2, botsSettings.length);
+
+      const settings = { botsSettings };
+
+      const botmaster = new Botmaster(settings);
+
+      const messengerBot = new MessengerBot(messengerSettings);
+
+      botmaster.addBot(messengerBot);
+
+      expect(messengerBot.type).to.equal('messenger');
+
+      const userId = '134449875';
+      const botId = '123124412'
+      const updateData = {
+        entry: [{
+          messaging: [{
+            sender: {
+              id: userId
+            },
+            recipient: {
+              id: botId
+            },
+            timestamp: 1468325836000,
+            message: {
+              mid: 100,
+              seq: 1,
+              text: 'Party & Bullshit'
+            }
+          }]
+        }]
+      }
+
+      const requestOptions = {
+        method: 'POST',
+        uri: 'http://localhost:3000/messenger/webhook',
+        body: updateData,
+        json: true,
+        headers: {
+            'x-hub-signature': getMessengerSignatureHeader(
+            updateData, config.messengerCredentials.fbAppSecret)
+        }
+      };
+
+      botmaster.once('update', function(bot, update) {
+        expect(update).to.not.equal(undefined);
+        botmaster.server.close(function() { done(); });
+      })
+
+      request(requestOptions);
+    })
   })
 
   describe('sending messages', function() {
+    // botmaster.server stops listening onto in port 3200 in the after hook
+    // of 'sending message'
+    const botmasterSettings = { botsSettings: baseBotsSettings, port: 3200 };
+    const botmaster = new Botmaster(botmasterSettings);
 
     for (const bot of botmaster.bots) {
       // if (bot.type !== 'twitter') continue; // for now
@@ -184,13 +367,12 @@ describe('Botmaster', function() {
             expect(body.recipient_id).to.equal(recipientId);
           });
         })
+      })
 
+      after(function(done) {
+        botmaster.server.close(function() { done(); });
       })
     }
   });
-
-  after(function(done) {
-    server.close(function() { done(); });
-  })
 
 });
