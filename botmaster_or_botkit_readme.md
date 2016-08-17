@@ -2,7 +2,7 @@
 
 ### tl;dr
 
-Use Botmaster If you are want to build platform agnostic conversational bots using a system like Wit. ai or Watson conversation [or your own system] to manage 1 on 1 conversations (On Messenger, Twitter, Telegram for now). e.g. a personal assistant, customer support etc.
+Use Botmaster If you want to build platform agnostic conversational bots using a system like Wit.ai or Watson conversation [or your own system] to manage 1 on 1 conversations (On Messenger, Twitter, Telegram for now). e.g. a personal assistant, customer support etc.
 
 Use Botkit if you want to build platform dependant bots on either Slack or Twilio IPM while managing simple conversations based on regex or also more complex ones using again Watson Conversation or wit etc.
 
