@@ -201,7 +201,7 @@ const botmaster = new Botmaster({ settings: botsSettings,
                                  port: port });
 ```
 
-The webhook endpoints will be set according to your settings. See the [webhooks](Readme.md#webhooks) to read some more about webhooks in Botmaster.
+The webhook endpoints will be set according to your settings. Go to [webhooks](Readme.md#webhooks) in the main readme to read some more about webhooks in Botmaster.
 
 In order to use your own express app, you would do as follows in Botmaster.
 
