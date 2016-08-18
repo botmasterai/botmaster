@@ -119,7 +119,9 @@ const controller = Botkit.facebookbot({
 });
 ```
 
-Because of the fixed endpoint and the fact that Botkit does not (according to their code as of today) verify the integrity of the requests using the Facebook App Secret, I would advise against using it as this means that anyone can make a request to https://YOUR_SERVER:PORT_CHOSEN/facebook/receive and fake requests from Facebook.
+NOTE: Because of the fixed endpoint and the fact that Botkit does not (according to their code as of Aug 18th 2016) verify the integrity of the requests using the Facebook App Secret, I would advise against using it as this means that anyone can make a request to https://YOUR_SERVER_URL:PORT_CHOSEN/facebook/receive and fake requests from Facebook.
+
+Of course, you can have multiple controllers in your app. But you will have to manage the various types of incoming messages.
 
 Botmaster does not have this concept of a controller. In fact, if you are coming from Botkit, you can think of Botmaster as a sort of supercontroller from which you can create a bot of any type as in this example:
 
@@ -152,61 +154,77 @@ botmaster.on('update', (bot, update) => {
 
 Where the bot object would have been created with any of the 4 settings mentioned. Note the fact that there are 2 messenger settings. Because Botmaster requires an endpoint to be specified in the settings, nothing more than specifying it has to be done there. We recommend people to include some sort of a key in their endpoint as added security for Messenger (on top of the integrity verification from the Facebook app secret) and as basic security for Telegram.
 
-express app object
+Working with webhooks
 ---
 
-Both frameworks either expect an express() app object to be passed as argument either after controller creation in Botkit as such:
+In order to receive messages, some platforms make the use of webhooks. Which means they will send requests to some endpoints on your server. In order to do that, both frameworks make the use of express() app objects under the hood. Botkit does so for Messenger, Twilio IPM and some of the Slack solutions. Botmaster does do for Messenger and Telegram (for now).
+
+The standard way to deal with this in Botkit is the following:
 
 ```js
-const express = require('express');
-const app = express();
-var bodyParser = require('body-parser');
+const port = 3000;
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-...
-
-controller.createWebhookEndpoints(app, bot, () => {
-    console.log('This bot is online!!!');
+controller.setupWebserver(port, function(err, webserver) {
+  controller.createWebhookEndpoints(webserver)
 });
 ```
 
-Or during botmaster object instantiation in Botmaster as such:
+As you can see, this will create an express() webserver and send it onto the `createWebhookEndpoints` function. The server will now listen onto the `facebook/receive` endpoint on port 3000 if it is a Messenger controller. It will listen onto the `'/twilio/receive'` for Twilio IPM and `'/slack/receive'` for Slack (if using one of the services that uses webhooks).
+
+Of course, you might want to use your own express() app webserver to use accross multiple controllers or to serve all sorts of other purposes. You would do this like that in Botkit:
+
 
 ```js
 const express = require('express');
 const app = express();
-...
+const bodyParser = require('body-parser');
 
-const botmaster = new Botmaster({settings: botsSettings,
-                                 app: app});
-```
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+.
+.
+.
+controller.createWebhookEndpoints(app, bot, () => {
+    console.log('This bot is online!!!');
+});
 
-Both then expect the server to be started by you in this case. So you would have something like this in your code:
-
-```js
 app.listen(3000, function() {
   console.log('Server up');
 });
 ```
 
-If this isn't done in Botkit, they expect you to manually start it using their builtin methods:
-
-```js
-Controller.setupWebserver(3000,function(err,webserver) {
-  Controller.createWebhookEndpoints(bController.webserver, bBot, function() {
-      console.log('This bot is online!!!');
-  });
-});
-```
-
-If unspecified in Botmaster, it will just start an express server under the hood for you and make it listen onto port 3000. If you want it to listen onto another port, you can just do something like this when instantiating botmaster:
+In Botmaster, instantiating a botmaster object, will by default just start an express server under the hood for you and make it listen onto port 3000. If you want it to listen onto another port, you can just do something like this when instantiating botmaster:
 
 ```
 const port = 3001;
-const botmaster = new Botmaster({settings: botsSettings,
-                                 port: port});
+const botmaster = new Botmaster({ settings: botsSettings,
+                                 port: port });
 ```
+
+The webhook endpoints will be set according to your settings. See the [webhooks](Readme.md#webhooks) to read some more about webhooks in Botmaster.
+
+In order to use your own express app, you would do as follows in Botmaster.
+
+```js
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+.
+.
+.
+const botmaster = new Botmaster({settings: botsSettings,
+                                 app: app});
+
+app.listen(3000, function() {
+  console.log('Server up');
+});
+```
+
+By default, Botkit will use different express app webservers for each controller. Botmaster, as mentioned earlier, is a sort of supercontroller. Because of that, it uses the same express webserver accross all channels by default.
+
 
 Supported Platforms
 ---

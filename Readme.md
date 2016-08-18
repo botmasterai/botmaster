@@ -13,7 +13,7 @@ npm install --save botmaster
 ```
 
 ## Quick start
-(Go to 'Getting set up' to see how to get all the required credentials)
+(Go to [Getting set up](##getting-set-up) to see how to get all the required credentials)
 ```js
 
 // settings stuff
@@ -118,7 +118,7 @@ https://developers.facebook.com/docs/messenger-platform/quickstart
 
 In step 2, where you setup your webhook, no need to code anything. Just specify the webhook, enter any secure string you want as a verify token and copy that value in the settings object.
 
-If you are not too sure how webhooks work and/or how to get it to run locally, go to the section about webhooks.
+If you are not too sure how webhooks work and/or how to get it to run locally, go to [webhooks](#webhooks) to read some more.
 
 ### Getting set up with Telegram
 
@@ -147,7 +147,7 @@ https://api.telegram.org/<authToken>/setWebhook?url=<'Your Base URL'>/telegram/w
 
 !!Because Telegram doesn't send any type of information to verify the identity of the origin of the update, it is highly recommended that you include a sort of hash in your webhookEndpoint. I.e., rather that having this: `webhookEndpoint: '/webhook/'`, do something more like this: `webhookEndpoint: '/webhook92ywrnc9qm4qoiuthecvasdf42FG/'`. This will assure that you know where the request is coming from.
 
-If you are not too sure how webhooks work and/or how to get it to run locally, go to the section about webhooks.
+If you are not too sure how webhooks work and/or how to get it to run locally, go to [webhooks](#webhooks) to read some more.
 
 ### Getting set up with Twitter
 
@@ -213,7 +213,7 @@ The `botmasterSettings` object has the following parameters:
 | botsSettings | An `array` of platform specific settings. See 'Getting set up' for more info on that
 | port  | (__optional__) The port to use for your webhooks (see the below 'webhooks' to understand more about webhooks). This will only be used if the `app` parameter is not provided. Otherwise, it will be ignored
 | app  | (__optional__) An `express.js` app object to mount the webhookEnpoints onto. If you choose to do this, it is assumed that you will be starting your own express server and this won't be done by Botmaster.
-| sessionStore | (__optional__) a `sessionStore` object to store basic context and information about the bot and the updates it receives. See the 'session' section below to understand more about sessions
+| sessionStore | (__optional__) a `sessionStore` object to store basic context and information about the bot and the updates it receives. See the [session](#sessions) section below to read more about sessions
 
 ### Events
 
