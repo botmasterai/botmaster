@@ -97,7 +97,7 @@ What this means is that any bot class that follows a  certain set of rules will 
 
 Before defining the rules that have to be respected in order to write a Botmaster compatible bot class let's look at the constructor of one of the pre-existing one, `TelegramBot`:
 
-### `constructor(settings)`
+### `#constructor(settings)`
 
 ```js
 class TelegramBot extends BaseBot {
@@ -126,11 +126,11 @@ The following three lines setup some important values.
   2. `this.requiresWebhook`: whether the bot requires webhooks. If the platform you are coding for requires webhooks, you will be expected to set a `this.app` variable at some point in the setup. We'll look into this when we have a look at what the `this.__createMountPoints();` does.
   3. `this.requiredCredentials`: sets up an array of credentials that are expected to be defined for the platform you are coding your class for. Telgram only takes in 1, so we just have an array with the value `'authToken'`.
 
-### `__applySettings(settings)`
+### `#__applySettings(settings)`
 
 The next line calls the `this.__applySettings(settings)`. This function is implemented in BaseBot and will just make sure that the settings passed on to the bot constructor are valid with respect to the parameters you defined. You should always call this function directly after setting the three [or more if you want] parameters specific to the platform you are coding for. If valid, the settings will then be applied to the bot object. e.g. `this.webhookEndpoint` will be set to `settings.webhookEndpoing`.
 
-### `__createMountPoints()`
+### `#__createMountPoints()`
 
 The last line of our controller makese a call to `this.__createMountPoints();`. This line should only be present if your bo class requires webhooks. If this is the case, you will be expected to define a class member function that looks like:
 
@@ -162,7 +162,7 @@ very importantly, this function creates an express router `this.app` that will b
 
 It then sets up the post endpoint that listens onto `this.webhookEnpoint`. No further assumption is made here. 
 
-### `__formatUpdate(rawUpdate)`
+### `#__formatUpdate(rawUpdate)`
 
 Although you can technically handle the body of the request as you wish. In our example here (the TelegramBot code), we make a call to the `__formatUpdate` function with the body of the request.
 It would make sense for you to do so for consitency and because it has to be defined if you want your bot class to eventually be added to the Botmaster project.
@@ -199,11 +199,11 @@ Typically, it would look something like this for a message with an image attachm
 
 Your function should return the update (or a promise that resolves a formatted update) in order to the call `__emitUpdate`.
 
-### `__emitUpdate(update)`
+### `#__emitUpdate(update)`
 
 Like `__applySettings`, this method is implemented in `BaseBot`. It handles errors, setting up the session to the update if sessionStore is set, and most importantly, actually calling `this.emit(update)` to emit the actual update. You can overwrite this method is you wish, but in its current state, it handles the most important cases you will want to deal with.
 
-### `sendMessage(message)`
+### `#sendMessage(message)`
 
 All previous methods had either something to do with object instantiation or with incoming messages. We'll now have a look at what needs to be done within your bot class to send messages.
 
@@ -229,7 +229,7 @@ Please note that the `BaseBot` superclass defines a set of methods that allow de
 
 All these methods will convert a developer specified input into a Facebook Messenger compatible message that will be called as a parameter to `sendMessage`. That is, they all eventually will call your `sendMessage` method. You can however overwirte them if need be.
 
-### `__formatOutgoingMessage(message)`
+### `#__formatOutgoingMessage(message)`
 
 Your `sendMessage` methos is expected to call a `__formatOutgoingMessage(message)` method that will format the Messenger style message into one that is compatible with the platform your are coding your bot class for.
 
