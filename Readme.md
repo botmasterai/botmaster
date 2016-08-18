@@ -718,3 +718,7 @@ app.listen(port, '0.0.0.0', () => {
 
 Checkout the examples folder for cool examples of how to use botmaster
 
+## License
+
+This library is licensed under the MIT [license](LICENSE)
+
