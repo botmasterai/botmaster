@@ -2,9 +2,9 @@
 
 Botmaster is an opinionated lightweight chatbot framework. Its purpose is to integrate your existing chatbot into a variety of messaging channels - currently Facebook Messenger, Twitter DM and Telegram. 
 
-Botmaster is platform agnostic in two important ways. Firstly, in its current state, developers can have bots running on Facebook Messenger, Twitter DM and Telegram - with just one integration. Secondly, BotMaster makes no assumptions about the back-end bot itself - you can write code that allows BotMaster to call engines such as IBM Watson, open source frameworks or even write the bot yourself.
+Botmaster is platform agnostic in two important ways. Firstly, in its current state, developers can have bots running on Facebook Messenger, Twitter DM and Telegram - with just one integration. Secondly, BotMaster makes no assumptions about the back-end bot itself - you can write code that allows BotMaster to call conversational engines such as IBM Watson's conversation API, open source frameworks or even write the conversation engine yourself.
 
-Its philosophy is to minimise the amount of code developers have to write in order to create a 1-on-1 conversational chatbot that works on multiple different platforms. It does so by defining a standard with respect to what format messages take and how 1-on-1 conversations occur. Messages to/from the various messaging apps supported are all mapped onto this botmaster standard, meaning the code you write is much reduced when compared to a set of point:point integrations.
+Its philosophy is to minimise the amount of code developers have to write in order to create a 1-on-1 conversational chatbot that works on multiple platforms. It does so by defining a standard with respect to what format messages take and how 1-on-1 conversations occur. Messages to/from the various messaging channels supported are all mapped onto this botmaster standard, meaning the code you write is much reduced when compared to a set of point:point integrations.
 
 ## install
 
@@ -13,7 +13,7 @@ npm install --save botmaster
 ```
 
 ## Quick start
-(Go to [Getting set up](##getting-set-up) to see how to get all the required credentials)
+(Go to [Getting set up](#getting-set-up) to see how to get all the required credentials)
 ```js
 
 // settings stuff
@@ -23,12 +23,13 @@ const messengerSettings = {
   credentials: {
     verifyToken: 'YOUR verifyToken',
     pageToken: 'YOUR pageToken',
-    fbAppSecret: 'YOUR fbAppSecret'
+    fbAppSecret: 'YOUR fbAppSecret',
   },
   webhookEndpoint: '/webhook1234', // botmaster will mount this webhook on https://Your_Domain_Name/messenger/webhook1234
 };
 
 const twitterSettings = {
+  credentials: {
     consumerKey: 'YOUR consumerKey',
     consumerSecret: 'YOUR consumerSecret',
     accessToken: 'YOUR accessToken',
@@ -51,21 +52,14 @@ const botmasterSettings = {
   botsSettings: botsSettings,
   // by default botmaster will start an express server that listens on port 3000
   // you can pass in a port argument here to change this default setting:
-  port: 3001
+  port: 3001,
 }
 
 const botmaster = new Botmaster(botmasterSettings);
 
 // actual code
 botmaster.on('update', (bot, update) => {
-  bot.sendMessage({
-    recipient: {
-      id: update.sender.id,
-    },
-    message: {
-      text: 'Right back at you!', // yes, this bot doesn't really do anything smart
-    },
-  });
+  bot.sendTextMessageTo('Right back at you!', update.sender.id);
 });
 
 botmaster.on('error', (bot, err) => {
@@ -76,7 +70,7 @@ botmaster.on('error', (bot, err) => {
 
 ## Getting set up
 
-As you can see here, the Botmaster constructor takes a botmasterSettings argument. 
+As you can see above, the Botmaster constructor takes a `botmasterSettings` argument. 
 This object is of the following form:
 
 ```js
@@ -96,7 +90,7 @@ const botsSettings = [{ messenger: messengerSettings },
                       { twitter: otherTwitterSettings }];
 ```
 
-I.e. it is an array of single key objects. Where you specify the type as the key of each object and the settings is is the value. Here I show that you can define multiple bots of the same type at once (twitter ones in this example). As you surely guessed, each different platform will expect different credentials. So platform specific settings will differ.
+I.e. it is an array of single key objects. Where you specify the type as the key of each object and the settings as the value. Here I show that you can define multiple bots of the same type at once (twitter ones in this example). As you surely guessed, each different platform will expect different credentials. So platform specific settings will differ.
 
 ### Getting set up with Messenger
 
@@ -107,18 +101,18 @@ const messengerSettings = {
   credentials: {
     verifyToken: 'YOUR verifyToken',
     pageToken: 'YOUR pageToken',
-    fbAppSecret: 'YOUR fbAppSecret'
+    fbAppSecret: 'YOUR fbAppSecret',
   },
-  webhookEndpoint: '/webhook1234'
+  webhookEndpoint: '/webhook1234',
 };
 ```
 
 If you don't already have these, follow the steps **1-4** on the Facebook Messenger guide:
 https://developers.facebook.com/docs/messenger-platform/quickstart
 
-In step 2, where you setup your webhook, no need to code anything. Just specify the webhook, enter any secure string you want as a verify token and copy that value in the settings object.
+In step 2, where you setup your webhook, no need to code anything. Just specify the webhook, enter any secure string you want as a verify token and copy that value in the settings object. Also, click on whichever message [update] type you want to receive from Messenger (`message_deliveries`, `messages`, `message_postbacks` etc...).
 
-If you are not too sure how webhooks work and/or how to get it to run locally, go to [webhooks](#webhooks) to read some more.
+If you are not too sure how webhooks work and/or how to get them to run locally, go to [webhooks](#webhooks) to read some more.
 
 ### Getting set up with Telegram
 
@@ -135,9 +129,9 @@ const telegramSettings = {
 
 Which means all we need is an authToken. In order to get one, you will need to either create a new bot or include your authToken here.
 
-Basically, you'll need to send a '/newbot' command to Botfather (go talk to him [here](https://web.telegram.org/#/im?p=@BotFather)). Once you're done with giving it a name and a username, BotFather will come back to you with your authToken. Make sure to store it somewhere. More info on BotFather can be found [here](https://core.telegram.org/bots#create-a-new-bot ) if needed.
+Basically, you'll need to send a `/newbot` command(message) to Botfather (go talk to him [here](https://web.telegram.org/#/im?p=@BotFather)). Once you're done with giving it a name and a username, BotFather will come back to you with your authToken. Make sure to store it somewhere. More info on BotFather can be found [here](https://core.telegram.org/bots#create-a-new-bot ) if needed.
 
-And you can find the telegram api docs [here](https://core.telegram.org/bots/api)
+For more on Telegram, you can find the telegram api docs [here](https://core.telegram.org/bots/api)
 
 Setting up your webhook requires you to make the following request outside of Botmaster (using curl for instance or a browser): 
 
@@ -155,6 +149,7 @@ We've seen a twitter settings object looks like:
 
 ```js
 const twitterSettings = {
+  credentials: {
     consumerKey: 'YOUR consumerKey',
     consumerSecret: 'YOUR consumerSecret',
     accessToken: 'YOUR accessToken',
@@ -172,19 +167,19 @@ Twitter's setup is slightly more tricky than the two other ones. Because Twitter
 
 2. Setting up the app
    *  Navigate to the somewhat hard to find Twitter developer app dashboard at: https://apps.twitter.com/
-   * Click Create New App. Enter your details (callback URL is not required if you are starting from scratch here). Website can take in a placeholder like (http://www.example.com)
-   * Now navigate straight (do this before going to the 'Keys and Access Tokens' page). Select 'Read, Write and Access direct messages' and then click 'Update Setting'
-   * Navigate to the 'Read, Write and Access direct messages'. You'll find your consumerKey and consumerSecret right here
+   * Click Create New App. Enter your details (callback URL is not required if you are starting from scratch here). 'Website' can take in a placeholder like (http://www.example.com)
+   * Now navigate straight to the 'Permissions' tab(do this before going to the 'Keys and Access Tokens' tab). Select 'Read, Write and Access direct messages' and then click 'Update Setting'
+   * Navigate to the 'Keys and Access Tokens' tab. You'll find your consumerKey and consumerSecret right here
    * Scroll down and click on 'Create my access token'. You now have your accessToken  and your accessTokenSecret
 
 ! Makes sure not to create your access token before havng reset your permissions. If you do that, you will need to change your permissions then regenerate your access token.
 
-That should about do. Because twitter DM is not completely separate from the rest of Twitter, it behaves quite differently than the other platforms on many aspects. All the points will be mentioned in the rest of this doc.
+That should about do it. Because twitter DM is not completely separate from the rest of Twitter, it behaves quite differently from the other platforms on many aspects. All the points will be mentioned in the rest of this doc.
 
 
 ## Working with Botmaster
 
-Now that you have your settings, you can go ahead and create a botmaster object. This essentially 'starts' botmaster. Doing so will look a little something like this:
+Now that you have your settings, you can go ahead and create a botmaster object. This essentially 'starts' botmaster. Briefly rehearsing what was mentioned in the 'Getting set up' section, doing so will look a little something like this:
 
 ```js
 const botsSettings = [{ messenger: messengerSettings },
@@ -210,9 +205,9 @@ The `botmasterSettings` object has the following parameters:
 
 | Parameter | Description
 |--- |---
-| botsSettings | An `array` of platform specific settings. See 'Getting set up' for more info on that
-| port  | (__optional__) The port to use for your webhooks (see the below 'webhooks' to understand more about webhooks). This will only be used if the `app` parameter is not provided. Otherwise, it will be ignored
-| app  | (__optional__) An `express.js` app object to mount the webhookEnpoints onto. If you choose to do this, it is assumed that you will be starting your own express server and this won't be done by Botmaster.
+| botsSettings | An `array` of platform specific settings. See [Getting set up](#getting-set-up) for more info on that
+| port  | (__optional__) The port to use for your webhooks (see [webhooks](#webhooks) to understand more about webhooks). This will only be used if the `app` parameter is not provided. Otherwise, it will be ignored
+| app  | (__optional__) An `express.js` app object to mount the `webhookEnpoints` onto. If you choose to do this, it is assumed that you will be starting your own express server and this won't be done by Botmaster.
 | sessionStore | (__optional__) a `sessionStore` object to store basic context and information about the bot and the updates it receives. See the [session](#sessions) section below to read more about sessions
 
 ### Events
@@ -231,17 +226,17 @@ botmaster.on('error', (bot, err) => {
 });
 ```
 
-I am registering two new listeners onto the botmaster object. One that listens for any updates that come in and one that listens for any potential error that might occur when receiving updates. The `update` events is of course the one you will want to focus most of your attention onto. You see here that every `update` event will come with a `bot` and an `update` in the arguments. This will always be the case. In general, the updates are standardized as well as the methods to use from the bot object (i.e. sending a message).
+I am registering two new listeners onto the botmaster object. One that listens for any updates that come in and one that listens for any potential error that might occur when receiving updates. The `update` events is of course the one you will want to focus most of your attention onto. You see here that every `update` event will come with a `bot` and an `update` object as arguments. This will always be the case. In general, the updates are standardized as well as the methods to use from the bot object (i.e. sending a message).
 
 ### Bot object
 
 Every Botmaster instance will have a list of bots that can be accessed by calling: `botmaster.bots` assuming your Botmaster instance is named 'botmaster'.
 
-Bot instances can be accessed through that array or more commonly, directly within an `update` event. Because you might want to act differently on bots of a certain type or log information differently, every bot comes with a `bot.type` parameter that is one of: `messenger`, `twitter` or `telegram` (for now). Use these to write more platform specific code (if necessary).
+Bot instances can be accessed through that array or more commonly, directly within an `update` event. Because you might want to act differently on bots of a certain type or log information differently based on type, every bot comes with a `bot.type` parameter that is one of: `messenger`, `twitter` or `telegram` (for now). Use these to write more platform specific code (if necessary).
 
 I'll note quickly that each bot object created comes from one of the `TelegramBot`, `MessengerBot` or `Twitterbot` classes. They act in the same way on the surface (because of heavy standardization), but have a few idiosynchrasies here and there.
 
-You can also create bot object directly from their base classes. Here is an example of creating a twitter bot.
+You can also create bot objects directly from their base classes. Here is an example of creating a twitter bot.
 
 ```js
 const TwitterBot = require('botmaster').botTypes.TwitterBot;
@@ -257,7 +252,7 @@ const twitterSettings = {
 twitterBot = new TwitterBot(twitterSettings);
 ```
 
-All bot items are also eventEmitters. So you will be able to do something like this:
+All bot items are also of the EventEmitters class. So you will be able to do something like this:
 
 ```js
 twitterBot.on('update', (update) => {
@@ -272,7 +267,7 @@ If for some reason you created a bot this way but now want it to be in a botmast
 ```js
 botmaster.addBot(twitterBot);
 ```
-This is important if you create your own Bot that extends the `Botmaster.botTypes.BaseBot` class. For instance, you might want to create your own class that supports your pre-existing messaging standards. Have a look in the `writing_a_botmaster_supported_bot-class.ms` file to learn how to do this.
+This is important if you create your own Bot that extends the `Botmaster.botTypes.BaseBot` class. For instance, you might want to create your own class that supports your pre-existing messaging standards. Have a look at the [writing_a_botmaster_supported_bot-class.md](writing_a_botmaster_supported_bot_class_readme.md) file to learn how to do this.
 
 ## Message/Update format
 
@@ -311,7 +306,7 @@ Typically, it would look something like this for a message with an image attachm
 
 This allows developers to handle these messages in on place only rather than doing it in multiple places. For more info on the various incoming messages formats, read the messenger bot doc on webhooks at: https://developers.facebook.com/docs/messenger-platform/webhook-reference/message-received.
 
-Currently, you will only get updates for `Messages` for all platforms. On Messenger, it is assumed that you don't want to get updates for delivery, read and echo. This can't be turned on at the moment, but will be in later versions as it might be a requirement.
+Currently, you will only get updates for `Messages` (and not delivery, echo notification etc) for all platforms. On Messenger, it is assumed that you don't want to get updates for delivery, read and echo. This can't be turned on at the moment, but will be in later versions as it might be a requirement.
 
 #### Note on attachment types and conversions
 Attachment type conversion works as such for __Twitter__:
@@ -324,11 +319,11 @@ Attachment type conversion works as such for __Twitter__:
 
 !!!Yes `gif` becomes a `video`. because Twitter doesn't actually use gifs the way you would expect it to. It simply loops over a short `.mp4` video.
 
-Also, here's an important caveat for Twitter bot developers who are receiving attachments. Image links that come in from the Twitter API will be private and not public, which makes using them quite trky. You might need to make authenticated requests to do so. The twitterBot objects you will receive in the update will have a `bot.twit` object. Documentation for how to use this is available [here](https://github.com/ttezel/twit).
+Also, here's an important caveat for Twitter bot developers who are receiving attachments. Image links that come in from the Twitter API will be private and not public, which makes using them quite tricky. You might need to make authenticated requests to do so. The twitterBot objects you will receive in the update will have a `bot.twit` object. Documentation for how to use this is available [here](https://github.com/ttezel/twit).
 
 Attachment type conversion works as such for __Telegram__:
 
-| Twitter Type | Botmaster conversion
+| Telegram Type | Botmaster conversion
 |--- |---
 | audio | audio
 | voice  | audio
@@ -374,7 +369,7 @@ botmaster.on('update', (bot, update) => {
 
 The method used is used directly from the bot object and not using the botmaster one.
 
-Because you might not always want to write in a complex json object just to send in a simple text message or photo attachment, Botmaster comes with a few methods that can be used to send messages with less code:
+Because you might not always want to code in a complex json object just to send in a simple text message or photo attachment, Botmaster comes with a few methods that can be used to send messages with less code:
 
 `bot.sendMessageTo`
 
@@ -491,7 +486,7 @@ Buttons are important and this is one a the many places where Botmaster is opini
 | recipientId  | a string representing the id of the user to whom you want to send the message.
 | textOrAttachment  | (__optional__) a string or an attachment object similar to the ones required in `bot.sendAttachmentTo`. This is meant to provide context to the buttons. I.e. why are there buttons here. A piece of text or an attachment could detail that. If not provided,  text will be added that reads: 'Please select one of:'.
 
-The function defaults to sending `quick_replies` in Messenger, setting Keyboard buttons in Telegram and simply prints button titles one on each line in Twitter as it deosn't support buttons. The user is expecting to type in their choice in Twitter.
+The function defaults to sending `quick_replies` in Messenger, setting `Keyboard buttons` in Telegram and simply prints button titles one on each line in Twitter as it deosn't support buttons. The user is expecting to type in their choice in Twitter.
 
 
 ## Sessions
@@ -520,6 +515,7 @@ I.e. this will __not__ print `undefined`:
 botmaster.on('update', (bot, update) => {
   console.log(update.session);
 });
+```
 
 Here we simply added the sessionStore object to our settings passed into the Botmaster constructor.
 
