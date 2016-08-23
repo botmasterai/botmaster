@@ -2,9 +2,9 @@
 
 ### tl;dr
 
-Use Botmaster If you want to build platform agnostic conversational bots using a system like Wit.ai or Watson conversation [or your own system] to manage 1 on 1 conversations (On Messenger, Twitter, Telegram for now). e.g. a personal assistant, customer support etc.
+Use Botmaster If you want to build platform agnostic conversational bots using a system like Watson Conversation [or your own system] to manage 1 on 1 conversations (On Messenger, Twitter, Telegram for now). e.g. a personal assistant, customer support etc.
 
-Use Botkit if you want to build platform dependant bots on either Slack or Twilio IPM while managing simple conversations based on regex or also more complex ones using again Watson Conversation or wit etc.
+Use Botkit if you want to build platform dependant bots on either Slack or Twilio while managing simple conversations based on regex or also more complex ones using again Watson Conversation or wit etc.
 
 ### Main article
 Although it might seem at first glance like the two frameworks (and other similar ones out there) were created with the same goal in mind, things are quite far from that. Let's have a look at how one of these frameworks compare, namely Botkit.
@@ -62,7 +62,7 @@ While a Twilio IPM message (Twilio IPM only supports text) will look like this:
   channel: <some_id> }
 ```
 
-Because of the nature of Twilio and the nature of channels and how they are dealt with, this only makes sense. We'll look at what other differences this brings in the next section.
+Because of the nature of Twilio and the nature of channels and how they are dealt with, this makes sense. We'll look at what other differences this brings in the next section.
 
 
 Standardization is at the heart of Botmaster. The framework was really created for that purpose. In order to do that, the Facebook Messenger message format was chosen and adopted. This means that when your botmaster object receives an 'update' event from anywhere (twitter, telegram as of this writing), you can be sure that it will be of the same format as a similar message that would come from Messenger. 
@@ -237,12 +237,12 @@ Supported Platforms
 |Telegram| x |  |
 |Line| coming soon |  |
 
-conversations
+Conversations
 ---
 
-Botkit allows developers to specify a deterministic conversation flow within the code to simplify such flows. This is definitely handy and something that can help when creting Slack and Twilio bots
+Botkit allows developers to specify a deterministic conversation flow within the code to simplify such flows. This is definitely handy and something that can help when creating Slack and Twilio bots
 
-Because Botmaster was initialy built mainly as a standardization agnostic layer that assumes your messages will be sent to some sort of AI service like Watson conversation and others, this hasn't been builtin to the first version. This is however something that will come soon (in a different form from the ones in Botkit). Depending on requests however, it could come sooner or later.
+Because Botmaster was initialy built mainly as a standardization agnostic layer that assumes your messages will be sent to some sort of AI service like Watson Conversation and others, this hasn't been builtin to the first version. This is however something that will come soon (in a different form from the ones in Botkit). Depending on requests however, it could come sooner or later.
 
 Conclusion
 ---

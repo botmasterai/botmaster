@@ -6,7 +6,7 @@ Botmaster is platform agnostic in two important ways. Firstly, in its current st
 
 Its philosophy is to minimise the amount of code developers have to write in order to create a 1-on-1 conversational chatbot that works on multiple platforms. It does so by defining a standard with respect to what format messages take and how 1-on-1 conversations occur. Messages to/from the various messaging channels supported are all mapped onto this botmaster standard, meaning the code you write is much reduced when compared to a set of point:point integrations.
 
-## install
+## Install
 
 ```bash
 npm install --save botmaster
@@ -172,7 +172,7 @@ Twitter's setup is slightly more tricky than the two other ones. Because Twitter
    * Navigate to the 'Keys and Access Tokens' tab. You'll find your consumerKey and consumerSecret right here
    * Scroll down and click on 'Create my access token'. You now have your accessToken  and your accessTokenSecret
 
-! Makes sure not to create your access token before havng reset your permissions. If you do that, you will need to change your permissions then regenerate your access token.
+! Makes sure not to create your access token before having reset your permissions. If you do that, you will need to change your permissions then regenerate your access token.
 
 That should about do it. Because twitter DM is not completely separate from the rest of Twitter, it behaves quite differently from the other platforms on many aspects. All the points will be mentioned in the rest of this doc.
 
@@ -275,7 +275,7 @@ Standardization is at the heart of Botmaster. The framework was really created f
 
 In order to do that, the Facebook Messenger message format was chosen and adopted. This means that when your botmaster object receives an 'update' event from anywhere (twitter, telegram or Messenger as of this writing), you can be sure that it will be of the same format as a similar message that would come from Messenger. 
 
-### incoming update
+### Incoming update
 
 Typically, it would look something like this for a message with an image attachment. Independant of what platform the message comes from:
 
@@ -304,7 +304,7 @@ Typically, it would look something like this for a message with an image attachm
 };
 ```
 
-This allows developers to handle these messages in on place only rather than doing it in multiple places. For more info on the various incoming messages formats, read the messenger bot doc on webhooks at: https://developers.facebook.com/docs/messenger-platform/webhook-reference/message-received.
+This allows developers to handle these messages in one place only rather than doing it in multiple places. For more info on the various incoming messages formats, read the messenger bot doc on webhooks at: https://developers.facebook.com/docs/messenger-platform/webhook-reference/message-received.
 
 Currently, you will only get updates for `Messages` (and not delivery, echo notification etc) for all platforms. On Messenger, it is assumed that you don't want to get updates for delivery, read and echo. This can't be turned on at the moment, but will be in later versions as it might be a requirement.
 
@@ -336,7 +336,7 @@ Attachment type conversion works as such for __Telegram__:
 
 Also, concerning `location` and `venue` attachments. The url received in Botmaster for Telegram is a google maps one with the coordinates as query parameters. It looks something like this: `https://maps.google.com/?q=<lat>,<long>`
 
-### outgoing messages
+### Outgoing messages
 
 Again, outgoing messages are expected to be formatted like messages the Messenger platform would expect. They will typically look something like this for a text message:
 
@@ -598,7 +598,7 @@ The `createOrUpdateSession(update)` method takes in a standard Botmaster compati
 
 If you are looking to contribute and make a pull request with a new SessionStore class, you are expected to use the ES6 `Promise` class and to follow the airbnb style guidelines as found [here](https://github.com/airbnb/javascript#strings). 
 
-## webhooks
+## Webhooks
 
 Most platforms rely on webhooks to work. As such, you are expected to setup webhooks on the various platforms that use them in order to use Botmaster with these platforms. In the 'Getting set up' part of this documentation, we briefly touched onto that for Telegram and it is mentioned in one of the steps in the Messenger documentation.
 

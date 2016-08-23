@@ -24,7 +24,7 @@ const messengerSettings = {
 const messengerBot = new MessengerBot(messengerSettings);
 ```
 
-You would then be expected to mount your bots express `.app` onto your own express `app` by doing something like this:
+You would then be expected to mount your bot's express mini-app `messengerBot.app` onto your own express `app` by doing something like this:
 
 
 ```js
@@ -36,14 +36,14 @@ app.listen(3000, function() {});
 This will mount your bot onto: `https://Your_Domain_Name/webhook1234`. Note how the bot type __is not__ part of the endpoint here. 
 
 
-## Making Botmaster objects and bot objecst work together
+## Making Botmaster objects and bot objects work together
 
 In the main`Readme.md` we saw how botmaster objects return a bot object along with every update it receives. I.e. something like this happens:
 
 ```js
 botmaster.on('update', (bot, update) => {
-	console.log(bot.type);
-	console.log(update);
+  console.log(bot.type);
+  console.log(update);
 });
 ```
 
@@ -78,15 +78,15 @@ const botmasterSettings = { botsSettings: botsSettings };
 const botmaster = new Botmaster(botmasterSettings);
 ```
 
-In this example the botmaster object will start a new express() app server running locally on port 3000 as expected. However, we later want to add to botmaster the object we created in the first section, namely, `messengerBot`.
+In this example the `botmaster` object will start a new `express()` `app` server running locally on port `3000` as expected by default. However, we later might want to add to botmaster the object we created in the first section, namely, `messengerBot`.
 
-We can achieve this by doing this:
+We can achieve this by doing the following:
 
 ```js
 botmaster.addBot(messengerBot);
 ```
 
-This will mount your bot onto: `https://Your_Domain_Name/messenger/webhook1234`. Note how the bot type __is__ part of the endpoint here. This is because the Botmaster class assumes that you want your endpoint to be mounted onto its botType. This is just another way in which Botmaster is opinionated.
+This will mount your bot onto: `https://Your_Domain_Name/messenger/webhook1234`. Note how the bot type __is__ part of the endpoint here. This is because the Botmaster class assumes that you want your endpoint to be mounted onto its botType.
 
 You will then get updates from the botmaster object as if you had instantiated it with the messenger settings too.
 
@@ -118,11 +118,11 @@ class TelegramBot extends BaseBot {
  }
 ```
 
-Let's look into this line by line. The first line reads `super(settings)`. Which of course just means it calls the constructor of `TelegramBot`'s superclass, namely, BaseBot. `BaseBot`'s constructor doesn't actually do anything fancy a part from calling its own superclass's constructor and settings a few default values [as pointers for you]. BaseBot calls its own superclass's constructor as it inherits from node.js's `EventEmitter` which will allow your bot's classes to listen to events as well as emit them.
+Let's look into this line by line. The first line reads `super(settings)`. Which of course just means it calls the constructor of `TelegramBot`'s superclass, namely, BaseBot. `BaseBot`'s constructor doesn't actually do anything fancy a part from calling its own superclass's constructor and setting a few default values [as pointers for you, the developer]. BaseBot calls its own superclass's constructor as it inherits from node.js's `EventEmitter` which will allow your bot's classes to listen to events as well as emit them.
 
 The following three lines setup some important values. 
 
-  1. `this.type`: the type of bot that is being instantiated. It's omportant to specify that as developers might want condition some code on the type of bot you are writing.
+  1. `this.type`: the type of bot that is being instantiated. It's important to specify that as developers might want condition some code on the type of bot you are writing.
   2. `this.requiresWebhook`: whether the bot requires webhooks. If the platform you are coding for requires webhooks, you will be expected to set a `this.app` variable at some point in the setup. We'll look into this when we have a look at what the `this.__createMountPoints();` does.
   3. `this.requiredCredentials`: sets up an array of credentials that are expected to be defined for the platform you are coding your class for. Telgram only takes in 1, so we just have an array with the value `'authToken'`.
 
@@ -132,7 +132,7 @@ The next line calls the `this.__applySettings(settings)`. This function is imple
 
 ### `#__createMountPoints()`
 
-The last line of our controller makese a call to `this.__createMountPoints();`. This line should only be present if your bo class requires webhooks. If this is the case, you will be expected to define a class member function that looks like:
+The last line of our controller makese a call to `this.__createMountPoints();`. This line should only be present if your bot class requires webhooks. If this is the case, you will be expected to define a class member function that looks like:
 
 ```js
   __createMountPoints() {
@@ -158,7 +158,7 @@ The last line of our controller makese a call to `this.__createMountPoints();`. 
   }
 ```
 
-very importantly, this function creates an express router `this.app` that will be mounted onto the main `app` router from the botmaster object if `botmaster.addBot` is used.
+Very importantly, this function creates an express router `this.app` that will be mounted onto the main `app` router from the botmaster object if `botmaster.addBot` is used.
 
 It then sets up the post endpoint that listens onto `this.webhookEnpoint`. No further assumption is made here. 
 
@@ -169,7 +169,6 @@ It would make sense for you to do so for consitency and because it has to be def
 
 This function is expected to transform the `rawUpdate` into an object which is of the format of Messenger updates, while having an `update.raw` bit that references that `rawUpdate` received. I.e. formatting it to something like this for an incoming image is what would be expected:
 
-```js
 Typically, it would look something like this for a message with an image attachment. Independant of what platform the message comes from:
 
 ```js
