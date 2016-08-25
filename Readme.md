@@ -654,6 +654,42 @@ For Telegram, it would look something like this:
 https://botmastersubdomain.localtunnel.me/telegram/webhook1234/
 ```
 
+If you keep on getting an error that looks like this:
+
+```bash 
+your url is: https://customname.localtunnel.me
+/usr/local/lib/node_modules/localtunnel/bin/client:58
+        throw err;
+        ^
+
+Error: connection refused: localtunnel.me:44404 (check your firewall settings)
+    at Socket.<anonymous> (/usr/local/lib/node_modules/localtunnel/lib/TunnelCluster.js:47:32)
+    at emitOne (events.js:96:13)
+    at Socket.emit (events.js:188:7)
+    at emitErrorNT (net.js:1272:8)
+    at _combinedTickCallback (internal/process/next_tick.js:74:11)
+    at process._tickCallback (internal/process/next_tick.js:98:9)
+```
+
+This is due to a bug in localtunnel. You can either go try out ngrok (which you will have to pay for), or try this workaround in the terminal:
+
+```bash
+(while true; do 
+  lt -p 3000 -s botmastersubdomain
+done)
+```
+
+or
+
+```bash
+( while true; do; lt -p 3000 -s botmastersubdomain; done; )
+```
+
+If you prefer a one liner.
+
+This will just restart the process whenever it crashes (which can happen very often...), making sure your webhook will always be up and listening for incoming requests.
+
+
 ## Using Botmaster with your own express() object
 
 Here's an example on how to do so:
