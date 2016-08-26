@@ -1,6 +1,6 @@
 # Botmaster
 
-Botmaster is an opinionated lightweight chatbot framework. Its purpose is to integrate your existing chatbot into a variety of messaging channels - currently Facebook Messenger, Twitter DM and Telegram. 
+Botmaster is a lightweight chatbot framework. Its purpose is to integrate your existing chatbot into a variety of messaging channels - currently Facebook Messenger, Twitter DM and Telegram. 
 
 Botmaster is platform agnostic in two important ways. Firstly, in its current state, developers can have bots running on Facebook Messenger, Twitter DM and Telegram - with just one integration. Secondly, BotMaster makes no assumptions about the back-end bot itself - you can write code that allows BotMaster to call conversational engines such as IBM Watson's conversation API, open source frameworks or even write the conversation engine yourself.
 
@@ -476,7 +476,7 @@ It will only send a request to the platforms that support it. If unsupported, no
 
 ### Buttons
 
-Buttons are important and this is one a the many places where Botmaster is opinionated. It provides a method that will send what is assumed to be a decent way to display buttons throughout all platforms.
+Buttons will almost surely be part of your bot. Botmaster provides a method that will send what is assumed to be a decent way to display buttons throughout all platforms.
 
 `bot.sendDefaultButtonMessageTo`
 
