@@ -13,10 +13,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.ibm.com/JWuarin/botmaster"
+    "url": "https://github.com/jdwuarin/botmaster"
   },
   "bugs": {
-    "url": "https://github.ibm.com/JWuarin/botmaster/issues"
+    "url": "https://github.com/jdwuarin/botmaster/issues"
   },
   "keywords": [
     "bot",
@@ -46,6 +46,6 @@
     "mocha-eslint": "^2.1.1",
     "nodemon": "^1.9.2"
   },
-  "author": "JD Wuarin <john.dwuarin@gmail.com>",
+  "author": "JD Wuarin <jwuarin@uk.ibm.com>",
   "license": "MIT"
 }
