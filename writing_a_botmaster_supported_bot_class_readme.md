@@ -9,7 +9,7 @@ Botmaster makes three usable bot classes available to developers. `MessengerBot`
 For example, you can instantiate a new `MessengerBot` object as such:
 
 ```js
-const Botmaster = require('./lib');
+const Botmaster = require('botmaster');
 const MessengerBot = Botmaster.botTypes.MessengerBot;
 
 const messengerSettings = {
@@ -24,7 +24,7 @@ const messengerSettings = {
 const messengerBot = new MessengerBot(messengerSettings);
 ```
 
-You would then be expected to mount your bot's express mini-app `messengerBot.app` onto your own express `app` by doing something like this:
+In order to get updates from Messenger, you would then be expected to mount your bot's express mini-app `messengerBot.app` onto your own express `app` by doing something like this:
 
 
 ```js
@@ -33,7 +33,7 @@ app.use('/', messengerBot.app);
 app.listen(3000, function() {});
 ```
 
-This will mount your bot onto: `https://Your_Domain_Name/webhook1234`. Note how the bot type __is not__ part of the endpoint here. 
+This will mount your bot onto: `https://Your_Domain_Name/webhook1234`. Note how the bot type __is not__ part of the URL here. 
 
 
 ## Making Botmaster objects and bot objects work together
@@ -49,7 +49,7 @@ botmaster.on('update', (bot, update) => {
 
 We also saw in the last section how to setup a bot using its own bot class. Let's have a look at how to use this bot inside of a botmaster object.
 
-As usual, we create a botmaster object as such:
+As usual, we create a botmaster object. This one supports Twitter and Telegram, but not Messenger. We create it as such:
 
 
 ```js
@@ -78,7 +78,7 @@ const botmasterSettings = { botsSettings: botsSettings };
 const botmaster = new Botmaster(botmasterSettings);
 ```
 
-In this example the `botmaster` object will start a new `express()` `app` server running locally on port `3000` as expected by default. However, we later might want to add to botmaster the object we created in the first section, namely, `messengerBot`.
+In this example the `botmaster` object will start a new `express()` `app` server running locally on port `3000` as expected by default (see main Readme to see how to change that). However, we later might want to add to botmaster the object we created in the first section, namely, `messengerBot`.
 
 We can achieve this by doing the following:
 
@@ -90,7 +90,7 @@ This will mount your bot onto: `https://Your_Domain_Name/messenger/webhook1234`.
 
 You will then get updates from the botmaster object as if you had instantiated it with the messenger settings too.
 
-What this means is that any bot class that follows a  certain set of rules will be able to be added to a botmaster object.
+__What this means is that any bot class that follows a  certain set of rules will be able to be added to a botmaster object.__
 
 
 ## Creating your own bot classes
@@ -164,10 +164,10 @@ It then sets up the post endpoint that listens onto `this.webhookEnpoint`. No fu
 
 ### `#__formatUpdate(rawUpdate)`
 
-Although you can technically handle the body of the request as you wish. In our example here (the TelegramBot code), we make a call to the `__formatUpdate` function with the body of the request.
+Although you can technically handle the body of the request as you wish. In our `__createMountPoints` example here (from TelegramBot code), we make a call to the `__formatUpdate` function with the body of the request.
 It would make sense for you to do so for consitency and because it has to be defined if you want your bot class to eventually be added to the Botmaster project.
 
-This function is expected to transform the `rawUpdate` into an object which is of the format of Messenger updates, while having an `update.raw` bit that references that `rawUpdate` received. I.e. formatting it to something like this for an incoming image is what would be expected:
+This function is expected to transform the `rawUpdate` into an object which is of the format of Messenger updates, while having an `update.raw` bit that references that `rawUpdate` received.
 
 Typically, it would look something like this for a message with an image attachment. Independant of what platform the message comes from:
 
@@ -196,11 +196,11 @@ Typically, it would look something like this for a message with an image attachm
 };
 ```
 
-Your function should return the update (or a promise that resolves a formatted update) in order to the call `__emitUpdate`.
+Your function should return the update object(or a promise that resolves a formatted update object) in order to then call `__emitUpdate` with it as a parameter.
 
 ### `#__emitUpdate(update)`
 
-Like `__applySettings`, this method is implemented in `BaseBot`. It handles errors, setting up the session to the update if sessionStore is set, and most importantly, actually calling `this.emit(update)` to emit the actual update. You can overwrite this method is you wish, but in its current state, it handles the most important cases you will want to deal with.
+Like `__applySettings`, this method is implemented in `BaseBot`. It handles errors, setting up the session to the update if sessionStore is set, and most importantly, actually calling `this.emit(update)` to emit the actual update. You can overwrite this method is you wish, but in its current state, it handles the most important cases you will want to deal with. You will however need to call it with your formatted update object as a parameter in order to actually get the update object in a `bot.on('update', callback)` block.
 
 ### `#sendMessage(message)`
 

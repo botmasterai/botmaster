@@ -1,8 +1,5 @@
 'use strict';
 
-const express = require('express');
-const app = express();
-const port = 3000;
 const Botmaster = require('botmaster');
 const SessionStore = Botmaster.storage.MemoryStore;
 const watson = require('watson-developer-cloud');
@@ -41,7 +38,14 @@ const messengerSettings = {
 */
 const botsSettings = [{ telegram: telegramSettings },
                       { messenger: messengerSettings }];
-const botmaster = new Botmaster(botsSettings, app, new SessionStore());
+
+const botmasterSettings = {
+  botsSettings,
+  port: 3000,
+  sessionStore: new SessionStore(),
+}
+
+const botmaster = new Botmaster(botmasterSettings);
 
 botmaster.on('update', (bot, update) => {
   const session = update.session;
@@ -71,10 +75,3 @@ botmaster.on('error', (bot, err) => {
 * Where the actual code stops. The rest is boilerplate.
 *
 */
-
-console.log('Loading App');
-// start server on the specified port and binding host
-app.listen(port, '0.0.0.0', () => {
-  // print a message when the server starts listening
-  console.log(`Running App on port: ${port}`);
-});

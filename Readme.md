@@ -750,7 +750,7 @@ app.listen(port, '0.0.0.0', () => {
 
 ## More examples
 
-Checkout the examples folder for cool examples of how to use botmaster
+Checkout the examples folder for some examples of how to use botmaster
 
 ## License
 
