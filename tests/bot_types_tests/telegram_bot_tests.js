@@ -26,13 +26,13 @@ describe('Telegram Bot tests', function() {
       from: {
         id: userId,
         first_name: 'Biggie',
-        last_name: 'Smalls' 
+        last_name: 'Smalls'
       },
-      chat: { 
+      chat: {
         id: userId,
         first_name: 'Biggie',
         last_name: 'Smalls',
-        type: 'private' 
+        type: 'private'
       },
       date: 1468325836
     }

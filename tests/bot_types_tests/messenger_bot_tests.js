@@ -111,7 +111,7 @@ describe('Messenger Bot tests', function() {
     })
 
     it('should emit an update event to the bot object when ' +
-            'update is well formatted. Also, bot.id should be set', function(done) {
+       'update is well formatted. Also, bot.id should be set', function(done) {
 
       expect(bot.id).to.equal(undefined); // before the first request is done
 
@@ -134,7 +134,7 @@ describe('Messenger Bot tests', function() {
     })
 
     it('should emit a standard error event to the bot object when ' +
-       'developer codes error in on("update") block', function(done) {
+       'developer codes error in .on("update") block', function(done) {
 
       bot.once('update', function(update) {
         bot.blob(); // this is not an actual funcion => error expected
