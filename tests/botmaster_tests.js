@@ -16,6 +16,7 @@ const MessengerBot = Botmaster.botTypes.MessengerBot;
 const SessionStore = Botmaster.storage.MemoryStore;
 const config = require('./config.js')
 const request = require('request-promise');
+const JsonFileStore = require('jfs');
 const getMessengerSignatureHeader = require('./tests_utils').getMessengerSignatureHeader;
 
 
@@ -35,9 +36,15 @@ describe('Botmaster', function() {
     credentials: config.twitterCredentials
   }
 
+  const slackSettings = {
+    credentials: config.slackCredentials,
+    webhookEndpoint: '/webhook'
+  }
+
   const baseBotsSettings = [{ telegram: telegramSettings },
                             { messenger: messengerSettings },
-                            { twitter: twitterSettings }];
+                            { twitter: twitterSettings },
+                            { slack: slackSettings }];
 
   describe('#constructor', function() {
     let server = null;
@@ -81,7 +88,7 @@ describe('Botmaster', function() {
       const settings = { botsSettings: baseBotsSettings };
       const botmaster = new  Botmaster(settings);
 
-      expect(botmaster.bots.length).to.equal(3);
+      expect(botmaster.bots.length).to.equal(4);
       expect(botmaster.sessionStore).to.equal(undefined);
 
       botmaster.once('server running', function(serverMessage) {
@@ -117,7 +124,7 @@ describe('Botmaster', function() {
 
     it('should otherwise properly create and setup the bot objects when ' +
        'sessionStore is specified', function() {
-      const settings = { 
+      const settings = {
         botsSettings: baseBotsSettings,
         sessionStore: new SessionStore(),
         app
@@ -151,7 +158,7 @@ describe('Botmaster', function() {
     })
 
     it('should return a bot with the correct parameters when using settings with sessionStore', function(done) {
-      const settings = { 
+      const settings = {
         botsSettings: baseBotsSettings,
         sessionStore: new SessionStore()
       };
@@ -174,7 +181,7 @@ describe('Botmaster', function() {
             'that were added', function(done) {
       const botsSettings = _.cloneDeep(baseBotsSettings);
       botsSettings.splice(1,1); // just remove the messengerSettings as I want to add is myself.
-      assert.equal(2, botsSettings.length);
+      assert.equal(3, botsSettings.length);
 
       const settings = { botsSettings };
 
@@ -235,7 +242,7 @@ describe('Botmaster', function() {
     const botmaster = new Botmaster(botmasterSettings);
 
     for (const bot of botmaster.bots) {
-      // if (bot.type !== 'twitter') continue; // for now
+      // if (bot.type !== 'slack') continue; // for now
 
       let recipientId = null
       if (bot.type === 'telegram') {
@@ -244,13 +251,21 @@ describe('Botmaster', function() {
         recipientId = config.messengerUserId;
       } else if (bot.type === 'twitter') {
         recipientId = config.twitterUserId;
+      } else if (bot.type === 'slack') {
+        const jsonFileStoreDB = new JsonFileStore('slack_teams_info');
+        const teamId = config.slackTeamInfo.team_id;
+        const channel = config.slackTestInfo.channel;
+        const user = config.slackTeamInfo.user_id
+        // write teamInfo data to file expected to be read
+        jsonFileStoreDB.saveSync(teamId, config.slackTeamInfo);
+        // extract recipientId from that data (and the one in config)
+        recipientId = `${teamId}.${channel}`;
       }
-
 
       describe(`to the ${bot.type} platform`, function() {
 
         specify('using #sendMessage', function(done) {
-          const message = { 
+          const message = {
             recipient: {
               id: recipientId
             },
@@ -269,7 +284,7 @@ describe('Botmaster', function() {
         })
 
         specify('using #sendMessageTo', function(done) {
-          const message = { 
+          const message = {
             text: 'Party & bullshit'
           }
 
@@ -324,7 +339,7 @@ describe('Botmaster', function() {
           });
         })
 
-        specify('using #sendDefaultButtonMessageTo with bad 3rd arg arguments', function(done) {
+        specify('using #sendDefaultButtonMessageTo with bad 3rd argument', function(done) {
           const buttons = ['option One', 'Option Two', 'Option Three', 'Option Four'];
 
           bot.sendDefaultButtonMessageTo(buttons, recipientId, bot)
