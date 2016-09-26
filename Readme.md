@@ -2,7 +2,6 @@
 
 [![Build Status](https://travis-ci.org/jdwuarin/botmaster.svg)](https://travis-ci.org/jdwuarin/botmaster)
 [![Dependency Status](https://gemnasium.com/badges/github.com/jdwuarin/botmaster.svg)](https://gemnasium.com/github.com/jdwuarin/botmaster)
-https://img.shields.io/npm/v/botmaster.svg
 [![npm-version](https://img.shields.io/npm/v/botmaster.svg)](https://www.npmjs.com/package/botmaster)
 
 Botmaster is a lightweight chatbot framework. Its purpose is to integrate your existing chatbot into a variety of messaging channels - currently Facebook Messenger, Twitter DM and Telegram.

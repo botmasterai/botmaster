@@ -43,7 +43,6 @@ describe('Twitter Bot tests', function() {
 
     it('should emit an update event to the bot object when ' +
        'receiving a text update', function (done) {
-      this.retries(4);
       this.timeout(6000);
       let sentDmId;
       let receivedDmIds = [];
@@ -54,7 +53,7 @@ describe('Twitter Bot tests', function() {
         // this is the text message that twitSender sends to our bot
         const textMessageToSend = {
           user_id: bot.idStr,
-          text: 'Party & Bullshit',
+          text: 'Tweetity tweet tweet',
           twit_options: {
             retry: true
           }
@@ -63,7 +62,7 @@ describe('Twitter Bot tests', function() {
         twitSender.post('direct_messages/new', textMessageToSend, function (err, reply) {
           assert(!err, err);
           assert(reply.id_str);
-          // we will check this dm against the reply recieved in the message event
+          // we will check this dm against the reply received in the message event
           sentDmId = reply.id_str;
 
           console.log('successfully posted DM:', reply.text, reply.id_str);
@@ -96,7 +95,7 @@ describe('Twitter Bot tests', function() {
           'message': {
             'mid': sentDmId,
             'seq': null,
-            'text': 'Party & Bullshit'
+            'text': 'Tweetity tweet tweet'
           }
         };
         expect(update).to.deep.equal(expectedUpdate);
