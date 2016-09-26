@@ -43,7 +43,8 @@ describe('Twitter Bot tests', function() {
 
     it('should emit an update event to the bot object when ' +
        'receiving a text update', function (done) {
-      this.timeout(5000);
+      this.retries(4);
+      this.timeout(6000);
       let sentDmId;
       let receivedDmIds = [];
 
