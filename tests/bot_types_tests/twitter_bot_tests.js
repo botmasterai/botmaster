@@ -1,8 +1,7 @@
-'use strict'
+'use strict';
 
 const assert = require('chai').assert;
 const expect = require('chai').expect;
-const request = require('request-promise');
 require('chai').should();
 const _ = require('lodash');
 const TwitterBot = require('../../lib').botTypes.TwitterBot;
@@ -32,7 +31,7 @@ describe('Twitter Bot tests', function() {
   describe('receiving updates', function () {
 
     this.retries(4);
-    // TwitterBot is linked to an account that can 
+    // TwitterBot is linked to an account that can
     // receive updates from anyone.
     // In this instance, "anyone" is the sender.
     let twitSender;
@@ -40,7 +39,7 @@ describe('Twitter Bot tests', function() {
     before(function () {
       twitSender = new Twit(senderCredentials);
       bot = new TwitterBot(settings);
-    })
+    });
 
     it('should emit an update event to the bot object when ' +
        'receiving a text update', function (done) {
@@ -58,7 +57,7 @@ describe('Twitter Bot tests', function() {
           twit_options: {
             retry: true
           }
-        }
+        };
 
         twitSender.post('direct_messages/new', textMessageToSend, function (err, reply) {
           assert(!err, err);
@@ -66,14 +65,14 @@ describe('Twitter Bot tests', function() {
           // we will check this dm against the reply recieved in the message event
           sentDmId = reply.id_str;
 
-          console.log('successfully posted DM:', reply.text, reply.id_str)
+          console.log('successfully posted DM:', reply.text, reply.id_str);
           // Lost the race to 'update' listener which was able to push
           // the DmId into receivedDmIds. Finish test now as a consequence.
           if (receivedDmIds.indexOf(sentDmId) !== -1) {
             done();
           }
-        })
-      })
+        });
+      });
 
       bot.once('update', function (update) {
         receivedDmIds.push(update.message.mid);
@@ -102,27 +101,27 @@ describe('Twitter Bot tests', function() {
         expect(update).to.deep.equal(expectedUpdate);
 
         done();
-      })
+      });
 
       after(function (done) {
         console.log('removing DM:', sentDmId);
 
-        var params = { id: sentDmId, twit_options: { retry: true } }
+        const params = { id: sentDmId, twit_options: { retry: true } };
         twitSender.post('direct_messages/destroy', params, function (err, reply) {
           assert(!err, err);
           assert.equal(reply.id, sentDmId);
           done();
-        })
-      })
-    })
-  })
+        });
+      });
+    });
+  });
 
   describe('twitter #__formatUpdate(rawUpdate)', function () {
 
     let bot;
     before(function () {
       bot = new TwitterBot(settings);
-    })
+    });
 
     it('should format a twitter text only message in the expected way', function() {
       const rawUpdate = twitterIncomingDms.textOnly;
@@ -145,7 +144,7 @@ describe('Twitter Bot tests', function() {
       const formattedUpdate = bot.__formatUpdate(rawUpdate);
 
       expect(formattedUpdate).to.deep.equal(expectedUpdate);
-    })
+    });
 
     it('should format a twitter photo message update in the expected way', function() {
       const rawUpdate = twitterIncomingDms.imageOnly;
@@ -175,7 +174,7 @@ describe('Twitter Bot tests', function() {
       const formattedUpdate = bot.__formatUpdate(rawUpdate);
 
       expect(formattedUpdate).to.deep.equal(expectedUpdate);
-    })
+    });
 
     it('should format a twitter photo with text message update in the expected way', function() {
       const rawUpdate = twitterIncomingDms.imageWithText;
@@ -206,7 +205,7 @@ describe('Twitter Bot tests', function() {
       const formattedUpdate = bot.__formatUpdate(rawUpdate);
 
       expect(formattedUpdate).to.deep.equal(expectedUpdate);
-    })
+    });
 
     it('should format a twitter video message update in the expected way', function() {
       const rawUpdate = twitterIncomingDms.videoOnly;
@@ -236,7 +235,7 @@ describe('Twitter Bot tests', function() {
       const formattedUpdate = bot.__formatUpdate(rawUpdate);
 
       expect(formattedUpdate).to.deep.equal(expectedUpdate);
-    })
+    });
 
     it('should format a twitter update with video, image and text in the expected way', function() {
       const rawUpdate = twitterIncomingDms.videoWithImageWithText;
@@ -273,7 +272,7 @@ describe('Twitter Bot tests', function() {
       const formattedUpdate = bot.__formatUpdate(rawUpdate);
 
       expect(formattedUpdate).to.deep.equal(expectedUpdate);
-    })
+    });
 
     it('should format a twitter gif message update in the expected way', function() {
       const rawUpdate = twitterIncomingDms.gifOnly;
@@ -303,7 +302,6 @@ describe('Twitter Bot tests', function() {
       const formattedUpdate = bot.__formatUpdate(rawUpdate);
 
       expect(formattedUpdate).to.deep.equal(expectedUpdate);
-    })
-  })
-
+    });
+  });
 });

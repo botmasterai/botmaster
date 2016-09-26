@@ -1,6 +1,11 @@
 # Botmaster
 
-Botmaster is a lightweight chatbot framework. Its purpose is to integrate your existing chatbot into a variety of messaging channels - currently Facebook Messenger, Twitter DM and Telegram. 
+[![Build Status](https://travis-ci.org/jdwuarin/botmaster.svg)](https://travis-ci.org/jdwuarin/botmaster)
+[![Dependency Status](https://gemnasium.com/badges/github.com/jdwuarin/botmaster.svg)](https://gemnasium.com/github.com/jdwuarin/botmaster)
+https://img.shields.io/npm/v/botmaster.svg
+[![npm-version](https://img.shields.io/npm/v/botmaster.svg)](https://www.npmjs.com/package/botmaster)
+
+Botmaster is a lightweight chatbot framework. Its purpose is to integrate your existing chatbot into a variety of messaging channels - currently Facebook Messenger, Twitter DM and Telegram.
 
 Botmaster is platform agnostic in two important ways. Firstly, in its current state, developers can have bots running on Facebook Messenger, Twitter DM and Telegram - with just one integration. Secondly, BotMaster makes no assumptions about the back-end bot itself - you can write code that allows BotMaster to call conversational engines such as IBM Watson's conversation API, open source frameworks or even write the conversation engine yourself.
 
@@ -70,7 +75,7 @@ botmaster.on('error', (bot, err) => {
 
 ## Getting set up
 
-As you can see above, the Botmaster constructor takes a `botmasterSettings` argument. 
+As you can see above, the Botmaster constructor takes a `botmasterSettings` argument.
 This object is of the following form:
 
 ```js
@@ -135,7 +140,7 @@ Basically, you'll need to send a `/newbot` command(message) to Botfather (go tal
 
 For more on Telegram, you can find the telegram api docs [here](https://core.telegram.org/bots/api)
 
-Setting up your webhook requires you to make the following request outside of Botmaster (using curl for instance or a browser): 
+Setting up your webhook requires you to make the following request outside of Botmaster (using curl for instance or a browser):
 
 ```http
 https://api.telegram.org/<authToken>/setWebhook?url=<'Your Base URL'>/telegram/webhook1234
@@ -275,7 +280,7 @@ This is important if you create your own Bot that extends the `Botmaster.botType
 
 Standardization is at the heart of Botmaster. The framework was really created for that purpose. This means that messages coming from any platform have to have the same format.
 
-In order to do that, the Facebook Messenger message format was chosen and adopted. This means that when your botmaster object receives an 'update' event from anywhere (twitter, telegram or Messenger as of this writing), you can be sure that it will be of the same format as a similar message that would come from Messenger. 
+In order to do that, the Facebook Messenger message format was chosen and adopted. This means that when your botmaster object receives an 'update' event from anywhere (twitter, telegram or Messenger as of this writing), you can be sure that it will be of the same format as a similar message that would come from Messenger.
 
 ### Incoming update
 
@@ -598,7 +603,7 @@ This is almost certainly not what you will want from a store. However, Botmaster
 
 The `createOrUpdateSession(update)` method takes in a standard Botmaster compatible `update` object and is expected to return an ES6 compatible `Promise`. The promise returned by the method is expected to resolve a `session` object that you might want to use in your `botmaster.on('update')` EventListener. Botmaster will make sure that `update.session` then exists and is the object resolved my your implementation of the `createOrUpdateSession(update)` method.
 
-If you are looking to contribute and make a pull request with a new SessionStore class, you are expected to use the ES6 `Promise` class and to follow the airbnb style guidelines as found [here](https://github.com/airbnb/javascript#strings). 
+If you are looking to contribute and make a pull request with a new SessionStore class, you are expected to use the ES6 `Promise` class and to follow the airbnb style guidelines as found [here](https://github.com/airbnb/javascript#strings).
 
 ## Webhooks
 
@@ -658,7 +663,7 @@ https://botmastersubdomain.localtunnel.me/telegram/webhook1234/
 
 If you keep on getting an error that looks like this:
 
-```bash 
+```bash
 your url is: https://customname.localtunnel.me
 /usr/local/lib/node_modules/localtunnel/bin/client:58
         throw err;
@@ -676,7 +681,7 @@ Error: connection refused: localtunnel.me:44404 (check your firewall settings)
 This is due to a bug in localtunnel. You can either go try out ngrok (which you will have to pay for), or try this workaround in the terminal:
 
 ```bash
-(while true; do 
+(while true; do
   lt -p 3000 -s botmastersubdomain
 done)
 ```
@@ -722,7 +727,7 @@ const messengerSettings = {
 const botsSettings = [{ telegram: telegramSettings },
                       { messenger: messengerSettings }];
 
-const botmasterSettings = { 
+const botmasterSettings = {
   botsSettings: botsSettings,
   app: app,
 }
@@ -755,4 +760,3 @@ Checkout the examples folder for some examples of how to use botmaster
 ## License
 
 This library is licensed under the MIT [license](LICENSE)
-

@@ -1,14 +1,13 @@
-'use strict'
+'use strict';
 
 const app = require('express')();
-const assert = require('chai').assert;
 const expect = require('chai').expect;
 const request = require('request-promise');
 const JsonFileStore = require('jfs');
 require('chai').should();
 const _ = require('lodash');
 const SlackBot = require('../../lib').botTypes.SlackBot;
-const config = require('../config.js')
+const config = require('../config.js');
 
 const credentials = config.slackCredentials;
 const slackTeamInfo = config.slackTeamInfo;
@@ -19,7 +18,7 @@ describe('Slack bot tests', function() {
   const slackSettings = {
     credentials,
     webhookEndpoint: '/slack/webhook'
-  }
+  };
 
   const baseIncommingMessage = {
     token: credentials.verificationToken,
@@ -37,13 +36,7 @@ describe('Slack bot tests', function() {
     authed_users: [
       slackTestInfo.bot_user_id
     ]
-  }
-
-  const baseIncommingUpdate = {
-    entry: [{
-      messaging: [baseIncommingMessage]
-    }]
-  }
+  };
 
   /*
   * Before all tests, create an instance of the bot which is
@@ -53,7 +46,7 @@ describe('Slack bot tests', function() {
   * then close connection
   */
   let bot= null;
-  let server = null
+  let server = null;
 
   before(function(done){
     bot = new SlackBot(slackSettings);
@@ -76,19 +69,19 @@ describe('Slack bot tests', function() {
       .then(function(res) {
         res.statusCode.should.equal(403);
       });
-    })
+    });
 
     it('should respond with 200 OK if verification token is valid', function() {
       const options = _.cloneDeep(requestOptions);
       options.body = {
         token: credentials.verificationToken
-      }
+      };
 
       return request(options)
       .then(function(res) {
         res.statusCode.should.equal(200);
       });
-    })
+    });
 
     it('should respond with challenge when sending over verification handshake', function() {
       const challenge = '3eZbrw1aBm2rZgRNFdxV2595E9CY3gmdALWMmHkvFXO7tYXAYM8P';
@@ -96,7 +89,7 @@ describe('Slack bot tests', function() {
         token: credentials.verificationToken,
         challenge,
         type: 'url_verification'
-      }
+      };
       const options = _.cloneDeep(requestOptions);
       options.body = body;
 
@@ -104,7 +97,7 @@ describe('Slack bot tests', function() {
       .then(function(res) {
         res.body.challenge.should.equal(challenge);
       });
-    })
+    });
 
     // it.only('should emit an error event to the bot object when ' +
     //    'slack message is badly formatted', function(done) {
@@ -125,15 +118,15 @@ describe('Slack bot tests', function() {
     it('should emit an update event to the bot object when ' +
        'slack message is well formatted', function(done) {
 
-      bot.once('update', function(update) {
+      bot.once('update', function() {
         done();
-      })
+      });
 
       const options = _.cloneDeep(requestOptions);
       options.body = baseIncommingMessage;
 
       request(options);
-    })
+    });
 
   });
 
@@ -145,8 +138,8 @@ describe('Slack bot tests', function() {
         const readFromFileTeamInfo = jsonFileStoreDB.getSync(slackTestInfo.team_id);
         expect(readFromFileTeamInfo).to.deep.equal(slackTeamInfo);
       });
-    })
-  })
+    });
+  });
 
   describe('slack #__formatUpdate(rawUpdate)', function() {
     it('should format a text message update in the expected way', function() {
@@ -167,15 +160,14 @@ describe('Slack bot tests', function() {
           seq: rawUpdate.event.ts.split('.')[1],
           text: rawUpdate.event.text
         }
-      }
+      };
 
       const update = bot.__formatUpdate(rawUpdate);
       expect(update).to.deep.equal(expectedUpdate);
-    })
-  })
+    });
+  });
 
   after(function(done) {
     server.close(() => done());
-  })
-
-})
+  });
+});

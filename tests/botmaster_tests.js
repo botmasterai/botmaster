@@ -1,8 +1,8 @@
-'use strict'
+'use strict';
 
 // just this code to make sure unhandled exceptions are printed to
 // the console when developing.
-process.on('unhandledRejection', (err, promise) => {
+process.on('unhandledRejection', (err) => {
   console.error('UNHANDLED REJECTION', err.stack);
 });
 
@@ -14,7 +14,7 @@ const _ = require('lodash');
 const Botmaster = require('../lib');
 const MessengerBot = Botmaster.botTypes.MessengerBot;
 const SessionStore = Botmaster.storage.MemoryStore;
-const config = require('./config.js')
+const config = require('./config.js');
 const request = require('request-promise');
 const JsonFileStore = require('jfs');
 const getMessengerSignatureHeader = require('./tests_utils').getMessengerSignatureHeader;
@@ -34,12 +34,12 @@ describe('Botmaster', function() {
 
   const twitterSettings = {
     credentials: config.twitterCredentials
-  }
+  };
 
   const slackSettings = {
     credentials: config.slackCredentials,
     webhookEndpoint: '/webhook'
-  }
+  };
 
   const baseBotsSettings = [{ telegram: telegramSettings },
                             { messenger: messengerSettings },
@@ -52,16 +52,16 @@ describe('Botmaster', function() {
     beforeEach(function(done) {
       app = express();
       server = app.listen(3100, function() { done(); });
-    })
+    });
 
     it('should throw an error if settings aren\'t specified', function() {
       expect(() => new Botmaster()).to.throw();
-    })
+    });
 
     it('should throw an error if settings.botsSettings aren\'t specified', function() {
       const settings = {};
       expect(() => new Botmaster(settings)).to.throw();
-    })
+    });
 
     it('should throw an error if entry in botsSettings has more than one key', function() {
       const botsSettings = _.cloneDeep(baseBotsSettings);
@@ -71,7 +71,7 @@ describe('Botmaster', function() {
         app
       };
       expect(() => new Botmaster(settings)).to.throw();
-    })
+    });
 
     it('should throw an error if botType isn\'t supported yet', function() {
       const botsSettings = _.cloneDeep(baseBotsSettings);
@@ -81,7 +81,7 @@ describe('Botmaster', function() {
         app
       };
       expect(() => new Botmaster(settings)).to.throw();
-    })
+    });
 
     it('should otherwise properly create and setup the bot objects when no ' +
        'optional parameters is specified', function(done) {
@@ -103,8 +103,8 @@ describe('Botmaster', function() {
         }
 
         botmaster.server.close(function() { done(); });
-      })
-    })
+      });
+    });
 
     it('should otherwise properly create and setup the bot objects when ' +
        'port parameter is specified', function(done) {
@@ -119,8 +119,8 @@ describe('Botmaster', function() {
           'App parameter not specified. Running new App on port: 3101');
 
         botmaster.server.close(function() { done(); });
-      })
-    })
+      });
+    });
 
     it('should otherwise properly create and setup the bot objects when ' +
        'sessionStore is specified', function() {
@@ -136,12 +136,12 @@ describe('Botmaster', function() {
       for (const bot of botmaster.bots) {
         expect(bot.sessionStore).to.equal(botmaster.sessionStore);
       }
-    })
+    });
 
     afterEach(function(done) {
       server.close(function() { done(); });
-    })
-  })
+    });
+  });
 
   describe('#createBot', function() {
     it('should return a bot with the correct parameters when settings exist', function(done) {
@@ -154,8 +154,8 @@ describe('Botmaster', function() {
         expect(messengerBot.type).to.equal('messenger');
 
         botmaster.server.close(function() { done(); });
-      })
-    })
+      });
+    });
 
     it('should return a bot with the correct parameters when using settings with sessionStore', function(done) {
       const settings = {
@@ -172,9 +172,9 @@ describe('Botmaster', function() {
         expect(messengerBot.sessionStore).to.equal(botmaster.sessionStore);
 
         botmaster.server.close(function() { done(); });
-      })
-    })
-  })
+      });
+    });
+  });
 
   describe('#addBot', function() {
     specify('update events should be received by botmaster object for bots ' +
@@ -194,7 +194,7 @@ describe('Botmaster', function() {
       expect(messengerBot.type).to.equal('messenger');
 
       const userId = '134449875';
-      const botId = '123124412'
+      const botId = '123124412';
       const updateData = {
         entry: [{
           messaging: [{
@@ -212,7 +212,7 @@ describe('Botmaster', function() {
             }
           }]
         }]
-      }
+      };
 
       const requestOptions = {
         method: 'POST',
@@ -228,11 +228,11 @@ describe('Botmaster', function() {
       botmaster.once('update', function(bot, update) {
         expect(update).to.not.equal(undefined);
         botmaster.server.close(function() { done(); });
-      })
+      });
 
       request(requestOptions);
-    })
-  })
+    });
+  });
 
   describe('sending messages', function() {
     this.retries(4);
@@ -244,9 +244,9 @@ describe('Botmaster', function() {
     for (const bot of botmaster.bots) {
       // if (bot.type !== 'slack') continue; // for now
 
-      let recipientId = null
+      let recipientId = null;
       if (bot.type === 'telegram') {
-        recipientId = config.telegramUserId
+        recipientId = config.telegramUserId;
       } else if (bot.type === 'messenger') {
         recipientId = config.messengerUserId;
       } else if (bot.type === 'twitter') {
@@ -255,7 +255,7 @@ describe('Botmaster', function() {
         const jsonFileStoreDB = new JsonFileStore('slack_teams_info');
         const teamId = config.slackTeamInfo.team_id;
         const channel = config.slackTestInfo.channel;
-        const user = config.slackTeamInfo.user_id
+        const user = config.slackTeamInfo.user_id;
         // write teamInfo data to file expected to be read
         jsonFileStoreDB.saveSync(teamId, config.slackTeamInfo);
         // extract recipientId from that data (and the one in config)
@@ -272,7 +272,7 @@ describe('Botmaster', function() {
             message: {
               text: 'Party & bullshit'
             }
-          }
+          };
 
           bot.sendMessage(message)
 
@@ -280,13 +280,13 @@ describe('Botmaster', function() {
             expect(body.message_id).to.not.equal(undefined);
             expect(body.recipient_id).to.not.equal(undefined);
             done();
-          })
-        })
+          });
+        });
 
         specify('using #sendMessageTo', function(done) {
           const message = {
             text: 'Party & bullshit'
-          }
+          };
 
           bot.sendMessageTo(message, recipientId)
 
@@ -294,8 +294,8 @@ describe('Botmaster', function() {
             expect(body.message_id).to.not.equal(undefined);
             expect(body.recipient_id).to.not.equal(undefined);
             done();
-          })
-        })
+          });
+        });
 
         specify('using #sendTextMessageTo', function(done) {
           bot.sendTextMessageTo('Party & bullshit', recipientId)
@@ -304,8 +304,8 @@ describe('Botmaster', function() {
             expect(body.message_id).to.not.equal(undefined);
             expect(body.recipient_id).to.not.equal(undefined);
             done();
-          })
-        })
+          });
+        });
 
         specify('using #reply', function(done) {
 
@@ -321,7 +321,7 @@ describe('Botmaster', function() {
             expect(body.recipient_id).to.not.equal(undefined);
             done();
           });
-        })
+        });
 
         specify('using #sendDefaultButtonMessageTo with good arguments', function(done) {
           const buttons = ['option One', 'Option Two', 'Option Three', 'Option Four'];
@@ -335,9 +335,9 @@ describe('Botmaster', function() {
             expect(bodies[0].recipient_id).to.not.equal(undefined);
             expect(bodies[1].message_id).to.not.equal(undefined);
             expect(bodies[1].recipient_id).to.not.equal(undefined);
-            done()
+            done();
           });
-        })
+        });
 
         specify('using #sendDefaultButtonMessageTo with bad 3rd argument', function(done) {
           const buttons = ['option One', 'Option Two', 'Option Three', 'Option Four'];
@@ -346,10 +346,9 @@ describe('Botmaster', function() {
 
           .catch((err) => {
             err.message.should.equal('ERROR: third argument must be a "String", "Object" or absent');
-            done()
-          })
-
-        })
+            done();
+          });
+        });
 
         specify('using #sendDefaultButtonMessageTo with too many buttons', function(done) {
           const tooManyButtons = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
@@ -358,10 +357,9 @@ describe('Botmaster', function() {
 
           .catch((err) => {
             err.message.should.equal('ERROR: buttonTitles must be of length 10 or less');
-            done()
-          })
-
-        })
+            done();
+          });
+        });
 
         specify('using #sendAttachmentFromURLTo', function() {
           this.timeout(3000);
@@ -373,7 +371,7 @@ describe('Botmaster', function() {
             expect(body.message_id).to.not.equal(undefined);
             expect(body.recipient_id).to.not.equal(undefined);
           });
-        })
+        });
 
         specify('using #sendIsTypingMessageTo', function() {
 
@@ -382,12 +380,12 @@ describe('Botmaster', function() {
           .then(function(body) {
             expect(body.recipient_id).to.equal(recipientId);
           });
-        })
-      })
+        });
+      });
 
       after(function(done) {
         botmaster.server.close(function() { done(); });
-      })
+      });
     }
   });
 

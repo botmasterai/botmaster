@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const app = require('express')();
 const assert = require('chai').assert;
@@ -7,7 +7,7 @@ const request = require('request-promise');
 require('chai').should();
 const _ = require('lodash');
 const TelegramBot = require('../../lib').botTypes.TelegramBot;
-const config = require('../config.js')
+const config = require('../config.js');
 
 const credentials = config.telegramCredentials;
 const userId = config.telegramUserId;
@@ -36,7 +36,7 @@ describe('Telegram Bot tests', function() {
       },
       date: 1468325836
     }
-  }
+  };
 
   const incomingTextUpdate = _.cloneDeep(baseIncomingUpdate);
   incomingTextUpdate.message.text = "Party & Bullshit";
@@ -84,14 +84,14 @@ describe('Telegram Bot tests', function() {
     * just start a server listening on port 3000 locally
     * then close connection
     */
-    let server = null
+    let server = null;
     before(function(done) {
       server = app.listen(3000, function() { done(); });
-    })
+    });
 
     after(function(done) {
       server.close(function() { done(); });
-    })
+    });
 
     it('should return a 200 statusCode when doing a standard request', function() {
 
@@ -103,7 +103,7 @@ describe('Telegram Bot tests', function() {
       .then(function(res) {
         assert.equal(200, res.statusCode);
       });
-    })
+    });
 
     it('should emit an error event to the bot object when ' +
        'update is badly formatted', function(done) {
@@ -111,7 +111,7 @@ describe('Telegram Bot tests', function() {
       bot.once('error', function(err) {
         err.message.should.equal(`Error in __formatUpdate "Cannot read property 'from' of undefined". Please report this.`);
         done();
-      })
+      });
 
       const options = _.cloneDeep(requestOptions);
       const invalidIncomingUpdate = _.cloneDeep(baseIncomingUpdate);
@@ -119,40 +119,39 @@ describe('Telegram Bot tests', function() {
       options.body = invalidIncomingUpdate;
 
       request(options);
-    })
+    });
 
     it('should emit an update event to the bot object when ' +
        'update is well formatted', function(done) {
 
-      bot.once('update', function(update) {
+      bot.once('update', function() {
         done();
-      })
+      });
 
       const options = _.cloneDeep(requestOptions);
       options.body = incomingTextUpdate;
 
       request(options);
-    })
+    });
 
     it('should emit a standard error event to the bot object when ' +
        'developer codes error in on("update") block', function(done) {
 
-      bot.once('update', function(update) {
+      bot.once('update', function() {
         bot.blob(); // this is not an actual funcion => error expected
-      })
+      });
 
       bot.once('error', function(err) {
         err.message.should.equal(`Uncaught error: "bot.blob is not a function". This is most probably on your end.`);
         done();
-      })
+      });
 
       const options = _.cloneDeep(requestOptions);
       options.body = incomingTextUpdate;
 
       request(options);
-    })
-
-  })
+    });
+  });
 
   describe('telegram #__formatUpdate(rawUpdate)', function() {
 
@@ -239,7 +238,7 @@ describe('Telegram Bot tests', function() {
         "address": "2-4 Boundary St",
         "foursquare_id": "4aeffc1ef964a5206eda21e3"
       }
-    }
+    };
 
     it('should format a text message update in the expected way', function() {
       const rawUpdate = incomingTextUpdate;
@@ -263,7 +262,7 @@ describe('Telegram Bot tests', function() {
         };
         expect(update).to.deep.equal(expectedUpdate);
       });
-    })
+    });
 
     it('should format a telegram audio message update in the expected way', function() {
       const rawUpdate = _.cloneDeep(baseIncomingUpdate);
@@ -297,7 +296,7 @@ describe('Telegram Bot tests', function() {
 
         expect(update).to.deep.equal(expectedUpdate);
       });
-    })
+    });
 
     it('should format a telegram voice message update in the expected way', function() {
       const rawUpdate = _.cloneDeep(baseIncomingUpdate);
@@ -311,7 +310,7 @@ describe('Telegram Bot tests', function() {
         expect(update.message.attachments[0].type).to.equal('audio');
         expect(update.message.attachments[0].payload.url).to.not.equal(undefined);
       });
-    })
+    });
 
     it('should format a telegram document message update in the expected way', function() {
       const rawUpdate = _.cloneDeep(baseIncomingUpdate);
@@ -323,7 +322,7 @@ describe('Telegram Bot tests', function() {
         expect(update.message.attachments[0].type).to.equal('file');
         expect(update.message.attachments[0].payload.url).to.not.equal(undefined);
       });
-    })
+    });
 
     it('should format a telegram photo message update in the expected way', function() {
       const rawUpdate = _.cloneDeep(baseIncomingUpdate);
@@ -335,7 +334,7 @@ describe('Telegram Bot tests', function() {
         expect(update.message.attachments[0].type).to.equal('image');
         expect(update.message.attachments[0].payload.url).to.not.equal(undefined);
       });
-    })
+    });
 
     it('should format a telegram sticker message update in the expected way', function() {
       const rawUpdate = _.cloneDeep(baseIncomingUpdate);
@@ -347,7 +346,7 @@ describe('Telegram Bot tests', function() {
         expect(update.message.attachments[0].type).to.equal('image');
         expect(update.message.attachments[0].payload.url).to.not.equal(undefined);
       });
-    })
+    });
 
     it('should format a telegram video message update in the expected way', function() {
       const rawUpdate = _.cloneDeep(baseIncomingUpdate);
@@ -359,7 +358,7 @@ describe('Telegram Bot tests', function() {
         expect(update.message.attachments[0].type).to.equal('video');
         expect(update.message.attachments[0].payload.url).to.not.equal(undefined);
       });
-    })
+    });
 
     it('should format a telegram image with text message update in the expected way', function() {
       const rawUpdate = _.cloneDeep(incomingTextUpdate);
@@ -372,7 +371,7 @@ describe('Telegram Bot tests', function() {
         expect(update.message.attachments[0].type).to.equal('image');
         expect(update.message.attachments[0].payload.url).to.not.equal(undefined);
       });
-    })
+    });
 
     it('should format a location message update in the expected way', function() {
       const rawUpdate = _.cloneDeep(baseIncomingUpdate);
@@ -413,7 +412,7 @@ describe('Telegram Bot tests', function() {
         };
         expect(update).to.deep.equal(expectedUpdate);
       });
-    })
+    });
 
     it('should format a venue message update in the expected way', function() {
       const rawUpdate = _.cloneDeep(baseIncomingUpdate);
@@ -455,8 +454,7 @@ describe('Telegram Bot tests', function() {
         };
         expect(update).to.deep.equal(expectedUpdate);
       });
-    })
+    });
   // end of describe(formatUpdate)
-  })
-
+  });
 });

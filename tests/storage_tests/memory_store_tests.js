@@ -1,15 +1,13 @@
-'use strict'
+'use strict';
 
 const app = require('express')();
-const assert = require('chai').assert;
 const expect = require('chai').expect;
 const request = require('request-promise');
-const crypto = require('crypto');
 require('chai').should();
 const _ = require('lodash');
 const Botmaster = require('../../lib');
 const SessionStore = Botmaster.storage.MemoryStore;
-const config = require('../config.js')
+const config = require('../config.js');
 const getMessengerSignatureHeader = require('../tests_utils').getMessengerSignatureHeader;
 
 describe('MemoryStore', function() {
@@ -18,25 +16,25 @@ describe('MemoryStore', function() {
   * just start a server listening on port 3000 locally
   * then close connection
   */
-  let server = null
+  let server = null;
   before(function(done) {
     server = app.listen(3000, function() { done(); });
-  })
+  });
 
   describe('for Telegram Bots', function() {
     const telegramCredentials = config.telegramCredentials;
     const telegramUserId = config.telegramUserId;
 
-    const updateData = { 
+    const updateData = {
       update_id: 100,
-      message: { 
+      message: {
         message_id: 1,
         from: {id: telegramUserId, first_name: 'Biggie', last_name: 'Smalls'},
-        chat: { 
+        chat: {
           id: telegramUserId,
           first_name: 'Biggie',
           last_name: 'Smalls',
-          type: 'private' 
+          type: 'private'
         },
         date: 1468325836,
         text: 'Party & Bullshit'
@@ -61,9 +59,9 @@ describe('MemoryStore', function() {
       const botmasterSettings = {
         botsSettings,
         app
-      }
+      };
       botmaster = new Botmaster(botmasterSettings);
-    })
+    });
 
     describe('when receiving an update from telegram', function() {
       it('should result in the update object having the right session on first message', function(done) {
@@ -78,7 +76,7 @@ describe('MemoryStore', function() {
         botmaster.once('update', function(bot, update) {
           expect(update.session).to.deep.equal(expectedSession);
           done();
-        })
+        });
 
         request(requestOptions);
       });
@@ -95,7 +93,7 @@ describe('MemoryStore', function() {
         botmaster.once('update', function(bot, update) {
           expect(update.session).to.deep.equal(expectedSession);
           done();
-        })
+        });
 
         const options = _.cloneDeep(requestOptions);
         options.body.update_id = 101;
@@ -105,13 +103,13 @@ describe('MemoryStore', function() {
       });
 
     });
-  })
+  });
 
   describe('for Messenger Bots', function() {
     const messengerCredentials = config.messengerCredentials;
 
     const userId = '134449875';
-    const botId = '123124412'
+    const botId = '123124412';
     const updateData = {
       entry: [{
         messaging: [{
@@ -129,7 +127,7 @@ describe('MemoryStore', function() {
           }
         }]
       }]
-    }
+    };
 
     const requestOptions = {
       method: 'POST',
@@ -153,9 +151,9 @@ describe('MemoryStore', function() {
         botsSettings,
         app,
         sessionStore: new SessionStore()
-      }
+      };
       botmaster = new Botmaster(botmasterSettings);
-    })
+    });
 
     describe('when receiving an update from messenger', function() {
       it('should result in the update object having the right session on first message', function(done) {
@@ -170,7 +168,7 @@ describe('MemoryStore', function() {
         botmaster.once('update', function(bot, update) {
           expect(update.session).to.deep.equal(expectedSession);
           done();
-        })
+        });
 
         request(requestOptions);
       });
@@ -187,25 +185,22 @@ describe('MemoryStore', function() {
         botmaster.once('update', function(bot, update) {
           expect(update.session).to.deep.equal(expectedSession);
           done();
-        })
+        });
 
         const options = _.cloneDeep(requestOptions);
         options.body.entry[0].messaging[0].message.mid = 101;
         options.body.entry[0].messaging[0].message.seq = 2;
         options.headers['x-hub-signature'] = getMessengerSignatureHeader(
-          options.body, messengerCredentials.fbAppSecret)
+          options.body, messengerCredentials.fbAppSecret);
 
         request(options);
       });
 
     });
-  })
+  });
 
   after(function(done) {
     server.close(function() { done(); });
-  })
+  });
 
-})
-
-
-
+});

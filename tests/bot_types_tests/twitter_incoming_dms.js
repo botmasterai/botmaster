@@ -103,7 +103,7 @@ const textOnly = {
       "urls": []
     }
   }
-}
+};
 
 const imageOnly = {
   "direct_message": {
@@ -174,7 +174,7 @@ const imageOnly = {
       ]
     }
   }
-}
+};
 
 
 const imageWithText = {
@@ -349,7 +349,7 @@ const videoOnly = {
       ]
     }
   }
-}
+};
 
 const videoWithImageWithText = {
   "direct_message": {
@@ -488,7 +488,7 @@ const videoWithImageWithText = {
       ]
     }
   }
-}
+};
 
 const gifOnly = {
   "direct_message": {
@@ -572,7 +572,7 @@ const gifOnly = {
       ]
     }
   }
-}
+};
 
 module.exports = {
   textOnly,
@@ -581,4 +581,4 @@ module.exports = {
   videoOnly,
   videoWithImageWithText,
   gifOnly
-}
+};

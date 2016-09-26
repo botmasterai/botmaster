@@ -1,10 +1,15 @@
 module.exports = {
-    "extends": "eslint:recommended",
-    "parserOptions": {
-        "ecmaVersion": 6,
+    extends: "eslint:recommended",
+    parserOptions: {
+      ecmaVersion: 6,
     },
-    "env": {
-        "mocha": true,
-        amd: true
-    }
+    env: {
+      node: true,
+      mocha: true,
+      amd: true
+    },
+    rules: {
+      semi: [2, 'always'],
+      'no-console': 'off'
+    },
 };

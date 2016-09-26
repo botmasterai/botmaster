@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const app = require('express')();
 const assert = require('chai').assert;
@@ -7,7 +7,7 @@ const request = require('request-promise');
 require('chai').should();
 const _ = require('lodash');
 const MessengerBot = require('../../lib').botTypes.MessengerBot;
-const config = require('../config.js')
+const config = require('../config.js');
 const getMessengerSignatureHeader = require('../tests_utils').getMessengerSignatureHeader;
 
 const credentials = config.messengerCredentials;
@@ -31,13 +31,13 @@ describe('Messenger Bot tests', function() {
       seq: 1,
       text: 'Party & Bullshit'
     }
-  }
+  };
 
   const baseIncommingUpdate = {
     entry: [{
       messaging: [baseIncommingMessage]
     }]
-  }
+  };
 
   const requestOptions = {
     method: 'POST',
@@ -55,7 +55,7 @@ describe('Messenger Bot tests', function() {
   * then close connection
   */
   let bot= null;
-  let server = null
+  let server = null;
 
   before(function(done){
     bot = new MessengerBot(settings);
@@ -87,14 +87,14 @@ describe('Messenger Bot tests', function() {
       .then(function(res) {
         assert.equal(200, res.statusCode);
       });
-    })
+    });
 
     it('should return an error in the response body if signature is absent', function() {
       return request(requestOptions)
       .then(function(res) {
         res.body.error.should.equal('Error, wrong signature');
       });
-    })
+    });
 
     it('should return an error in the response body if signature is wrong', function() {
       const options = _.cloneDeep(requestOptions);
@@ -102,63 +102,62 @@ describe('Messenger Bot tests', function() {
       options.headers = {
         'x-hub-signature': getMessengerSignatureHeader(
         baseIncommingUpdate, 'someWrongAppSecret')
-      }
+      };
 
       return request(options)
       .then(function(res) {
         res.body.error.should.equal('Error, wrong signature');
       });
-    })
+    });
 
     it('should emit an update event to the bot object when ' +
        'update is well formatted. Also, bot.id should be set', function(done) {
 
       expect(bot.id).to.equal(undefined); // before the first request is done
 
-      bot.once('update', function(update) {
+      bot.once('update', function() {
         expect(bot.id).to.not.equal(undefined); // after the first request is done
         done();
-      })
+      });
 
       const options = _.cloneDeep(requestOptions);
       options.body = baseIncommingUpdate;
       options.headers = {
         'x-hub-signature': getMessengerSignatureHeader(
         baseIncommingUpdate, credentials.fbAppSecret)
-      }
+      };
 
       return request(options)
       .then(function(res) {
         assert.equal(undefined, res.body.error); // no error returned
       });
-    })
+    });
 
     it('should emit a standard error event to the bot object when ' +
        'developer codes error in .on("update") block', function(done) {
 
-      bot.once('update', function(update) {
+      bot.once('update', function() {
         bot.blob(); // this is not an actual funcion => error expected
-      })
+      });
 
       bot.once('error', function(err) {
         err.message.should.equal(`Uncaught error: "bot.blob is not a function". This is most probably on your end.`);
         done();
-      })
+      });
 
       const options = _.cloneDeep(requestOptions);
       options.body = baseIncommingUpdate;
       options.headers = {
         'x-hub-signature': getMessengerSignatureHeader(
         baseIncommingUpdate, credentials.fbAppSecret)
-      }
+      };
 
       request(options);
-    })
-
-  })
+    });
+  });
 
   after(function(done) {
     server.close(() => done());
-  })
+  });
 
 });
