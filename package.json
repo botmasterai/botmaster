@@ -35,7 +35,7 @@
     "twit": "^2.2.5"
   },
   "engines": {
-    "node": ">=4.4.x"
+    "node": ">=4.x.x <7.0.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
