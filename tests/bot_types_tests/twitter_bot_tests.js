@@ -105,13 +105,13 @@ describe('Twitter Bot tests', function() {
 
       after(function (done) {
         console.log('removing DM:', sentDmId);
-        done();
-        // const params = { id: sentDmId, twit_options: { retry: true } };
-        // twitSender.post('direct_messages/destroy', params, function (err, reply) {
-        //   assert(!err, err);
-        //   assert.equal(reply.id, sentDmId);
-        //   done();
-        // });
+
+        const params = { id: sentDmId, twit_options: { retry: true } };
+        twitSender.post('direct_messages/destroy', params, function (err, reply) {
+          assert(!err, err);
+          assert.equal(reply.id, sentDmId);
+          done();
+        });
       });
     });
   });

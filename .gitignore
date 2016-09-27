@@ -21,3 +21,5 @@ npm-debug.log
 
 /logs
 slack_teams_info
+jsconfig.json
+.vscode
