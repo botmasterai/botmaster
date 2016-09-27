@@ -155,6 +155,8 @@ describe('Telegram Bot tests', function() {
 
   describe('telegram #__formatUpdate(rawUpdate)', function() {
 
+    this.retries(2);
+
     // TODO at some point:
     // Not too sure these filIds will work with other bots than mine because
     // I made the request. Ask someone to verify

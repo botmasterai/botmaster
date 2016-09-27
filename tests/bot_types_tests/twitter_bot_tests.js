@@ -35,7 +35,7 @@ describe('Twitter Bot tests', function() {
       // only run tests if version is below 6 (so that travis runs this test on only one version)
       return;
     }
-    this.retries(4);
+    this.retries(2);
     // TwitterBot is linked to an account that can
     // receive updates from anyone.
     // In this instance, "anyone" is the sender.
