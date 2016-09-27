@@ -30,6 +30,11 @@ describe('Twitter Bot tests', function() {
 
   describe('receiving updates', function () {
 
+    const processVersion = Number(process.version.match(/^v(\d+\.\d+)/)[1]);
+    if (processVersion < 6) {
+      // only run tests if version is below 6 (so that travis runs this test on only one version)
+      return;
+    }
     this.retries(4);
     // TwitterBot is linked to an account that can
     // receive updates from anyone.
