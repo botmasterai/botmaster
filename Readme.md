@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/jdwuarin/botmaster.svg)](https://travis-ci.org/jdwuarin/botmaster)
 [![Dependency Status](https://gemnasium.com/badges/github.com/jdwuarin/botmaster.svg)](https://gemnasium.com/github.com/jdwuarin/botmaster)
 [![npm-version](https://img.shields.io/npm/v/botmaster.svg)](https://www.npmjs.com/package/botmaster)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](LICENSE)
 
 Botmaster is a lightweight chatbot framework. Its purpose is to integrate your existing chatbot into a variety of messaging channels - currently Facebook Messenger, Twitter DM and Telegram.
 
@@ -142,7 +143,7 @@ For more on Telegram, you can find the telegram api docs [here](https://core.tel
 Setting up your webhook requires you to make the following request outside of Botmaster (using curl for instance or a browser):
 
 ```http
-https://api.telegram.org/<authToken>/setWebhook?url=<'Your Base URL'>/telegram/webhook1234
+https://api.telegram.org/bot<authToken>/setWebhook?url=<'Your Base URL'>/telegram/webhook1234
 ```
 
 !!Because Telegram doesn't send any type of information to verify the identity of the origin of the update, it is highly recommended that you include a sort of hash in your webhookEndpoint. I.e., rather that having this: `webhookEndpoint: '/webhook/'`, do something more like this: `webhookEndpoint: '/webhook92ywrnc9qm4qoiuthecvasdf42FG/'`. This will assure that you know where the request is coming from.
