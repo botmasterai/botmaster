@@ -156,6 +156,17 @@ describe('Messenger Bot tests', function() {
     });
   });
 
+  describe('#getUserInfo()', function() {
+    it('should return the userInfo for the passed in userId', function() {
+      return bot.getUserInfo(config.messengerUserId)
+
+      .then((userInfo) => {
+        expect(userInfo.last_name).to.equal('Wuarin');
+        expect(userInfo.gender).to.equal('male');
+      });
+    });
+  });
+
   after(function(done) {
     server.close(() => done());
   });

@@ -32,7 +32,7 @@ const messengerSettings = {
 };
 /*
 * Where the actual code starts. This code is actually all that is required
-* to have a bot that works on the various different channels and that 
+* to have a bot that works on the various different channels and that
 * communicates with the end user using natural language (from Watson Conversation).
 * If a conversation is properly trained on the system, no more code is required.
 */
@@ -58,12 +58,9 @@ botmaster.on('update', (bot, update) => {
   };
   watsonConversation.message(messageForWatson, (err, watsonUpdate) => {
     session.context = watsonUpdate.context;
-    const message = {
-      message: {
-        text: watsonUpdate.output.text[0],
-      },
-    };
-    bot.sendMessage(message, session);
+    const text = watsonUpdate.output.text[0]
+
+    bot.sendTextMessageTo(text, update.sender.id);
   });
 });
 
