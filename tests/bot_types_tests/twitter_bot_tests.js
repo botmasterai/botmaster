@@ -30,94 +30,23 @@ describe('Twitter Bot tests', function() {
 
   describe('receiving updates', function () {
 
-    const processVersion = Number(process.version.match(/^v(\d+\.\d+)/)[1]);
-    if (processVersion < 6) {
-      // only run tests if version is below 6 (so that travis runs this test on only one version)
-      return;
-    }
-    this.retries(2);
-    // TwitterBot is linked to an account that can
-    // receive updates from anyone.
-    // In this instance, "anyone" is the sender.
-    let twitSender;
     let bot;
     before(function () {
-      twitSender = new Twit(senderCredentials);
       bot = new TwitterBot(settings);
     });
 
     it('should emit an update event to the bot object when ' +
        'receiving a text update', function (done) {
-      this.timeout(6000);
-      let sentDmId;
-      let receivedDmIds = [];
-
-      // this can actually happen multiple times if the stream
-      // ever has to reconnect because the connection is lost somehow
-      bot.userStream.on('connected', function() {
-        // this is the text message that twitSender sends to our bot
-        const textMessageToSend = {
-          user_id: bot.idStr,
-          text: 'Tweetity tweet tweet',
-          twit_options: {
-            retry: true
-          }
-        };
-
-        twitSender.post('direct_messages/new', textMessageToSend, function (err, reply) {
-          assert(!err, err);
-          assert(reply.id_str);
-          // we will check this dm against the reply received in the message event
-          sentDmId = reply.id_str;
-
-          console.log('successfully posted DM:', reply.text, reply.id_str);
-          // Lost the race to 'update' listener which was able to push
-          // the DmId into receivedDmIds. Finish test now as a consequence.
-          if (receivedDmIds.indexOf(sentDmId) !== -1) {
-            done();
-          }
-        });
-      });
 
       bot.once('update', function (update) {
-        receivedDmIds.push(update.message.mid);
-        console.log('got DM event. id:', update.message.mid);
-
-        if (receivedDmIds.indexOf(sentDmId) === -1) {
-          console.log('this DM doesnt match our test DM - race was probably won by listener');
-          return;
-        }
-
-        const expectedUpdate = {
-          'raw': update.raw,
-          'sender': {
-            'id': senderCredentials.access_token.split('-')[0]
-          },
-          'recipient': {
-            'id': bot.idStr
-          },
-          'timestamp': (new Date(update.raw.direct_message.created_at)).getTime(),
-          'message': {
-            'mid': sentDmId,
-            'seq': null,
-            'text': 'Tweetity tweet tweet'
-          }
-        };
-        expect(update).to.deep.equal(expectedUpdate);
-
-        done();
+       expect(update).not.to.equal(undefined);
+       done();
       });
 
-      after(function (done) {
-        console.log('removing DM:', sentDmId);
-
-        const params = { id: sentDmId, twit_options: { retry: true } };
-        twitSender.post('direct_messages/destroy', params, function (err, reply) {
-          assert(!err, err);
-          assert.equal(reply.id, sentDmId);
-          done();
-        });
-      });
+      // bot.userStream is the stream object created by twit and the emit
+      // method is how it passes updates to the developer facing part of the
+      // framework. => to botmaster
+      bot.userStream.emit('direct_message', twitterIncomingDms.textOnly);
     });
   });
 
