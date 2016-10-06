@@ -37,7 +37,8 @@ describe('Botmaster', function() {
 
   const slackSettings = {
     credentials: config.slackCredentials,
-    webhookEndpoint: '/webhook'
+    webhookEndpoint: '/webhook',
+    storeTeamInfoInFile: true
   };
 
   const baseBotsSettings = [{ telegram: telegramSettings },

@@ -1,7 +1,6 @@
 'use strict';
 
 const Botmaster = require('botmaster');
-const SessionStore = Botmaster.storage.MemoryStore;
 const watson = require('watson-developer-cloud');
 
 const watsonConversation = watson.conversation({
@@ -42,22 +41,23 @@ const botsSettings = [{ telegram: telegramSettings },
 const botmasterSettings = {
   botsSettings,
   port: 3000,
-  sessionStore: new SessionStore(),
 }
 
 const botmaster = new Botmaster(botmasterSettings);
 
+const inMemoryContexts = {};
+
 botmaster.on('update', (bot, update) => {
-  const session = update.session;
+  const context = inMemoryContexts[update.sender.id]; // this will be undefined on the first run
   const messageForWatson = {
+    context,
     workspace_id: process.env.WATSON_CONVERSATION_WORKSPACE_ID,
-    context: session.context, // this will be undefined on the first run
     input: {
       text: update.message.text,
     },
   };
   watsonConversation.message(messageForWatson, (err, watsonUpdate) => {
-    session.context = watsonUpdate.context;
+    inMemoryContexts[update.sender.id] = watsonUpdate.context;
     const text = watsonUpdate.output.text[0]
 
     bot.sendTextMessageTo(text, update.sender.id);

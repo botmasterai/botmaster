@@ -17,7 +17,8 @@ const slackTestInfo = config.slackTestInfo;
 describe('Slack bot tests', function() {
   const slackSettings = {
     credentials,
-    webhookEndpoint: '/slack/webhook'
+    webhookEndpoint: '/slack/webhook',
+    storeTeamInfoInFile: true
   };
 
   const baseIncommingMessage = {
@@ -52,6 +53,23 @@ describe('Slack bot tests', function() {
     bot = new SlackBot(slackSettings);
     app.use('/', bot.app);
     server = app.listen(3000, function() { done(); });
+  });
+
+  describe('#constructor()', function() {
+    it('should throw an error when storeTeamInfoInFile and storeTeamInfoHooks are not defined', function(done) {
+      const badSettings = _.cloneDeep(slackSettings);
+      badSettings.storeTeamInfoInFile = undefined;
+      expect(() => new SlackBot(badSettings)).to.throw(
+        'ERROR: bots of type \'slack\' must be defined with exactly one of storeTeamInfoInFile set to true or storeTeamInfoHooks defined');
+      done();
+    });
+    it('should throw an error when both storeTeamInfoInFile and storeTeamInfoHooks are defined (truthy)', function(done) {
+      const badSettings = _.cloneDeep(slackSettings);
+      badSettings.storeTeamInfoInFile = undefined;
+      expect(() => new SlackBot(badSettings)).to.throw(
+        'ERROR: bots of type \'slack\' must be defined with exactly one of storeTeamInfoInFile set to true or storeTeamInfoHooks defined');
+      done();
+    });
   });
 
   describe('/webhook endpoint works', function() {
@@ -99,22 +117,6 @@ describe('Slack bot tests', function() {
       });
     });
 
-    // it.only('should emit an error event to the bot object when ' +
-    //    'slack message is badly formatted', function(done) {
-    //
-    //   bot.once('error', function(err) {
-    //     err.message.should.equal(`Error in __formatUpdate "Cannot read property 'type' of undefined". Please report this.`);
-    //     done();
-    //   })
-    //
-    //   const options = _.cloneDeep(requestOptions);
-    //   const invalidIncomingMessage = _.cloneDeep(baseIncommingMessage);
-    //   delete invalidIncomingMessage.event;
-    //   options.body = invalidIncomingMessage;
-    //
-    //   request(options);
-    // })
-
     it('should emit an update event to the bot object when ' +
        'slack message is well formatted', function(done) {
 
@@ -131,10 +133,10 @@ describe('Slack bot tests', function() {
   });
 
   describe('slack #__storeTeamInfo', function() {
-    it('should store teamInfo in json file when no sessionStore is specified',
+    it('should store teamInfo in json file when storeTeamInfoInFile is set to true',
        function() {
       const jsonFileStoreDB = new JsonFileStore('slack_teams_info');
-      return bot.__storeTeamInfo(slackTeamInfo, () => {
+      return bot.storeTeamInfoHooks.storeTeamInfo(bot, slackTeamInfo, () => {
         const readFromFileTeamInfo = jsonFileStoreDB.getSync(slackTestInfo.team_id);
         expect(readFromFileTeamInfo).to.deep.equal(slackTeamInfo);
       });

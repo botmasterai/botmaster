@@ -52,7 +52,8 @@ describe('Middleware', function() {
 
     const slackSettings = {
       credentials: config.slackCredentials,
-      webhookEndpoint: '/webhook'
+      webhookEndpoint: '/webhook',
+      storeTeamInfoInFile: true,
     };
 
     const botsSettings = [{ telegram: telegramSettings },
