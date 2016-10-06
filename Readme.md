@@ -12,20 +12,21 @@ Botmaster is platform agnostic in two important ways. Firstly, in its current st
 Its philosophy is to minimise the amount of code developers have to write in order to create a 1-on-1 conversational chatbot that works on multiple platforms. It does so by defining a standard with respect to what format messages take and how 1-on-1 conversations occur. Messages to/from the various messaging channels supported are all mapped onto this botmaster standard, meaning the code you write is much reduced when compared to a set of point:point integrations.
 
 ## Botmaster 2.0.0 Changes
-
+---
 In this new version, a lot of new things were added to Botmaster. A few others were removed.
 
-# Breaking Changes
+### Breaking Changes
 If you were using SessionStore in version 1.x.x, you won't be able to anymore in version 2.x.x. They have been scratched for the far more common middleware design pattern common in so many other frameworks (e.g. express). Middleware can be hooked into right before receiving an update and right before sending out a message. It fits ideally with people wanting to setup session storage at these points.
 
-# Adding Slack
+### Adding Slack
 Support for Slack as the fourth channel supported by Botmaster has been added. Using the Events API, you can now send and receive messages on the platform.
 
-# get User info
+### get User info
 If the platform supports it and the bot class you are using supports it too, you can now use the `bot.getUserInfo` method to retrieve basic information on a user, including their name and profile pic.
 
-# bug fixes
+### bug fixes
 As with any release, a bunch of bugfixes were done.
+---
 
 
 ## Install
