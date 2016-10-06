@@ -11,8 +11,9 @@ Botmaster is platform agnostic in two important ways. Firstly, in its current st
 
 Its philosophy is to minimise the amount of code developers have to write in order to create a 1-on-1 conversational chatbot that works on multiple platforms. It does so by defining a standard with respect to what format messages take and how 1-on-1 conversations occur. Messages to/from the various messaging channels supported are all mapped onto this botmaster standard, meaning the code you write is much reduced when compared to a set of point:point integrations.
 
-## Botmaster 2.0.0 Changes
 ---
+## Botmaster 2.0.0 Changes
+
 In this new version, a lot of new things were added to Botmaster. A few others were removed.
 
 ### Breaking Changes
@@ -26,8 +27,9 @@ If the platform supports it and the bot class you are using supports it too, you
 
 ### bug fixes
 As with any release, a bunch of bugfixes were done.
----
 
+
+---
 
 ## Install
 
