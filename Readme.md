@@ -1,6 +1,6 @@
 # Botmaster
 
-[![Build Status](https://travis-ci.org/jdwuarin/botmaster.svg)](https://travis-ci.org/jdwuarin/botmaster)
+[![Build Status](https://travis-ci.org/jdwuarin/botmaster.svg?branch=master)](https://travis-ci.org/jdwuarin/botmaster)
 [![Dependency Status](https://gemnasium.com/badges/github.com/jdwuarin/botmaster.svg)](https://gemnasium.com/github.com/jdwuarin/botmaster)
 [![npm-version](https://img.shields.io/npm/v/botmaster.svg)](https://www.npmjs.com/package/botmaster)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](LICENSE)
@@ -11,7 +11,7 @@ Botmaster is platform agnostic in two important ways. Firstly, in its current st
 
 Its philosophy is to minimise the amount of code developers have to write in order to create a 1-on-1 conversational chatbot that works on multiple platforms. It does so by defining a standard with respect to what format messages take and how 1-on-1 conversations occur. Messages to/from the various messaging channels supported are all mapped onto this botmaster standard, meaning the code you write is much reduced when compared to a set of point:point integrations.
 
-## Botmaster 2.0 Changes
+## Botmaster 2.0.0 Changes
 
 In this new version, a lot of new things were added to Botmaster. A few others were removed.
 
