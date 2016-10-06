@@ -11,6 +11,23 @@ Botmaster is platform agnostic in two important ways. Firstly, in its current st
 
 Its philosophy is to minimise the amount of code developers have to write in order to create a 1-on-1 conversational chatbot that works on multiple platforms. It does so by defining a standard with respect to what format messages take and how 1-on-1 conversations occur. Messages to/from the various messaging channels supported are all mapped onto this botmaster standard, meaning the code you write is much reduced when compared to a set of point:point integrations.
 
+## Botmaster 2.0 Changes
+
+In this new version, a lot of new things were added to Botmaster. A few others were removed.
+
+# Breaking Changes
+If you were using SessionStore in version 1.x.x, you won't be able to anymore in version 2.x.x. They have been scratched for the far more common middleware design pattern common in so many other frameworks (e.g. express). Middleware can be hooked into right before receiving an update and right before sending out a message. It fits ideally with people wanting to setup session storage at these points.
+
+# Adding Slack
+Support for Slack as the fourth channel supported by Botmaster has been added. Using the Events API, you can now send and receive messages on the platform.
+
+# get User info
+If the platform supports it and the bot class you are using supports it too, you can now use the `bot.getUserInfo` method to retrieve basic information on a user, including their name and profile pic.
+
+# bug fixes
+As with any release, a bunch of bugfixes were done.
+
+
 ## Install
 
 ```bash
@@ -49,9 +66,21 @@ const telegramSettings = {
   webhookEndpoint: '/webhook1234/',
 };
 
-const botsSettings = [{ messenger: messengerSettings },
+const slackSettings = {
+  credentials: {
+    clientId: 'YOUR app client ID',
+    clientSecret: 'YOUR app client secret',
+    verificationToken: 'YOUR app verification Token',
+    landingPageURL: 'YOUR landing page URL' // users will be redirected there after adding your bot app to slack. If not set, they will go straight to their slack account
+  },
+  webhookEndpoint: '/webhook',
+  storeTeamInfoInFile: true,
+};
+
+const botsSettings = [{ telegram: telegramSettings },
+                      { messenger: messengerSettings },
                       { twitter: twitterSettings },
-                      { telegram: telegramSettings }];
+                      { slack: slackSettings }];
 
 const botmasterSettings = {
   botsSettings: botsSettings,
@@ -495,115 +524,6 @@ Buttons will almost surely be part of your bot. Botmaster provides a method that
 
 The function defaults to sending `quick_replies` in Messenger, setting `Keyboard buttons` in Telegram and simply prints button titles one on each line in Twitter as it deosn't support buttons. The user is expecting to type in their choice in Twitter.
 
-
-## Sessions
-
-Anyone wanting to write a decent bot will have to use storage in one way or another.
-
-Botmaster has the concept of a `SessionStore` which enables developers to store some information as updates come in. In order to use Botmaster with a SessionStore, do the following:
-
-```js
-const Botmaster = require('botmaster');
-const SessionStore = Botmaster.storage.MemoryStore;
-const sessionStore = new SessionStore();
-
-const botmasterSettings = {
-  botsSettings: botsSettings, // some botsSettings you've specified as in the first example
-  sessionStore: sessionStore,
-};
-
-const botmaster = new Botmaster(botmasterSettings);
-```
-
-Now upon receiving an event, the `update` will have an `update.session` object.
-I.e. this will __not__ print `undefined`:
-
-```js
-botmaster.on('update', (bot, update) => {
-  console.log(update.session);
-});
-```
-
-Here we simply added the sessionStore object to our settings passed into the Botmaster constructor.
-
-You can see that we have the following line:
-
-```js
-const SessionStore = Botmaster.storage.MemoryStore;
-```
-
-Botmaster comes bundled in with a MemoryStore class that stores basic data on the user sending messages to the bot and on the latest messages. This stores the data in memory and shouldn't be used in a production environment. The class looks like this:
-
-```js
-'use strict';
-
-class MemoryStore {
-  constructor() {
-    this.sessions = {};
-  }
-
-  createOrUpdateSession(update) {
-    if (!this.sessions[update.sender.id]) {
-      return this.createSession(update);
-    }
-    return this.updateSession(update);
-  }
-
-  // using promises here because dbs would typically usually work like that
-  createSession(update) {
-    const promise = new Promise((resolve) => {
-      const id = update.sender.id;
-      const session = {
-        id: update.sender.id,
-        botId: update.recipient.id,
-        latestMid: update.message.mid,
-        latestSeq: update.message.seq,
-        lastActive: update.timestamp,
-      };
-      this.sessions[id] = session;
-      resolve(session);
-    });
-
-    return promise;
-  }
-
-  updateSession(update) {
-    const promise = new Promise((resolve) => {
-      const id = update.sender.id;
-      const session = this.sessions[id];
-
-      session.latestMid = update.message.mid;
-      session.latestSeq = update.message.seq;
-      session.lastActive = update.timestamp;
-
-      resolve(session);
-    });
-
-    return promise;
-  }
-
-}
-
-module.exports = MemoryStore;
-```
-
-As you can see, `MemoryStore` only stores the following information on each update:
-
-```js
-const session = {
-  id: update.sender.id,
-  botId: update.recipient.id,
-  latestMid: update.message.mid,
-  latestSeq: update.message.seq,
-  lastActive: update.timestamp,
-};
-```
-
-This is almost certainly not what you will want from a store. However, Botmaster allows you to easily include your own or other third party SessionStores. As seen in the `MemoryStore` code. There is a `createOrUpdateSession(update)` method. This method is the only method any `SessionStore` class would have to implement to work with Botmaster.
-
-The `createOrUpdateSession(update)` method takes in a standard Botmaster compatible `update` object and is expected to return an ES6 compatible `Promise`. The promise returned by the method is expected to resolve a `session` object that you might want to use in your `botmaster.on('update')` EventListener. Botmaster will make sure that `update.session` then exists and is the object resolved my your implementation of the `createOrUpdateSession(update)` method.
-
-If you are looking to contribute and make a pull request with a new SessionStore class, you are expected to use the ES6 `Promise` class and to follow the airbnb style guidelines as found [here](https://github.com/airbnb/javascript#strings).
 
 ## Webhooks
 

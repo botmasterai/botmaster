@@ -33,7 +33,7 @@ app.use('/', messengerBot.app);
 app.listen(3000, function() {});
 ```
 
-This will mount your bot onto: `https://Your_Domain_Name/webhook1234`. Note how the bot type __is not__ part of the URL here. 
+This will mount your bot onto: `https://Your_Domain_Name/webhook1234`. Note how the bot type __is not__ part of the URL here.
 
 
 ## Making Botmaster objects and bot objects work together
@@ -120,7 +120,7 @@ class TelegramBot extends BaseBot {
 
 Let's look into this line by line. The first line reads `super(settings)`. Which of course just means it calls the constructor of `TelegramBot`'s superclass, namely, BaseBot. `BaseBot`'s constructor doesn't actually do anything fancy a part from calling its own superclass's constructor and setting a few default values [as pointers for you, the developer]. BaseBot calls its own superclass's constructor as it inherits from node.js's `EventEmitter` which will allow your bot's classes to listen to events as well as emit them.
 
-The following three lines setup some important values. 
+The following three lines setup some important values.
 
   1. `this.type`: the type of bot that is being instantiated. It's important to specify that as developers might want condition some code on the type of bot you are writing.
   2. `this.requiresWebhook`: whether the bot requires webhooks. If the platform you are coding for requires webhooks, you will be expected to set a `this.app` variable at some point in the setup. We'll look into this when we have a look at what the `this.__createMountPoints();` does.
@@ -160,7 +160,7 @@ The last line of our controller makese a call to `this.__createMountPoints();`. 
 
 Very importantly, this function creates an express router `this.app` that will be mounted onto the main `app` router from the botmaster object if `botmaster.addBot` is used.
 
-It then sets up the post endpoint that listens onto `this.webhookEnpoint`. No further assumption is made here. 
+It then sets up the post endpoint that listens onto `this.webhookEnpoint`. No further assumption is made here.
 
 ### `#__formatUpdate(rawUpdate)`
 
@@ -200,7 +200,7 @@ Your function should return the update object(or a promise that resolves a forma
 
 ### `#__emitUpdate(update)`
 
-Like `__applySettings`, this method is implemented in `BaseBot`. It handles errors, setting up the session to the update if sessionStore is set, and most importantly, actually calling `this.emit(update)` to emit the actual update. You can overwrite this method is you wish, but in its current state, it handles the most important cases you will want to deal with. You will however need to call it with your formatted update object as a parameter in order to actually get the update object in a `bot.on('update', callback)` block.
+Like `__applySettings`, this method is implemented in `BaseBot`. It handles errors, calling the `incoming` middleware stack, and most importantly, actually calling `this.emit(update)` to emit the actual update. You can overwrite this method is you wish, but in its current state, it handles the most important cases you will want to deal with. You will however need to call it with your formatted update object as a parameter in order to actually get the update object in a `bot.on('update', callback)` block.
 
 ### `#sendMessage(message)`
 
@@ -237,4 +237,3 @@ You can have a look at the ones defined in the `TelegramBot` and the `TwitterBot
 ## Is this really all there is to it?
 
 Yes it is! These few basic steps are the steps that should be followed in order to build your own bot classes. Nothing more is required. Of course, formatting the incomming updates and the outgoing messages won't always be as trivial as we'd wish, but this guide should help you into doing this.
-
