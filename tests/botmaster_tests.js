@@ -13,7 +13,6 @@ require('chai').should();
 const _ = require('lodash');
 const Botmaster = require('../lib');
 const MessengerBot = Botmaster.botTypes.MessengerBot;
-const SessionStore = Botmaster.storage.MemoryStore;
 const config = require('./config.js');
 const request = require('request-promise');
 const JsonFileStore = require('jfs');
@@ -89,7 +88,6 @@ describe('Botmaster', function() {
       const botmaster = new  Botmaster(settings);
 
       expect(botmaster.bots.length).to.equal(4);
-      expect(botmaster.sessionStore).to.equal(undefined);
 
       botmaster.once('server running', function(serverMessage) {
         expect(serverMessage).to.equal(
@@ -99,7 +97,6 @@ describe('Botmaster', function() {
           if (bot.requiresWebhook) {
             expect(bot.app).to.not.equal(undefined);
           }
-          expect(bot.sessionStore).to.equal(undefined);
         }
 
         botmaster.server.close(function() { done(); });
@@ -122,22 +119,6 @@ describe('Botmaster', function() {
       });
     });
 
-    it('should otherwise properly create and setup the bot objects when ' +
-       'sessionStore is specified', function() {
-      const settings = {
-        botsSettings: baseBotsSettings,
-        sessionStore: new SessionStore(),
-        app
-      };
-      const botmaster = new  Botmaster(settings);
-
-      expect(botmaster.sessionStore).to.not.equal(undefined);
-
-      for (const bot of botmaster.bots) {
-        expect(bot.sessionStore).to.equal(botmaster.sessionStore);
-      }
-    });
-
     afterEach(function(done) {
       server.close(function() { done(); });
     });
@@ -152,24 +133,6 @@ describe('Botmaster', function() {
       botmaster.once('server running', function() {
         const messengerBot = botmaster.createBot(MessengerBot, messengerSettings);
         expect(messengerBot.type).to.equal('messenger');
-
-        botmaster.server.close(function() { done(); });
-      });
-    });
-
-    it('should return a bot with the correct parameters when using settings with sessionStore', function(done) {
-      const settings = {
-        botsSettings: baseBotsSettings,
-        sessionStore: new SessionStore()
-      };
-
-      const botmaster = new  Botmaster(settings);
-
-      botmaster.once('server running', function() {
-        const messengerBot = botmaster.createBot(MessengerBot, messengerSettings);
-
-        expect(messengerBot.sessionStore).to.not.equal(undefined);
-        expect(messengerBot.sessionStore).to.equal(botmaster.sessionStore);
 
         botmaster.server.close(function() { done(); });
       });
@@ -231,6 +194,60 @@ describe('Botmaster', function() {
       });
 
       request(requestOptions);
+    });
+  });
+
+
+  describe('#getBot / #getBots', function() {
+
+    let botmaster;
+    before(function() {
+      const botsSettings = _.cloneDeep(baseBotsSettings);
+
+      const otherMessengerSettings = {
+        credentials: config.messengerCredentials,
+        webhookEndpoint: '/webhook'
+      };
+
+      botsSettings.push({ messenger: otherMessengerSettings} );
+
+      botmaster = new Botmaster({ botsSettings });
+    });
+
+    specify('getBot should throw an error when getting called without any options', function() {
+      expect(() => botmaster.getBot()).to.throw(
+        'ERROR: \'getBot\' needs exactly one of type or id');
+    });
+
+    specify('getBot should throw an error when requesting bots using type and id', function() {
+      expect(() => botmaster.getBot({type: 'telegram', id: 'not_important'})).to.throw(
+        'ERROR: \'getBot\' needs exactly one of type or id');
+    });
+
+    specify('getBot should return bot with a certain id when requested using getBot', function() {
+      const bot = botmaster.getBot({ id: config.telegramBotId });
+      expect(bot.type).to.equal('telegram');
+    });
+
+    specify('getBot should return unique bot of a certain type when requested using getBot', function() {
+      const bot = botmaster.getBot({ type: 'messenger' });
+      expect(bot.type).to.equal('messenger');
+    });
+
+    specify('getBots should throw error when used like getBot', function() {
+      expect(() => botmaster.getBots({ type: 'messenger'} )).to.throw(
+        'ERROR: \'getBots\' takes in a string as only parameter');
+    });
+
+    specify('getBots should return bots of a certain type when requested', function() {
+      const bots = botmaster.getBots('messenger');
+      expect(bots.length).to.equal(2);
+      expect(bots[0].type).to.equal('messenger');
+      expect(bots[1].type).to.equal('messenger');
+    });
+
+    after(function(done) {
+      botmaster.server.close(function() { done(); });
     });
   });
 
