@@ -82,7 +82,7 @@ describe('Middleware', function() {
     it('should throw an error if the second argument exists and it isn\'t an object', function() {
       expect(() => botmaster.use('incoming', 'some string', function(bot, update, next) {
         next();
-      })).to.throw('ERROR: invalid coptions. Options should be passed as an object');
+      })).to.throw('ERROR: invalid options. Options should be passed as an object');
     });
 
     it('should throw an error if it is passed more than 3 arguments', function() {
