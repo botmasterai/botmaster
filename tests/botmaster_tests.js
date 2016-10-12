@@ -20,7 +20,6 @@ const getMessengerSignatureHeader = require('./tests_utils').getMessengerSignatu
 
 
 describe('Botmaster', function() {
-
   const telegramSettings = {
     credentials: config.telegramCredentials,
     webhookEndpoint: '/webhook'
@@ -261,24 +260,25 @@ describe('Botmaster', function() {
 
     for (const bot of botmaster.bots) {
       // if (bot.type !== 'slack') continue; // for now
-
       let recipientId = null;
-      if (bot.type === 'telegram') {
-        recipientId = config.telegramUserId;
-      } else if (bot.type === 'messenger') {
-        recipientId = config.messengerUserId;
-      } else if (bot.type === 'twitter') {
-        recipientId = config.twitterUserId;
-      } else if (bot.type === 'slack') {
-        const jsonFileStoreDB = new JsonFileStore('slack_teams_info');
-        const teamId = config.slackTeamInfo.team_id;
-        const channel = config.slackTestInfo.channel;
-        const user = config.slackTeamInfo.user_id;
-        // write teamInfo data to file expected to be read
-        jsonFileStoreDB.saveSync(teamId, config.slackTeamInfo);
-        // extract recipientId from that data (and the one in config)
-        recipientId = `${teamId}.${channel}`;
-      }
+
+      before(function() {
+        if (bot.type === 'telegram') {
+          recipientId = config.telegramUserId;
+        } else if (bot.type === 'messenger') {
+          recipientId = config.messengerUserId;
+        } else if (bot.type === 'twitter') {
+          recipientId = config.twitterUserId;
+        } else if (bot.type === 'slack') {
+          const jsonFileStoreDB = new JsonFileStore('slack_teams_info');
+          const teamId = config.slackTeamInfo.team_id;
+          const channel = config.slackTestInfo.channel;
+          // write teamInfo data to file expected to be read
+          jsonFileStoreDB.saveSync(teamId, config.slackTeamInfo);
+          // extract recipientId from that data (and the one in config)
+          recipientId = `${teamId}.${channel}`;
+        }
+      });
 
       describe(`to the ${bot.type} platform`, function() {
 
@@ -402,6 +402,12 @@ describe('Botmaster', function() {
       });
 
       after(function(done) {
+        if (bot.type === 'slack') {
+          const jsonFileStoreDB = new JsonFileStore('slack_teams_info');
+          // delete teamInfo data
+          jsonFileStoreDB.delete(config.slackTeamInfo.team_id);
+        }
+
         botmaster.server.close(function() { done(); });
       });
     }

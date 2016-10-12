@@ -23,3 +23,4 @@ npm-debug.log
 slack_teams_info
 jsconfig.json
 .vscode
+coverage

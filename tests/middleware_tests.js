@@ -73,11 +73,11 @@ describe('Middleware', function() {
     it('should throw an error if the first argument is not a valid string', function() {
       expect(() => botmaster.use('typo', function(bot, update, next) {
         next();
-      })).to.throw('ERROR: invalid middleware type. Type should be either \'incoming\' or\'outgoing\'');
+      })).to.throw('ERROR: invalid middleware type. Type should be either \'incoming\' or \'outgoing\'');
 
       expect(() => botmaster.use(function(bot, update, next) {
         next();
-      })).to.throw('ERROR: invalid middleware type. Type should be either \'incoming\' or\'outgoing\'');
+      })).to.throw('ERROR: invalid middleware type. Type should be either \'incoming\' or \'outgoing\'');
     });
 
     it('should throw an error if the second argument exists and it isn\'t an object', function() {

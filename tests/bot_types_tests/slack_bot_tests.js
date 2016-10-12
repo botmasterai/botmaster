@@ -82,38 +82,42 @@ describe('Slack bot tests', function() {
       simple: false // 4xx errors go through
     };
 
-    it('should respond with 403 if verification token is invalid', function() {
-      return request(requestOptions)
-      .then(function(res) {
-        res.statusCode.should.equal(403);
+    describe('#__verifyRequestOrigin', function() {
+      it('should respond with 403 if verification token is invalid', function() {
+        return request(requestOptions)
+        .then(function(res) {
+          res.statusCode.should.equal(403);
+        });
+      });
+
+      it('should respond with 200 OK if verification token is valid', function() {
+        const options = _.cloneDeep(requestOptions);
+        options.body = {
+          token: credentials.verificationToken
+        };
+
+        return request(options)
+        .then(function(res) {
+          res.statusCode.should.equal(200);
+        });
       });
     });
 
-    it('should respond with 200 OK if verification token is valid', function() {
-      const options = _.cloneDeep(requestOptions);
-      options.body = {
-        token: credentials.verificationToken
-      };
+    describe('#__respondToVerificationHandshake', function() {
+      it('should respond with challenge when sending over verification handshake', function() {
+        const challenge = '3eZbrw1aBm2rZgRNFdxV2595E9CY3gmdALWMmHkvFXO7tYXAYM8P';
+        const body = {
+          token: credentials.verificationToken,
+          challenge,
+          type: 'url_verification'
+        };
+        const options = _.cloneDeep(requestOptions);
+        options.body = body;
 
-      return request(options)
-      .then(function(res) {
-        res.statusCode.should.equal(200);
-      });
-    });
-
-    it('should respond with challenge when sending over verification handshake', function() {
-      const challenge = '3eZbrw1aBm2rZgRNFdxV2595E9CY3gmdALWMmHkvFXO7tYXAYM8P';
-      const body = {
-        token: credentials.verificationToken,
-        challenge,
-        type: 'url_verification'
-      };
-      const options = _.cloneDeep(requestOptions);
-      options.body = body;
-
-      return request(options)
-      .then(function(res) {
-        res.body.challenge.should.equal(challenge);
+        return request(options)
+        .then(function(res) {
+          res.body.challenge.should.equal(challenge);
+        });
       });
     });
 
@@ -130,17 +134,22 @@ describe('Slack bot tests', function() {
       request(options);
     });
 
-  });
+    describe.only('slack #__authorizeApplicationForTeam', function() {
+      it('should store teamInfo in json file when storeTeamInfoInFile is set to true',
+         function() {
+        const jsonFileStoreDB = new JsonFileStore('slack_teams_info');
 
-  describe('slack #__storeTeamInfo', function() {
-    it('should store teamInfo in json file when storeTeamInfoInFile is set to true',
-       function() {
-      const jsonFileStoreDB = new JsonFileStore('slack_teams_info');
-      return bot.storeTeamInfoHooks.storeTeamInfo(bot, slackTeamInfo, () => {
-        const readFromFileTeamInfo = jsonFileStoreDB.getSync(slackTestInfo.team_id);
-        expect(readFromFileTeamInfo).to.deep.equal(slackTeamInfo);
+        // using bind here as this is how it is coded in the __authorize... function
+        return bot.storeTeamInfoHooks.storeTeamInfo.bind(undefined, bot)(slackTeamInfo)
+
+        .then(() => {
+          const readFromFileTeamInfo = jsonFileStoreDB.getSync(slackTestInfo.team_id);
+          expect(readFromFileTeamInfo).to.deep.equal(slackTeamInfo);
+          jsonFileStoreDB.delete(slackTestInfo.team_id);
+        });
       });
     });
+
   });
 
   describe('slack #__formatUpdate(rawUpdate)', function() {

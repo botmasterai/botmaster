@@ -5,7 +5,8 @@
   "main": "./lib/index.js",
   "scripts": {
     "start": "nodemon --legacy-watch ./example_jd.js",
-    "test": "./node_modules/mocha/bin/mocha --recursive tests",
+    "test": "mocha --recursive tests",
+    "coverage": "istanbul cover _mocha -- --recursive tests",
     "postversion": "git push && git push --tags && rm -rf build/temp"
   },
   "directories": {
@@ -22,7 +23,12 @@
     "bot",
     "framework",
     "toolkit",
-    "botmaster"
+    "botmaster",
+    "slack",
+    "messenger",
+    "telegram",
+    "twitter",
+    "bot library"
   ],
   "dependencies": {
     "body-parser": "^1.15.0",
@@ -32,7 +38,8 @@
     "lodash": "^4.16.1",
     "request-promise": "^4.1.1",
     "twit": "^2.2.5",
-    "ware": "^1.3.0"
+    "ware": "^1.3.0",
+    "ws": "^1.1.1"
   },
   "engines": {
     "node": ">=4.x.x <7.0.0"
@@ -44,6 +51,7 @@
     "eslint-plugin-import": "^1.15.0",
     "eslint-plugin-jsx-a11y": "^2.2.2",
     "eslint-plugin-react": "^6.2.0",
+    "istanbul": "^0.4.5",
     "mocha": "^2.5.3",
     "mocha-eslint": "^2.1.1",
     "nodemon": "^1.10.2"

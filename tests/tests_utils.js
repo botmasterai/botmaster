@@ -10,4 +10,4 @@ module.exports = {
 
     return `sha1=${hash}`;
   }
-}
+};
