@@ -6,3 +6,4 @@ node_js:
 before_install:
 - openssl aes-256-cbc -K $encrypted_d419204dd745_key -iv $encrypted_d419204dd745_iv
   -in config.js.enc -out tests/config.js -d
+after_success: 'npm run coveralls'

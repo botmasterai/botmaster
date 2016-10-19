@@ -1,23 +1,20 @@
 'use strict';
 
 const Botmaster = require('botmaster');
-const watson = require('watson-developer-cloud');
+const WatsonConversationMiddleware = require('./middleware');
 
-const watsonConversation = watson.conversation({
+const watsonConversationParams = {
   username: process.env.WATSON_CONVERSATION_USERNAME,
   password: process.env.WATSON_CONVERSATION_PASSWORD,
   version: 'v1',
   version_date: '2016-05-19',
-});
+};
 
 const telegramSettings = {
   credentials: {
     authToken: process.env.TELEGRAM_TEST_TOKEN,
   },
-  // !! botmaster will mount your webhooks on /<botType>/webhookEndpoint.
-  // so in this case, it will mount it on: /telegram/webhook1234.
-  // If using localtunnel as specified below the whole path will be:
-  // https://botmastersubdomain.localtunnel.me/telegram/webhook1234/
+  // !! see Readme if you have any issues with understanding webhooks
   webhookEndpoint: '/webhook1234/',
 };
 
@@ -29,12 +26,8 @@ const messengerSettings = {
   },
   webhookEndpoint: '/webhook1234/',
 };
-/*
-* Where the actual code starts. This code is actually all that is required
-* to have a bot that works on the various different channels and that
-* communicates with the end user using natural language (from Watson Conversation).
-* If a conversation is properly trained on the system, no more code is required.
-*/
+// !! see Readme if you have any issues with understanding webhooks
+
 const botsSettings = [{ telegram: telegramSettings },
                       { messenger: messengerSettings }];
 
@@ -44,13 +37,13 @@ const botmasterSettings = {
 }
 
 const botmaster = new Botmaster(botmasterSettings);
+const watsonConversationMiddleware = new WatsonConversationMiddleware(watsonConversationParams);
 
-const inMemoryContexts = {};
+botmaster.use('incoming', WatsonConversationMiddleware.attach)
 
 botmaster.on('update', (bot, update) => {
-  const context = inMemoryContexts[update.sender.id]; // this will be undefined on the first run
   const messageForWatson = {
-    context,
+    context: update.context,
     workspace_id: process.env.WATSON_CONVERSATION_WORKSPACE_ID,
     input: {
       text: update.message.text,
