@@ -134,7 +134,7 @@ describe('Slack bot tests', function() {
       request(options);
     });
 
-    describe.only('slack #__authorizeApplicationForTeam', function() {
+    describe('slack #__authorizeApplicationForTeam', function() {
       it('should store teamInfo in json file when storeTeamInfoInFile is set to true',
          function() {
         const jsonFileStoreDB = new JsonFileStore('slack_teams_info');

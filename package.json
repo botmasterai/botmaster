@@ -6,8 +6,9 @@
   "scripts": {
     "start": "nodemon --legacy-watch ./example_jd.js",
     "test": "istanbul cover _mocha -- --recursive tests",
-    "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
-    "postversion": "git push && git push --tags && rm -rf build/temp"
+    "coveralls": "cat ./coverage/lcov.info | coveralls",
+    "postversion": "git push && git push --tags && rm -rf build/temp",
+    "tunnel": "( while true; do lt -p 3000 -s watsonchatdemo; done; )"
   },
   "directories": {
     "tests": "test"

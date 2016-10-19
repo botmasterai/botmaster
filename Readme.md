@@ -613,7 +613,7 @@ done)
 or
 
 ```bash
-( while true; do; lt -p 3000 -s botmastersubdomain; done; )
+( while true; do lt -p 3000 -s botmastersubdomain; done; )
 ```
 
 If you prefer a one liner.

@@ -65,7 +65,7 @@ While a Twilio IPM message (Twilio IPM only supports text) will look like this:
 Because of the nature of Twilio and the nature of channels and how they are dealt with, this makes sense. We'll look at what other differences this brings in the next section.
 
 
-Standardization is at the heart of Botmaster. The framework was really created for that purpose. In order to do that, the Facebook Messenger message format was chosen and adopted. This means that when your botmaster object receives an 'update' event from anywhere (twitter, telegram as of this writing), you can be sure that it will be of the same format as a similar message that would come from Messenger. 
+Standardization is at the heart of Botmaster. The framework was really created for that purpose. In order to do that, the Facebook Messenger message format was chosen and adopted. This means that when your botmaster object receives an 'update' event from anywhere (twitter, telegram as of this writing), you can be sure that it will be of the same format as a similar message that would come from Messenger.
 Typically, it would look something like this for a message with an image attachment. Independant of what platform the message comes from:
 
 ```js
@@ -195,7 +195,7 @@ app.listen(3000, function() {
 
 In Botmaster, instantiating a botmaster object, will by default just start an express server under the hood for you and make it listen onto port 3000. If you want it to listen onto another port, you can just do something like this when instantiating botmaster:
 
-```
+```js
 const port = 3001;
 const botmaster = new Botmaster({ settings: botsSettings,
                                  port: port });
@@ -228,14 +228,17 @@ By default, Botkit will use different express app webservers for each controller
 
 Supported Platforms
 ---
+The following are platforms that are supported out of the box. Both frameworks allow developers to write their own integrations and npm packages might exist for the a platform you are interested in.
+
 |   | Botmaster| Botkit |
 |---|---|---|
 |Facebook Messenger| x | x |
-|Slack|| x |
+|Slack| x | x |
 |Twilio IPM| | x |
 |Twitter DM| x |  |
 |Telegram| x |  |
-|Line| coming soon |  |
+|WebSockets| x | |
+|MS Bot framework|| x |
 
 Conversations
 ---
@@ -249,4 +252,3 @@ Conclusion
 I hope this all made some sort of sense to you and that you are now able to make a sensible decision with respect to which framework to use.
 
 I realize there are other frameworks out there too that I haven't mentioned. If anyone would like to look into them and tell me what the differences are, I'd be happy to add them to another file.
-

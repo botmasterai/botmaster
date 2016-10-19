@@ -16,6 +16,7 @@ const MessengerBot = Botmaster.botTypes.MessengerBot;
 const config = require('./config.js');
 const request = require('request-promise');
 const JsonFileStore = require('jfs');
+const io = require('socket.io-client');
 const getMessengerSignatureHeader = require('./tests_utils').getMessengerSignatureHeader;
 
 
@@ -262,13 +263,16 @@ describe('Botmaster', function() {
       // if (bot.type !== 'slack') continue; // for now
       let recipientId = null;
 
-      before(function() {
+      before(function(done) {
         if (bot.type === 'telegram') {
           recipientId = config.telegramUserId;
+          done();
         } else if (bot.type === 'messenger') {
           recipientId = config.messengerUserId;
+          done();
         } else if (bot.type === 'twitter') {
           recipientId = config.twitterUserId;
+          done();
         } else if (bot.type === 'slack') {
           const jsonFileStoreDB = new JsonFileStore('slack_teams_info');
           const teamId = config.slackTeamInfo.team_id;
@@ -277,6 +281,14 @@ describe('Botmaster', function() {
           jsonFileStoreDB.saveSync(teamId, config.slackTeamInfo);
           // extract recipientId from that data (and the one in config)
           recipientId = `${teamId}.${channel}`;
+          done();
+        } else if (bot.type === 'socketio') {
+          const socket = io('ws://localhost:3000');
+
+          socket.on('conected', function() {
+            recipientId = socket.id;
+            done();
+          });
         }
       });
 
