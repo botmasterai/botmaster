@@ -234,6 +234,29 @@ describe('Middleware', function() {
       });
     });
 
+    specify('Error in outgoing middleware is thrown on sendMessage', function(done) {
+      // outgoing middleware
+      botmaster.use('outgoing', function(bot, message, next) {
+        message.blob(); // doesn't exist, should throw
+        return next();
+      });
+
+      const bot = botmaster.getBots('messenger')[0];
+
+      const outgoingMessageCopy = _.cloneDeep(outgoingMessage);
+      bot.sendMessage(outgoingMessageCopy)
+
+      // catch error with promise
+      .catch(function(err) {
+        expect(err.message).to.equal('message.blob is not a function');
+        // get error in callback
+        bot.sendMessage(outgoingMessageCopy, function(err) {
+          expect(err.message).to.equal('message.blob is not a function');
+          done();
+        });
+      });
+    });
+
     specify('Botmaster should not call incoming middleware', function(done) {
       botmaster.use('incoming', function(bot, update, next) {
         // something wrong as this should not happen

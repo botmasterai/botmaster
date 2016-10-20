@@ -8,7 +8,7 @@ const io = require('socket.io-client');
 const SocketioBot = require('../../lib').botTypes.SocketioBot;
 const config = require('../config.js');
 
-describe.only('socketio Bot tests', function() {
+describe('socketio Bot tests', function() {
   const settings = {
     id: config.socketIoBotInfo.id,
   };
@@ -24,15 +24,17 @@ describe.only('socketio Bot tests', function() {
   let server = null;
 
   before(function(done){
-    server = app.listen(3000, function() {  });
-    settings.server = server;
-    bot = new SocketioBot(settings);
-    done();
+    server = app.listen(3000, function() {
+      settings.server = server;
+      bot = new SocketioBot(settings);
+      done();
+    });
   });
 
   describe('#constructor()', function() {
     it('should throw an error when server is missing', function(done) {
       const badSettings = _.cloneDeep(settings);
+      badSettings.server = undefined;
       expect(() => new SocketioBot(badSettings)).to.throw(
         'ERROR: bots of type \'socketio\' must be defined with \'server\' in their settings');
       done();
@@ -49,39 +51,51 @@ describe.only('socketio Bot tests', function() {
 
   describe('receiving messages', function() {
 
+    it('should emit an error event to the bot object when ' +
+       'update is badly formatted', function(done) {
+      const socket = io("ws://localhost:3000");
+
+      socket.on('connect', function() {
+        socket.send('Party & Bullshit');
+      });
+
+      bot.once('error', function(err) {
+        err.message.should.equal(`ERROR: "Expected stringified JSON object but got 'Party & Bullshit' instead"`);
+        socket.disconnect();
+        done();
+      });
+    });
+
     it('a client sending a text message should go through', function(done) {
       const socket = io("ws://localhost:3000");
 
-      bot.once('update', function() {
-        expect(bot.type).to.equal('socketio');
-        done();
+      socket.on('connect', function() {
+        socket.send(JSON.stringify({text: 'Party & Bullshit'}));
       });
 
-      socket.on('conected', function() {
-        socket.send(JSON.stringify({text: 'Party & Bullshit'}));
+      bot.once('update', function(update) {
+        expect(update.recipient.id).to.equal(config.socketIoBotInfo.id);
+        socket.disconnect();
+        done();
       });
     });
 
     it('a client sending a text message should work', function(done) {
       const socket = io("ws://localhost:3000");
 
-      bot.once('update', function() {
-        expect(bot.type).to.equal('socketio');
-        done();
+      socket.on('connect', function() {
+        socket.send(JSON.stringify({text: 'Party & Bullshit'}));
       });
 
-      socket.on('conected', function() {
-        socket.send(JSON.stringify({text: 'Party & Bullshit'}));
+      bot.once('update', function(update) {
+        expect(update.recipient.id).to.equal(config.socketIoBotInfo.id);
+        socket.disconnect();
+        done();
       });
     });
 
     it('a client sending an attachment should work', function(done) {
       const socket = io('ws://localhost:3000');
-
-      bot.once('update', function() {
-        expect(bot.type).to.equal('socketio');
-        done();
-      });
 
       const attachments = [
         {
@@ -92,8 +106,14 @@ describe.only('socketio Bot tests', function() {
         }
       ];
 
-      socket.on('conected', function() {
+      socket.on('connect', function() {
         socket.send(JSON.stringify({attachments: attachments}));
+      });
+
+      bot.once('update', function(update) {
+        expect(update.recipient.id).to.equal(config.socketIoBotInfo.id);
+        socket.disconnect();
+        done();
       });
     });
 
@@ -102,14 +122,16 @@ describe.only('socketio Bot tests', function() {
       const socketTwo = io('ws://localhost:3000');
       let connectedClientCount = 0;
 
-      bot.once('update', function(bot, update) {
+      bot.once('update', function(update) {
         bot.sendTextMessageTo(update.message.text, socketTwo.id);
       });
 
       socketTwo.on('message', function(msg) {
         // timeout to make sure we don't enter socketOne.on('message')
-        expect(msg).to.equal("Party & Bullshit");
+        expect(JSON.parse(msg).text).to.equal("Party & Bullshit");
         setTimeout(function() {
+          socketOne.disconnect();
+          socketTwo.disconnect();
           done();
         }, 150);
       });
@@ -122,28 +144,17 @@ describe.only('socketio Bot tests', function() {
       const trySendMessage = function trySendMessage() {
         ++connectedClientCount;
         if (connectedClientCount === 2) {
-          socketOne.send({text: "Party & Bullshit"});
+          socketOne.send(JSON.stringify({text: "Party & Bullshit"}));
         }
       };
 
-      socketOne.on('connected', trySendMessage);
-      socketTwo.on('connected', trySendMessage);
+      socketOne.on('connect', trySendMessage);
+      socketTwo.on('connect', trySendMessage);
 
     });
   });
 
   describe('socketio #__formatUpdate(rawUpdate)', function() {
-
-    it('should emit an error event to the bot object when ' +
-       'update is badly formatted', function(done) {
-
-      bot.once('error', function(err) {
-        err.message.should.equal(`Error in __formatUpdate "Expected \'text\' and/or \'attachments\' but got \'Party & Bullshit\' instead"`);
-        done();
-      });
-
-      bot.__formatUpdate('Party & Bullshit');
-    });
 
     it('should format a text message update in the expected way', function() {
       const rawUpdate = {
@@ -218,7 +229,9 @@ describe.only('socketio Bot tests', function() {
   });
 
   after(function(done) {
-    server.close(() => done());
+    process.nextTick(function() {
+      server.close(() => done());
+    })
   });
 
 });

@@ -41,10 +41,15 @@ describe('Botmaster', function() {
     storeTeamInfoInFile: true
   };
 
+  const socketioSettings = {
+    id: "ersfdcredrsfd",
+  };
+
   const baseBotsSettings = [{ telegram: telegramSettings },
                             { messenger: messengerSettings },
                             { twitter: twitterSettings },
-                            { slack: slackSettings }];
+                            { slack: slackSettings },
+                            { socketio: socketioSettings }];
 
   describe('#constructor', function() {
     let server = null;
@@ -252,7 +257,7 @@ describe('Botmaster', function() {
     });
   });
 
-  describe('sending messages', function() {
+  describe.only('sending messages', function() {
     this.retries(4);
     // botmaster.server stops listening onto in port 3200 in the after hook
     // of 'sending message'
@@ -260,8 +265,9 @@ describe('Botmaster', function() {
     const botmaster = new Botmaster(botmasterSettings);
 
     for (const bot of botmaster.bots) {
-      // if (bot.type !== 'slack') continue; // for now
+      // if (bot.type !== 'socketio') continue; // for now
       let recipientId = null;
+      let socket;
 
       before(function(done) {
         if (bot.type === 'telegram') {
@@ -283,9 +289,9 @@ describe('Botmaster', function() {
           recipientId = `${teamId}.${channel}`;
           done();
         } else if (bot.type === 'socketio') {
-          const socket = io('ws://localhost:3000');
+          socket = io('ws://localhost:3200');
 
-          socket.on('conected', function() {
+          socket.on('connect', function() {
             recipientId = socket.id;
             done();
           });
@@ -328,9 +334,8 @@ describe('Botmaster', function() {
         });
 
         specify('using #sendTextMessageTo', function(done) {
-          bot.sendTextMessageTo('Party & bullshit', recipientId)
-
-          .then(function(body) {
+          // using callback here
+          bot.sendTextMessageTo('Party & bullshit', recipientId, function(err, body) {
             expect(body.message_id).to.not.equal(undefined);
             expect(body.recipient_id).to.not.equal(undefined);
             done();
@@ -418,6 +423,10 @@ describe('Botmaster', function() {
           const jsonFileStoreDB = new JsonFileStore('slack_teams_info');
           // delete teamInfo data
           jsonFileStoreDB.delete(config.slackTeamInfo.team_id);
+        }
+
+        if (socket) {
+          socket.disconnect();
         }
 
         botmaster.server.close(function() { done(); });
