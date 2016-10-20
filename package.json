@@ -9,7 +9,8 @@
     "tests": "mocha --recursive tests",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "postversion": "git push && git push --tags && rm -rf build/temp",
-    "tunnel": "( while true; do lt -p 3000 -s watsonchatdemo; done; )"
+    "tunnel": "( while true; do lt -p 3000 -s watsonchatdemo; done; )",
+    "jsdoc": "jsdoc ./lib ./lib/bot_types"
   },
   "directories": {
     "tests": "test"
@@ -56,6 +57,7 @@
     "eslint-plugin-jsx-a11y": "^2.2.2",
     "eslint-plugin-react": "^6.2.0",
     "istanbul": "^0.4.5",
+    "jsdoc": "^3.4.2",
     "mocha": "^2.5.3",
     "mocha-eslint": "^2.1.1",
     "nodemon": "^1.10.2"
