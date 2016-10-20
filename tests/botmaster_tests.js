@@ -259,7 +259,7 @@ describe('Botmaster', function() {
 
   describe('sending messages', function() {
     this.retries(4);
-    // botmaster.server stops listening onto in port 3200 in the after hook
+    // botmaster.server stops listening onto port 3200 in the after hook
     // of 'sending message'
     const botmasterSettings = { botsSettings: baseBotsSettings, port: 3200 };
     const botmaster = new Botmaster(botmasterSettings);
@@ -418,21 +418,27 @@ describe('Botmaster', function() {
         });
       });
 
-      after(function(done) {
-        this.retries(2);
+      // after each run of the loop (runs in parallel)
+      // so for each bot type, they will run after the tests in context,
+      // I.e. the after for slack will be run after all tests for, say, messenger
+      // are run ( but in context).
+      after(function() {
         if (bot.type === 'slack') {
           const jsonFileStoreDB = new JsonFileStore('slack_teams_info');
           // delete teamInfo data
           jsonFileStoreDB.delete(config.slackTeamInfo.team_id);
         }
 
-        if (socket) {
+        if (bot.type === 'socketio') {
           socket.disconnect();
         }
-
-        botmaster.server.close(function() { done(); });
       });
     }
+
+    // close server after all single after blocks have run
+    after(function(done) {
+      botmaster.server.close(function() { done(); });
+    });
   });
 
 });
