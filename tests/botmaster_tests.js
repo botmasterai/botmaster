@@ -93,7 +93,7 @@ describe('Botmaster', function() {
       const settings = { botsSettings: baseBotsSettings };
       const botmaster = new  Botmaster(settings);
 
-      expect(botmaster.bots.length).to.equal(4);
+      expect(botmaster.bots.length).to.equal(5);
 
       botmaster.once('server running', function(serverMessage) {
         expect(serverMessage).to.equal(
@@ -150,7 +150,7 @@ describe('Botmaster', function() {
             'that were added', function(done) {
       const botsSettings = _.cloneDeep(baseBotsSettings);
       botsSettings.splice(1,1); // just remove the messengerSettings as I want to add is myself.
-      assert.equal(3, botsSettings.length);
+      assert.equal(4, botsSettings.length);
 
       const settings = { botsSettings };
 
@@ -419,7 +419,7 @@ describe('Botmaster', function() {
       });
 
       after(function(done) {
-        this.retry(2);
+        this.retries(2);
         if (bot.type === 'slack') {
           const jsonFileStoreDB = new JsonFileStore('slack_teams_info');
           // delete teamInfo data

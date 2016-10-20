@@ -128,7 +128,7 @@ describe('socketio Bot tests', function() {
 
       socketTwo.on('message', function(msg) {
         // timeout to make sure we don't enter socketOne.on('message')
-        expect(JSON.parse(msg).text).to.equal("Party & Bullshit");
+        expect(JSON.parse(msg).message.text).to.equal("Party & Bullshit");
         setTimeout(function() {
           socketOne.disconnect();
           socketTwo.disconnect();
@@ -231,7 +231,7 @@ describe('socketio Bot tests', function() {
   after(function(done) {
     process.nextTick(function() {
       server.close(() => done());
-    })
+    });
   });
 
 });
