@@ -257,7 +257,7 @@ describe('Botmaster', function() {
     });
   });
 
-  describe.only('sending messages', function() {
+  describe('sending messages', function() {
     this.retries(4);
     // botmaster.server stops listening onto in port 3200 in the after hook
     // of 'sending message'
@@ -419,6 +419,7 @@ describe('Botmaster', function() {
       });
 
       after(function(done) {
+        this.retry(2);
         if (bot.type === 'slack') {
           const jsonFileStoreDB = new JsonFileStore('slack_teams_info');
           // delete teamInfo data
