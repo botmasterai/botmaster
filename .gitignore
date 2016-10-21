@@ -11,8 +11,7 @@ Thumbs.db
 .Trashes
 
 example_jd.js
-testing_creds.md
-tests/config.js
+tests
 
 # Application specific files
 node_modules
@@ -24,3 +23,7 @@ slack_teams_info
 jsconfig.json
 .vscode
 coverage
+
+_site
+.sass-cache
+.jekyll-metadata
