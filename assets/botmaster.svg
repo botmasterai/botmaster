@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="188px" height="188px" viewBox="0 0 188 188" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 40.3 (33839) - http://www.bohemiancoding.com/sketch -->
+    <title>Logo</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M19.8867188,9.94140625 C46.3867188,-3.30859375 67.8205396,-2.93758496 91.4335938,9.94140625 C115.046648,22.8203975 108,58 108,58 L2,58 C2,58 -6.61328125,23.1914063 19.8867188,9.94140625 Z" id="path-1"></path>
+        <mask id="mask-2" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="108.321243" height="57.8574593" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+        <rect id="path-3" x="9" y="97" width="92" height="9" rx="4.5"></rect>
+        <mask id="mask-4" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="92" height="9" fill="white">
+            <use xlink:href="#path-3"></use>
+        </mask>
+        <rect id="path-5" x="17" y="106" width="77" height="9" rx="4.5"></rect>
+        <mask id="mask-6" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="77" height="9" fill="white">
+            <use xlink:href="#path-5"></use>
+        </mask>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Logo" transform="translate(2.000000, 2.000000)">
+            <circle id="Oval" stroke="#000000" stroke-width="4" fill="#FFFFFF" cx="92" cy="92" r="92"></circle>
+            <g id="Robot" transform="translate(38.000000, 15.000000)">
+                <g id="head" transform="translate(0.000000, 39.000000)">
+                    <use id="Rectangle" stroke="#FFFFFF" mask="url(#mask-2)" stroke-width="2" fill="#000000" xlink:href="#path-1"></use>
+                    <g id="right-eye" transform="translate(66.000000, 21.000000)" stroke="#979797">
+                        <circle id="Oval-2" fill="#FFFFFF" cx="13.5" cy="13.5" r="13.5"></circle>
+                        <circle id="Oval-3" fill="#000000" cx="13.5" cy="13.5" r="6.5"></circle>
+                    </g>
+                    <g id="left-eye" transform="translate(16.000000, 21.000000)" stroke="#979797">
+                        <circle id="Oval-2" fill="#FFFFFF" cx="13.5" cy="13.5" r="13.5"></circle>
+                        <circle id="Oval-3" fill="#000000" cx="13.5" cy="13.5" r="6.5"></circle>
+                    </g>
+                </g>
+                <use id="Rectangle-2" stroke="#FFFFFF" mask="url(#mask-4)" stroke-width="2" fill="#000000" xlink:href="#path-3"></use>
+                <use id="Rectangle-2" stroke="#FFFFFF" mask="url(#mask-6)" stroke-width="2" fill="#000000" xlink:href="#path-5"></use>
+                <g id="antena" transform="translate(38.000000, 0.000000)" stroke="#000000">
+                    <path d="M12.9133406,13.7560023 C12.9133406,13.7560023 14.7317465,22.3071437 14.7317465,26.2560023 C14.7317465,30.640477 12.9133406,38.7560023 12.9133406,38.7560023" id="Line" stroke-width="7" stroke-linecap="square" transform="translate(13.822544, 26.256002) rotate(-13.000000) translate(-13.822544, -26.256002) "></path>
+                    <circle id="Oval-4" fill="#000000" cx="7" cy="7" r="7"></circle>
+                </g>
+            </g>
+            <text id="BOTMASTER" font-family="AmericanTypewriter, American Typewriter" font-size="16" font-weight="normal" fill="#000000">
+                <tspan x="42.96" y="155">BOTMASTER</tspan>
+            </text>
+        </g>
+    </g>
+</svg>
