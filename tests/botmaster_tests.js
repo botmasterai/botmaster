@@ -265,7 +265,7 @@ describe('Botmaster', function() {
     const botmaster = new Botmaster(botmasterSettings);
 
     for (const bot of botmaster.bots) {
-      // if (bot.type !== 'socketio') continue; // for now
+      // if (bot.type !== 'slack') continue; // for now
       let recipientId = null;
       let socket;
 
@@ -385,12 +385,21 @@ describe('Botmaster', function() {
           });
         });
 
+        specify('using #sendDefaultButtonMessageTo with bad 3rd argument callback', function(done) {
+          const buttons = ['option One', 'Option Two', 'Option Three', 'Option Four'];
+
+          bot.sendDefaultButtonMessageTo(buttons, recipientId, bot, function(err) {
+            err.message.should.equal('ERROR: third argument must be a "String", "Object" or absent');
+            done();
+          });
+        });
+
         specify('using #sendDefaultButtonMessageTo with too many buttons', function(done) {
           const tooManyButtons = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
 
           bot.sendDefaultButtonMessageTo(tooManyButtons, recipientId)
 
-          .catch((err) => {
+          .catch(function(err) {
             err.message.should.equal('ERROR: buttonTitles must be of length 10 or less');
             done();
           });
@@ -408,12 +417,11 @@ describe('Botmaster', function() {
           });
         });
 
-        specify('using #sendIsTypingMessageTo', function() {
+        specify('using #sendIsTypingMessageTo', function(done) {
 
-          return bot.sendIsTypingMessageTo(recipientId)
-
-          .then(function(body) {
+          bot.sendIsTypingMessageTo(recipientId, function(err, body) {
             expect(body.recipient_id).to.equal(recipientId);
+            done();
           });
         });
       });
@@ -437,6 +445,7 @@ describe('Botmaster', function() {
 
     // close server after all single after blocks have run
     after(function(done) {
+      this.retries(4);
       botmaster.server.close(function() { done(); });
     });
   });

@@ -41,7 +41,7 @@ describe('Messenger Bot tests', function() {
 
   const requestOptions = {
     method: 'POST',
-    uri: 'http://localhost:3000/messenger/webhook',
+    uri: 'http://localhost:3001/messenger/webhook',
     body: {},
     json: true,
     resolveWithFullResponse: true
@@ -51,7 +51,7 @@ describe('Messenger Bot tests', function() {
   * Before all tests, create an instance of the bot which is
   * accessible in the following tests.
   * And also set up the mountpoint to make the calls.
-  * Also start a server listening on port 3000 locally
+  * Also start a server listening on port 3001 locally
   * then close connection
   */
   let bot= null;
@@ -60,7 +60,7 @@ describe('Messenger Bot tests', function() {
   before(function(done){
     bot = new MessengerBot(settings);
     app.use('/', bot.app);
-    server = app.listen(3000, function() { done(); });
+    server = app.listen(3001, function() { done(); });
   });
 
   describe('#constructor()', function() {
@@ -141,7 +141,7 @@ describe('Messenger Bot tests', function() {
       });
 
       bot.once('error', function(err) {
-        err.message.should.equal(`Uncaught error: "bot.blob is not a function". This is most probably on your end.`);
+        err.message.should.equal(`"bot.blob is not a function". This is most probably on your end.`);
         done();
       });
 
@@ -168,7 +168,7 @@ describe('Messenger Bot tests', function() {
   });
 
   after(function(done) {
+    this.retries(4);
     server.close(() => done());
   });
-
 });

@@ -174,6 +174,23 @@ describe('Middleware', function() {
       }
     });
 
+    specify('Error in incoming middleware is emitted on incoming message', function(done) {
+      // outgoing middleware
+      botmaster.use('incoming', function(bot, message, next) {
+        message.blob(); // doesn't exist, should throw
+        return next();
+      });
+
+      botmaster.once('error', function(bot, err) {
+        expect(err.message).to.equal('"message.blob is not a function". In incoming middleware');
+        done();
+      });
+
+      const bot = botmaster.getBots('messenger')[0];
+
+      bot.__emitUpdate(incomingUdpate);
+    });
+
     specify('Botmaster should call the middleware functions on multiple specific bot types only if specified', function(done) {
       let visitedCount = 0;
       botmaster.use('incoming', { type: ['messenger', 'telegram'] }, function(bot, update, next) {
@@ -211,6 +228,8 @@ describe('Middleware', function() {
   });
 
   describe('Outgoing Middleware', function() {
+    this.retries(4);
+
     specify('Botmaster should call a middleware function that was setup', function(done) {
       // outgoing middleware
       botmaster.use('outgoing', function(bot, message, next) {
@@ -248,10 +267,10 @@ describe('Middleware', function() {
 
       // catch error with promise
       .catch(function(err) {
-        expect(err.message).to.equal('message.blob is not a function');
+        expect(err.message).to.equal('"message.blob is not a function". In outgoing middleware');
         // get error in callback
-        bot.sendMessage(outgoingMessageCopy, function(err) {
-          expect(err.message).to.equal('message.blob is not a function');
+        bot.sendMessage(outgoingMessage, function(err) {
+          expect(err.message).to.equal('"message.blob is not a function". In outgoing middleware');
           done();
         });
       });
@@ -278,7 +297,10 @@ describe('Middleware', function() {
   });
 
   afterEach(function(done) {
-    botmaster.server.close(function() { done(); });
+    this.retries(4);
+    process.nextTick(function() {
+      botmaster.server.close(function() { done(); });
+    });
   });
 
 });

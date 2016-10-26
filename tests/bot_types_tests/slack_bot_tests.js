@@ -43,7 +43,7 @@ describe('Slack bot tests', function() {
   * Before all tests, create an instance of the bot which is
   * accessible in the following tests.
   * And also set up the mountpoint to make the calls.
-  * Also start a server listening on port 3000 locally
+  * Also start a server listening on port 3002 locally
   * then close connection
   */
   let bot= null;
@@ -52,7 +52,7 @@ describe('Slack bot tests', function() {
   before(function(done){
     bot = new SlackBot(slackSettings);
     app.use('/', bot.app);
-    server = app.listen(3000, function() { done(); });
+    server = app.listen(3002, function() { done(); });
   });
 
   describe('#constructor()', function() {
@@ -75,7 +75,7 @@ describe('Slack bot tests', function() {
   describe('/webhook endpoint works', function() {
     const requestOptions = {
       method: 'POST',
-      uri: 'http://localhost:3000/slack/webhook',
+      uri: 'http://localhost:3002/slack/webhook',
       body: {},
       json: true,
       resolveWithFullResponse: true,

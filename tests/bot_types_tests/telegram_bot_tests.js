@@ -47,10 +47,12 @@ describe('Telegram Bot tests', function() {
   * And also set up the mountpoint to make the calls.
   */
   let bot= null;
+  let server = null;
 
-  before(function(){
+  before(function(done){
     bot = new TelegramBot(telegramSettings);
     app.use('/', bot.app);
+    server = app.listen(3004, function() { done(); });
   });
 
   describe('#constructor()', function() {
@@ -74,24 +76,11 @@ describe('Telegram Bot tests', function() {
   describe('/webhook endpoint works', function() {
     const requestOptions = {
       method: 'POST',
-      uri: 'http://localhost:3000/telegram/webhook',
+      uri: 'http://localhost:3004/telegram/webhook',
       body: {},
       json: true,
       resolveWithFullResponse: true
     };
-
-    /*
-    * just start a server listening on port 3000 locally
-    * then close connection
-    */
-    let server = null;
-    before(function(done) {
-      server = app.listen(3000, function() { done(); });
-    });
-
-    after(function(done) {
-      server.close(function() { done(); });
-    });
 
     it('should return a 200 statusCode when doing a standard request', function() {
 
@@ -142,7 +131,7 @@ describe('Telegram Bot tests', function() {
       });
 
       bot.once('error', function(err) {
-        err.message.should.equal(`Uncaught error: "bot.blob is not a function". This is most probably on your end.`);
+        err.message.should.equal(`"bot.blob is not a function". This is most probably on your end.`);
         done();
       });
 
@@ -458,5 +447,10 @@ describe('Telegram Bot tests', function() {
       });
     });
   // end of describe(formatUpdate)
+  });
+
+  after(function(done) {
+    this.retries(4);
+    server.close(function() { done(); });
   });
 });

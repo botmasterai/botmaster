@@ -17,14 +17,14 @@ describe('socketio Bot tests', function() {
   * Before all tests, create an instance of the bot which is
   * accessible in the following tests.
   * And also set up the mountpoint to make the calls.
-  * Also start a server listening on port 3000 locally
+  * Also start a server listening on port 4000 locally
   * then close connection
   */
   let bot= null;
   let server = null;
 
   before(function(done){
-    server = app.listen(3000, function() {
+    server = app.listen(4000, function() {
       settings.server = server;
       bot = new SocketioBot(settings);
       done();
@@ -53,7 +53,7 @@ describe('socketio Bot tests', function() {
 
     it('should emit an error event to the bot object when ' +
        'update is badly formatted', function(done) {
-      const socket = io("ws://localhost:3000");
+      const socket = io("ws://localhost:4000");
 
       socket.on('connect', function() {
         socket.send('Party & Bullshit');
@@ -67,7 +67,7 @@ describe('socketio Bot tests', function() {
     });
 
     it('a client sending a text message should go through', function(done) {
-      const socket = io("ws://localhost:3000");
+      const socket = io("ws://localhost:4000");
 
       socket.on('connect', function() {
         socket.send(JSON.stringify({text: 'Party & Bullshit'}));
@@ -81,7 +81,7 @@ describe('socketio Bot tests', function() {
     });
 
     it('a client sending a text message should work', function(done) {
-      const socket = io("ws://localhost:3000");
+      const socket = io("ws://localhost:4000");
 
       socket.on('connect', function() {
         socket.send(JSON.stringify({text: 'Party & Bullshit'}));
@@ -95,7 +95,7 @@ describe('socketio Bot tests', function() {
     });
 
     it('a client sending an attachment should work', function(done) {
-      const socket = io('ws://localhost:3000');
+      const socket = io('ws://localhost:4000');
 
       const attachments = [
         {
@@ -118,8 +118,8 @@ describe('socketio Bot tests', function() {
     });
 
     it('developer can route message to other user if wanted without duplication', function(done) {
-      const socketOne = io('ws://localhost:3000');
-      const socketTwo = io('ws://localhost:3000');
+      const socketOne = io('ws://localhost:4000');
+      const socketTwo = io('ws://localhost:4000');
       let connectedClientCount = 0;
 
       bot.once('update', function(update) {
