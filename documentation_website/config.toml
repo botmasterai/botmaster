@@ -1,0 +1,4 @@
+languageCode = "en-us"
+baseurl = "http://replace-this-with-your-hugo-site.com/"
+title = "Botmaster Documentation"
+theme = "hugo-theme-learn"
