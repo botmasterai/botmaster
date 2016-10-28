@@ -346,7 +346,7 @@ describe('Botmaster', function() {
     });
   });
 
-  describe.only('sending messages', function() {
+  describe('sending messages', function() {
     this.retries(4);
     // botmaster.server stops listening onto port 3200 in the after hook
     // of 'sending message'
