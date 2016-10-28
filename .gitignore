@@ -26,4 +26,6 @@ coverage
 
 _site
 .sass-cache
-.jekyll-metadata
+documentation_website/themes
+documentation_website/public
+documentation_website/node_modules
