@@ -1,15 +1,15 @@
 ---
 chapter: true
 date: 2016-10-29T17:09:45+01:00
-icon: <b>1. </b>
+icon: <i class="fa fa-road" aria-hidden="true"></i>
 next: /next/path
-prev: /prev/path
-title: index
-weight: 0
+title: Getting started
+type: index
+weight: 5
 ---
 
-### Chapter X
+<!-- ### Chapter X -->
 
-# Some Chapter title
+# BOTMASTER
 
-Lorem ipsum
+The bot framework that keeps on giving

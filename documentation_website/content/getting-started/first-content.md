@@ -4,7 +4,7 @@ next: /next/path
 prev: /prev/path
 title: first content
 toc: true
-weight: 5
+weight: 10
 ---
 
 Lorem Ipsum
