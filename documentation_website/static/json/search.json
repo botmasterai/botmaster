@@ -1,0 +1,20 @@
+[
+    {
+        "uri": "/content/getting-started/first-content",
+        "title": "first content",
+        "content": "\nLorem Ipsum\n",
+        "tags": []
+    },
+    {
+        "uri": "/content/getting-started/index",
+        "title": "index",
+        "content": "\nChapter X\n\n Some Chapter title\n\nLorem ipsum\n",
+        "tags": []
+    },
+    {
+        "uri": "/content/getting-started/second-content/index",
+        "title": "index",
+        "content": "\nLorem Ipsum\n",
+        "tags": []
+    }
+]
