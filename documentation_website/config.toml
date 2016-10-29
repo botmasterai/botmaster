@@ -1,4 +1,5 @@
-# baseurl = "http://jdwuarin.github.io/botmaster"
+# baseurl = "http://jdwuarin.github.io/botmaster/"
+baseurl = "http://www.example.com/"
 languageCode = "en-us"
 title = "Botmaster Documentation"
 theme = "hugo-theme-learn"
@@ -12,18 +13,5 @@ googleAnalytics = ""
 	author = "JD Wuarin"
 	description = "The Bot framework for your serious projects"
 	copyright = "MIT"
-
-	# Repository
-	provider = "GitHub"
-	repo_url = "https://github.com/jdwuarin/botmaster"
-
-	# version = "2.1.1"
-	logo = "images/botmaster.svg"
-	favicon = "images/favicon.ico"
-	#
-	# permalink = "#"
-
-	# Custom assets
-	custom_css = []
-	custom_js  = []
+	editUrl = "https://github.com/jdwuarin/botmaster/tree/gh-pages/documentation_website/content"
 	search = true
