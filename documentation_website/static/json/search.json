@@ -1,5 +1,11 @@
 [
     {
+        "uri": "/content/changelog/CHANGELOG",
+        "title": "CHANGELOG",
+        "content": "\nPATCH: Botmaster 2.1.1\n\nThis patch fixes a bug whereby one couldn't instantiate a botmaster object that would use socket.io in all reasonably expected ways. See here for a discussion.\n\n MINOR: Botmaster 2.1.0\n\nThis version adds support for socket.io bots within the botmaster core. This is the last\nbot class that will be in the core\n\nMAJOR: Botmaster 2.0.0\n\nIn this new version, a lot of new things were added to Botmaster. A few others were removed.\n\n Breaking Changes\nIf you were using SessionStore in version 1.x.x, you won't be able to anymore in version 2.x.x. They have been scratched for the far more common middleware design pattern common in so many other frameworks (e.g. express). Middleware can be hooked into right before receiving an update and right before sending out a message. It fits ideally with people wanting to setup session storage at these points.\n\nAdding Slack\nSupport for Slack as the fourth channel supported by Botmaster has been added. Using the Events API, you can now send and receive messages on the platform.\n\n get User info\nIf the platform supports it and the bot class you are using supports it too, you can now use the bot.getUserInfo method to retrieve basic information on a user, including their name and profile pic.\n\nbug fixes\nAs with any release, a bunch of bugfixes were done.\n",
+        "tags": []
+    },
+    {
         "uri": "/content/getting-started/first-content",
         "title": "first content",
         "content": "\nLorem Ipsum\n",
@@ -7,14 +13,20 @@
     },
     {
         "uri": "/content/getting-started/index",
-        "title": "index",
-        "content": "\nChapter X\n\n Some Chapter title\n\nLorem ipsum\n",
+        "title": "Getting started",
+        "content": "\n!-- ### Chapter X --\n\nBOTMASTER\n\nThe bot framework that keeps on giving\n",
         "tags": []
     },
     {
         "uri": "/content/getting-started/second-content/index",
         "title": "index",
         "content": "\nLorem Ipsum\n",
+        "tags": []
+    },
+    {
+        "uri": "/content/home/index",
+        "title": "Botmaster v 2.1.1",
+        "content": "\nWhat is botmaster\n\nBotmaster is a lightweight highly extendable, highly configurable chatbot framework. It was meant to be used both in small scale and large scale projects. Its purpose is to integrate your chatbot into a variety of messaging channels - currently Facebook Messenger, Slack, Twitter DM, Telegram and socket.io. Using botmaster looks something like this:\n\nconst Botmaster = require('botmaster');\nconst config = require(./config);\nconst botsSettings = [{ telegram: config.telegramSettings },\n                      { messenger: config.messengerSettings },\n                      { twitter: config.twitterSettings },\n                      { slack: config.slackSettings }];\n\nconst botmasterSettings = { botsSettings };\n\nconst botmaster = new Botmaster(botmasterSettings);\n\nbotmaster.on('update', (bot, update) = {\n  bot.reply(update, 'Right back at you!');\n});\n\n Botmaster is platform agnostic\n\nBotmaster is platform agnostic in two important ways. Firstly, out of the box, developers can have bots running on Facebook Messenger, Slack, Twitter DM, Telegram and their personal webapp/app via socket.io with not only a standardized text message format, but also a standardized attachment format. Secondly, BotMaster makes no assumptions about the back-end bot itself - you can write code that allows BotMaster to call conversational engines such as IBM Watson's conversation API, open source frameworks or even write the conversation engine yourself.\n\nBotamster Philosophy\n\nIts philosophy is to minimise the amount of code developers have to write in order to create 1-on-1 conversational chatbots that work on multiple platforms. It does so by defining a standard with respect to what format messages take and how 1-on-1 conversations occur. Messages to/from the various messaging channels supported are all mapped onto this botmaster standard, meaning the code you write is much reduced when compared to a set of point:point integrations.\n",
         "tags": []
     }
 ]
