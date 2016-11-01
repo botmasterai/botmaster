@@ -124,7 +124,7 @@ The following three lines setup some important values.
 
   1. `this.type`: the type of bot that is being instantiated. It's important to specify that as developers might want condition some code on the type of bot you are writing.
   2. `this.requiresWebhook`: whether the bot requires webhooks. If the platform you are coding for requires webhooks, you will be expected to set a `this.app` variable at some point in the setup. We'll look into this when we have a look at what the `this.__createMountPoints();` does.
-  3. `this.requiredCredentials`: sets up an array of credentials that are expected to be defined for the platform you are coding your class for. Telgram only takes in 1, so we just have an array with the value `'authToken'`.
+  3. `this.requiredCredentials`: sets up an array of credentials that are expected to be defined for the platform you are coding your class for. Telegram only takes in 1, so we just have an array with the value `'authToken'`.
 
 ### `#__applySettings(settings)`
 
@@ -132,7 +132,7 @@ The next line calls the `this.__applySettings(settings)`. This function is imple
 
 ### `#__createMountPoints()`
 
-The last line of our controller makese a call to `this.__createMountPoints();`. This line should only be present if your bot class requires webhooks. If this is the case, you will be expected to define a class member function that looks like:
+The last line of our controller makes a call to `this.__createMountPoints();`. This line should only be present if your bot class requires webhooks. If this is the case, you will be expected to define a class member function that looks like:
 
 ```js
   __createMountPoints() {
@@ -162,6 +162,21 @@ Very importantly, this function creates an express router `this.app` that will b
 
 It then sets up the post endpoint that listens onto `this.webhookEnpoint`. No further assumption is made here.
 
+### `#__setBotIdIfNotSet(update)`
+
+In order for botmaster to know which bot should handle an update message, botmaster looks for a bot with an `id` matching `update.recipient.id`. You can manage these IDs yourself, or if you want you can define the `setBotIdIfNotSet` method which will define the bot's id the first time an update is received.
+
+The following is a good default implementation used in many of botmaster's internal bot types:
+
+```js
+__setBotIdIfNotSet(update) {
+  if (!this.id) {
+  	this.id = update.recipient.id;
+  }
+}
+```
+
+
 ### `#__formatUpdate(rawUpdate)`
 
 Although you can technically handle the body of the request as you wish. In our `__createMountPoints` example here (from TelegramBot code), we make a call to the `__formatUpdate` function with the body of the request.
@@ -169,7 +184,7 @@ It would make sense for you to do so for consitency and because it has to be def
 
 This function is expected to transform the `rawUpdate` into an object which is of the format of Messenger updates, while having an `update.raw` bit that references that `rawUpdate` received.
 
-Typically, it would look something like this for a message with an image attachment. Independant of what platform the message comes from:
+Typically, it would look something like this for a message with an image attachment. Independent of what platform the message comes from:
 
 ```js
 {
@@ -202,11 +217,11 @@ Your function should return the update object(or a promise that resolves a forma
 
 Like `__applySettings`, this method is implemented in `BaseBot`. It handles errors, calling the `incoming` middleware stack, and most importantly, actually calling `this.emit(update)` to emit the actual update. You can overwrite this method is you wish, but in its current state, it handles the most important cases you will want to deal with. You will however need to call it with your formatted update object as a parameter in order to actually get the update object in a `bot.on('update', callback)` block.
 
-### `#sendMessage(message)`
+### `#__sendMessage(message)`
 
 All previous methods had either something to do with object instantiation or with incoming messages. We'll now have a look at what needs to be done within your bot class to send messages.
 
-The `sendMessage` method needs to be implemented. The method should take in a Messenger style message and send a formatted message to the bot platform. It should return a `Promise` that resolves to something like this:
+The `__sendMessage` method needs to be implemented. The method should take in a Messenger style message and send a formatted message to the bot platform. It should return a `Promise` that resolves to something like this:
 
 ```js
   {
@@ -218,6 +233,7 @@ The `sendMessage` method needs to be implemented. The method should take in a Me
 
 Please note that the `BaseBot` superclass defines a set of methods that allow developers to more easily send messages to all platforms without having to build the whole Messenger compatible object themselves. These methods are the following:
 
+`sendMessage`
 `sendMessageTo`
 `sendTextMessageTo`
 `reply`
@@ -226,14 +242,14 @@ Please note that the `BaseBot` superclass defines a set of methods that allow de
 `sendDefaultButtonMessageTo`
 `sendIsTypingMessageTo`
 
-All these methods will convert a developer specified input into a Facebook Messenger compatible message that will be called as a parameter to `sendMessage`. That is, they all eventually will call your `sendMessage` method. You can however overwirte them if need be.
+All these methods will convert a developer specified input into a Facebook Messenger compatible message that will be called as a parameter to `__sendMessage`. That is, they all eventually will call your `__sendMessage` method. You can however overwrite them if need be.
 
 ### `#__formatOutgoingMessage(message)`
 
-Your `sendMessage` methos is expected to call a `__formatOutgoingMessage(message)` method that will format the Messenger style message into one that is compatible with the platform your are coding your bot class for.
+Your `sendMessage` method is expected to call a `__formatOutgoingMessage(message)` method that will format the Messenger style message into one that is compatible with the platform you are coding your bot class for.
 
 You can have a look at the ones defined in the `TelegramBot` and the `TwitterBot` classes for inspiration.
 
 ## Is this really all there is to it?
 
-Yes it is! These few basic steps are the steps that should be followed in order to build your own bot classes. Nothing more is required. Of course, formatting the incomming updates and the outgoing messages won't always be as trivial as we'd wish, but this guide should help you into doing this.
+Yes it is! These few basic steps are the steps that should be followed in order to build your own bot classes. Nothing more is required. Of course, formatting the incoming updates and the outgoing messages won't always be as trivial as we'd wish, but this guide should help you into doing this.
