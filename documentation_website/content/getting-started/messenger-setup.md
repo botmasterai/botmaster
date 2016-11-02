@@ -7,7 +7,7 @@ toc: true
 weight: 40
 ---
 
-If you want to build a Facebook Messenger supported bot, you'll want to have code that looks something like this:
+## Code
 
 ```js
 const Botmaster = require('botmaster');
@@ -30,7 +30,7 @@ botmaster.on('update', (bot, update) => {
 });
 ```
 
-The bit we haven't seen in the previous sections here is how to get the credentials. Here's how you do this for Messenger:
+## Getting your Credentials
 
 If you don't already have these, follow the steps **1-4** on the Facebook Messenger guide:
 https://developers.facebook.com/docs/messenger-platform/quickstart
@@ -38,5 +38,7 @@ https://developers.facebook.com/docs/messenger-platform/quickstart
 In **step 2**, where you setup your webhook, no need to code anything. Just specify the webhook, enter any secure string you want as a verify token(`verifyToken`) and copy that value in the settings object. Also, click on whichever message [those are "update"s using botmaster semantics] type you want to receive from Messenger (`message_deliveries`, `messages`, `message_postbacks` etc...).
 
 To find your Facebook App Secret (`fbAppSecret`), navigate to your apps dashboard and under `App Secret` click show, enter your password if prompted and then there it is.
+
+## Webhooks
 
 If you are not too sure how webhooks work and/or how to get them to run locally, go to [webhooks](/getting-started/webhooks) to read some more.
