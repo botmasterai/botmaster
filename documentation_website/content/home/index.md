@@ -32,6 +32,6 @@ botmaster.on('update', (bot, update) => {
 
 Botmaster is platform agnostic in two important ways. Firstly, out of the box, developers can have bots running on Facebook Messenger, Slack, Twitter DM, Telegram and their personal webapp/app via socket.io with not only a standardized text message format, but also a standardized attachment format. Secondly, BotMaster makes no assumptions about the back-end bot itself - you can write code that allows BotMaster to call conversational engines such as IBM Watson's conversation API, open source frameworks or even write the conversation engine yourself.
 
-## Botmaster Philosophy
+## Botmaster's Philosophy
 
 Its philosophy is to minimise the amount of code developers have to write in order to create 1-on-1 conversational chatbots that work on multiple platforms. It does so by defining a standard with respect to what format messages take and how 1-on-1 conversations occur. Messages to/from the various messaging channels supported are all mapped onto this botmaster standard, meaning the code you write is much reduced when compared to a set of point:point integrations.
