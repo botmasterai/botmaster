@@ -41,4 +41,6 @@ To find your Facebook App Secret (`fbAppSecret`), navigate to your apps dashboar
 
 ## Webhooks
 
+{{% notice note %}}
 If you are not too sure how webhooks work and/or how to get them to run locally, go to [webhooks](/getting-started/webhooks) to read some more.
+{{% /notice %}}

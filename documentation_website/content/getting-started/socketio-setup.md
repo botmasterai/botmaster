@@ -1,7 +1,7 @@
 ---
 date: 2016-11-02T18:18:34Z
-next: /getting-started/twitter
-prev: /gettings-started/slack-setup
+next: /getting-started/twitter-setup
+prev: /getting-started/slack-setup
 title: Socket.io setup
 toc: true
 weight: 60
@@ -243,3 +243,7 @@ You should have a read through this code to make sure you understand it as that 
 In the `form.onsubmit` part, we make sure that the text contained in the input cell is correctly formatted then sent to botmaster via the websocket. We also make sure to display it in our page and to then clear the input.
 
 In the `socket.on('message')` part, we simply display the received message.
+
+Now that our code is here, simply go to your command line and run `node app.js`. If you now open a browser to 127.0.0.1:3000 you should be able to chat with your pretty useless (for now) bot. Just like this:
+
+![Socket.io Setup 1](/images/socket.io_setup_1.png?width=90%)

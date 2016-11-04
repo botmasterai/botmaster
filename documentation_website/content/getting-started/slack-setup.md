@@ -1,7 +1,7 @@
 ---
 date: 2016-10-31T23:01:53Z
-next: /next/path
-prev: /prev/path
+next: /getting-started/socketio-setup
+prev: /getting-started/messenger-setup
 title: Slack setup
 toc: true
 weight: 50

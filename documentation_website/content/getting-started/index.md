@@ -9,6 +9,13 @@ type: index
 weight: 5
 ---
 
-<!-- ### Chapter X -->
-
 # GETTING STARTED
+
+### [Installation](installation)
+### [Quickstart](quickstart)
+### [Getting set up](getting-set-up)
+### [Messenger Setup](messenger-setup)
+### [Slack Setup](slack-setup)
+### [Socket.io Setup](socketio-setup)
+### [Twitter Setup](twitter-setup)
+### [Telegram setup](telegram-setup)

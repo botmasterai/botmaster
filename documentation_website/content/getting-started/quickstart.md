@@ -1,6 +1,5 @@
 ---
 date: 2016-10-31T21:39:47Z
-next: /next/path
 prev: /getting-started/installation
 next: /getting-started/getting-set-up
 title: Quickstart
