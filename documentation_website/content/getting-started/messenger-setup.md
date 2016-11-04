@@ -2,7 +2,7 @@
 date: 2016-10-31T22:24:20Z
 next: /getting-started/slack-setup
 prev: /getting-started/getting-set-up
-title: Messenger setup
+title: Facebook Messenger setup
 toc: true
 weight: 40
 ---

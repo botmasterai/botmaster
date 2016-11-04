@@ -26,3 +26,5 @@ Finally, install the botmaster npm package.
 ```bash
 npm install --save botmaster
 ```
+
+That should do!
