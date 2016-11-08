@@ -14,9 +14,11 @@ const Botmaster = require('botmaster');
 .
 . // full settings object omitted for brevity
 .
-const botsSettings = [{ messenger: messengerSettings },
+const botsSettings = [{ telegram: telegramSettings },
+                      { messenger: messengerSettings },
                       { twitter: twitterSettings },
-                      { telegram: telegramSettings }];
+                      { slack: slackSettings },
+                      { socketio: socketioSettings }];
 
 const botmasterSettings = {
   botsSettings: botsSettings,
@@ -34,13 +36,39 @@ The `botmasterSettings` object has the following parameters:
 
 | Parameter | Description
 |--- |---
-| botsSettings | An `array` of platform specific settings. See [Getting set up](#getting-set-up) for more info on that
+| botsSettings | An `array` of platform specific settings. See [Quickstart](/getting-started/quickstart) to see an example of those and the various setup guides in [Getting started](/getting-started) to see how to get started with the various platforms.
 | port  | (__optional__) The port to use for your webhooks (see [webhooks](#webhooks) to understand more about webhooks). This will only be used if the `app` parameter is not provided. Otherwise, it will be ignored
 | app  | (__optional__) An `express.js` app object to mount the `webhookEnpoints` onto. If you choose to do this, it is assumed that you will be starting your own express server and this won't be done by Botmaster.
 | server | (__optional__) an `http` server object. It can be accessed via `botmaster.server` once instantiated. If passed and using socket.io. This server object will be used as the socker.io server.
 
 {{% notice info %}}
-Please note, if you are passing in an app object to the settings, it is assumed that you are dealing with anything realating to
+Please note, if you are passing in an `app` object to the settings, it is assumed that you are dealing with anything relating to your http server. That is start listening, closing it if necessary etc.
+{{% /notice %}}
+
+{{% notice warning %}}
+If using socket.io (`socketio`), you will need to either define BOTH an `app` object and its corresponding `server` object in the settings. Or if you would rather botmaster manage this for you, you can define none of them. Alternatively, if you want, say, to have a different http server for your main botmaster app and for socket.io, you can do something like this:
+```js
+.
+.
+const socketioSettings = {
+  id: 'SOME_ID_OF_YOUR_CHOOSING',
+  server: 'SOME_HTTP_SERVER_OF_YOURS', // this server can't run on port 3000 in this example
+};
+
+const botsSettings = [{ telegram: telegramSettings },
+                      { messenger: messengerSettings },
+                      { twitter: twitterSettings },
+                      { slack: slackSettings },
+                      { socketio: socketioSettings }];
+
+const botmasterSettings = {
+  botsSettings: botsSettings,
+  app: 'SOME_EXPRESS_APP' // optional
+}
+
+const botmaster = new Botmaster(botmasterSettings);
+```
+In this example, a server will be started under the hood by botmaster using your express
 {{% /notice %}}
 
 ### Events

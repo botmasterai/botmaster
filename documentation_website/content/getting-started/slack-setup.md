@@ -2,7 +2,7 @@
 date: 2016-10-31T23:01:53Z
 next: /getting-started/socketio-setup
 prev: /getting-started/messenger-setup
-title: Slack setup
+title: Slack Setup
 toc: true
 weight: 50
 ---

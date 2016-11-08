@@ -50,10 +50,15 @@ const slackSettings = {
   storeTeamInfoInFile: true,
 };
 
+const socketioSettings = {
+  id: 'SOME_ID_OF_YOUR_CHOOSING',
+};
+
 const botsSettings = [{ telegram: telegramSettings },
                       { messenger: messengerSettings },
                       { twitter: twitterSettings },
-                      { slack: slackSettings }];
+                      { slack: slackSettings },
+                      { socketio: socketioSettings }];
 
 const botmasterSettings = {
   botsSettings: botsSettings,

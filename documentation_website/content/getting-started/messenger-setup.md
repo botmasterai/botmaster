@@ -2,7 +2,7 @@
 date: 2016-10-31T22:24:20Z
 next: /getting-started/slack-setup
 prev: /getting-started/getting-set-up
-title: Facebook Messenger setup
+title: Facebook Messenger Setup
 toc: true
 weight: 40
 ---
@@ -18,7 +18,7 @@ const messengerSettings = {
     pageToken: 'YOUR pageToken',
     fbAppSecret: 'YOUR fbAppSecret',
   },
-  webhookEndpoint: '/webhook1234', // botmaster will mount this webhook on https://Your_Domain_Name/messenger/webhook1234
+  webhookEndpoint: '/webhook1234',
 };
 
 const botsSettings = [{ messenger: messengerSettings }];
@@ -33,7 +33,7 @@ botmaster.on('update', (bot, update) => {
 ## Getting your Credentials
 
 If you don't already have these, follow the steps **1-4** on the Facebook Messenger guide:
-https://developers.facebook.com/docs/messenger-platform/quickstart
+https://developers.facebook.com/docs/messenger-platform/guides/quick-start
 
 In **step 2**, where you setup your webhook, no need to code anything. Just specify the webhook, enter any secure string you want as a verify token(`verifyToken`) and copy that value in the settings object. Also, click on whichever message [those are "update"s using botmaster semantics] type you want to receive from Messenger (`message_deliveries`, `messages`, `message_postbacks` etc...).
 

@@ -2,7 +2,7 @@
 date: 2016-11-04T00:57:53Z
 next: /getting-started/telegram-setup
 prev: /getting-started/socketio-setup
-title: Twitter setup
+title: Twitter Setup
 toc: true
 weight: 70
 ---

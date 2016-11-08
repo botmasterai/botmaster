@@ -2,7 +2,7 @@
 date: 2016-11-02T18:18:34Z
 next: /getting-started/twitter-setup
 prev: /getting-started/slack-setup
-title: Socket.io setup
+title: Socket.io Setup
 toc: true
 weight: 60
 ---
@@ -201,8 +201,9 @@ Finally, in the `client_app.js` file, you should include the following:
 
 ```js
 // the following line could also be: "var socket = io('');"
-// if you know you are communicating with the same server that served you the page you are on
-var socket = io("ws://localhost:3000");
+// if you know you will be communicating with a server different from the one that served you the page you are on
+// do something like this: io('ws://<URL>:<PORT_Number>');
+var socket = io('');
 
 // just get the html elements we will be needing by ID
 var form = document.getElementById('form');

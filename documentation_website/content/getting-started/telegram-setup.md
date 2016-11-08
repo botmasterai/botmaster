@@ -2,7 +2,7 @@
 date: 2016-11-04T01:04:24Z
 next: /working-with-botmaster
 prev: /getting-started/twitter-setup
-title: Telegram setup
+title: Telegram Setup
 toc: true
 weight: 80
 ---
