@@ -38,7 +38,7 @@ The `botmasterSettings` object has the following parameters:
 |--- |---
 | botsSettings | An `array` of platform specific settings. See [Quickstart](/getting-started/quickstart) to see an example of those and the various setup guides in [Getting started](/getting-started) to see how to get started with the various platforms.
 | port  | (__optional__) The port to use for your webhooks (see [webhooks](#webhooks) to understand more about webhooks). This will only be used if the `app` parameter is not provided. Otherwise, it will be ignored
-| app  | (__optional__) An `express.js` app object to mount the `webhookEnpoints` onto. If you choose to do this, it is assumed that you will be starting your own express server and this won't be done by Botmaster.
+| app  | (__optional__) An `express.js` app object to mount the `webhookEnpoints` onto. If you choose to do this, it is assumed that you will be starting your own express server and this won't be done by Botmaster. Unless you also specify a `server` parameter, `botmaster.server` will be `null`
 | server | (__optional__) an `http` server object. It can be accessed via `botmaster.server` once instantiated. If passed and using socket.io. This server object will be used as the socker.io server.
 
 {{% notice info %}}
@@ -63,45 +63,74 @@ const botsSettings = [{ telegram: telegramSettings },
 
 const botmasterSettings = {
   botsSettings: botsSettings,
-  app: 'SOME_EXPRESS_APP' // optional
 }
 
 const botmaster = new Botmaster(botmasterSettings);
 ```
-In this example, a server will be started under the hood by botmaster using your express
+In this example, a server will be started under the hood by botmaster using your express. This http server will be a different one from the one used in
 {{% /notice %}}
 
 ### Events
 
-Botmaster is built on top of the EventEmitter node.js class. Which means it can emit events and most importantly for us here, it can listen onto them. By doing the following:
+Botmaster is built on top of the EventEmitter node.js class. Which means it can emit events and most importantly for us here, it can listen onto them. By doing any of the following:
 
 ```js
+botmaster.on('server running', (message) => {
+  console.log(message);
+});
+
 botmaster.on('update', (bot, update) => {
   console.log(bot.type);
   console.log(update);
-});
-
-botmaster.on('server running', (message) => {
-  console.log(message);
 });
 
 botmaster.on('error', (bot, err) => {
   console.log(bot.type);
   console.log(err.stack);
 });
-
-botmaster.on('warning', (bot, warning) => {
-  console.log(warning);
-});
 ```
 
-I am registering four new listeners onto the botmaster object. One that listens for any updates that come in and one that listens for any potential error that might occur when receiving updates. The `update` events is of course the one you will want to focus most of your attention onto. You see here that every `update` event will come with a `bot` and an `update` object as arguments. This will always be the case. In general, the updates are standardized as well as the methods to use from the bot object (i.e. sending a message).
+These are the only four listeners that you can listen onto in botmaster. Let's go though them briefly:
+
+#### server running
+
+This event will be emitted only if you are not managing your own server (i.e. you started botmaster without setting the `app` parameter). It is just here to notify you that the server has been started. You don't necessarily need to use it. But you might want to do things at this point.
+
+#### update
+
+This is really where all the magic happens. Whenever a message (update in Botmaster semantic) is sent into your application. Botmaster will parse it and format it into its [FB Messenger] standard. Along with it, you will get a `bot` object which is the underlying object into which the message was sent. Note that the updates are standardized as well as the methods to use from the bot object (i.e. sending a message). Read further down to see how those two objects work.
+
+#### error
+
+This event is thrown whenever an error internal to botmaster occurs. I.e. if for some reason a misconfigured message was sent in. Or if some other kind of error occured directly within Botmaster. It is good to listen onto this event and keep track of potential errors. Also, if you code an error within `botmaster.on`, and don't catch it, it will be caught by botmaster and emitted in to `error`. So like this you have full control of what is going on and can log everything straight from there.
 
 ### Bot object
 
-Every Botmaster instance will have a list of bots that can be accessed by calling: `botmaster.bots` assuming your Botmaster instance is named 'botmaster'.
+Bot objects are really the ones running the show in the Botmaster framework. Your `botmaster` object is simply a central point of control for you to manage all of your bots. Botmaster simply assumes that most of your bots will have a central bit of code that you don't want to have to replicate for every platform/bot instance. Which should make sense. To drive the point a little further, here is another [perfectly acceptable way] of starting botmaster.
 
-Bot instances can be accessed through that array or more commonly, directly within an `update` event. Because you might want to act differently on bots of a certain type or log information differently based on type, every bot comes with a `bot.type` parameter that is one of: `messenger`, `twitter` or `telegram` (for now). Use these to write more platform specific code (if necessary).
+
+```js
+const Botmaster = require('botmaster');
+.
+. // full settings object omitted for brevity
+.
+const botsSettings = [{ telegram: telegramSettings },
+                      { messenger: messengerSettings },
+                      { twitter: twitterSettings },
+                      { slack: slackSettings },
+                      { socketio: socketioSettings }];
+
+const botmasterSettings = {
+  botsSettings: botsSettings,
+  // by default botmaster will start an express server that listens on port 3000
+  // you can pass in a port argument here to change this default setting:
+  port: 3001
+}
+
+const botmaster = new Botmaster(botmasterSettings);
+```
+
+Bot instances can be accessed directly within an `update` event. Because you might want to act differently on bots of a certain type or log information differently based on type, every bot comes with a `bot.type` parameter that is one of: `messenger`, `slack`, `twitter`, `socketio` or `telegram`. Use these to write more platform specific code (if necessary).
 
 I'll note quickly that each bot object created comes from one of the `TelegramBot`, `MessengerBot` or `Twitterbot` classes. They act in the same way on the surface (because of heavy standardization), but have a few idiosynchrasies here and there.
 
@@ -137,3 +166,7 @@ If for some reason you created a bot this way but now want it to be in a botmast
 botmaster.addBot(twitterBot);
 ```
 This is important if you create your own Bot that extends the `Botmaster.botTypes.BaseBot` class. For instance, you might want to create your own class that supports your pre-existing messaging standards. Have a look at the [writing_a_botmaster_supported_bot-class.md](writing_a_botmaster_supported_bot_class_readme.md) file to learn how to do this.
+
+Every Botmaster instance will have a list of bots that can be accessed by calling: `botmaster.bots` assuming your Botmaster instance is named 'botmaster'.
+
+To get a bot object, you can either parse the `botmaster.bots` array yourself
