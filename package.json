@@ -4,7 +4,8 @@
   "description": "Framework allowing developers to write bots that are agnostic with respect to the channel used by their users (messenger, telegram etc...)",
   "main": "./lib/index.js",
   "scripts": {
-    "start": "nodemon --legacy-watch ./example_jd.js",
+    "s": "nodemon --legacy-watch ./example_jd.js",
+    "start": "node ./example_jd.js",
     "test": "istanbul cover _mocha -- --recursive tests",
     "tests": "mocha --recursive tests",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
