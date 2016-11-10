@@ -59,13 +59,21 @@ describe('Botmaster', function() {
       server = app.listen(3100, function() { done(); });
     });
 
-    it('should throw an error if settings aren\'t specified', function() {
-      expect(() => new Botmaster()).to.throw();
+    it('should not throw an error if settings aren\'t specified', function(done) {
+      let botmaster;
+      expect(() => botmaster = new Botmaster()).to.not.throw();
+      botmaster.on('server running', function() {
+        botmaster.server.close(function() { done(); });
+      });
     });
 
-    it('should throw an error if settings.botsSettings aren\'t specified', function() {
+    it('should not throw an error if settings.botsSettings aren\'t specified', function(done) {
       const settings = {};
-      expect(() => new Botmaster(settings)).to.throw();
+      let botmaster;
+      expect(() => botmaster = new Botmaster(settings)).to.not.throw();
+      botmaster.on('server running', function() {
+        botmaster.server.close(function() { done(); });
+      });
     });
 
     it('should throw an error if entry in botsSettings has more than one key', function() {
@@ -147,7 +155,7 @@ describe('Botmaster', function() {
         server,
         botsSettings: baseBotsSettings,
       };
-      console.log(Object.keys(settings));
+
       const botmaster = new  Botmaster(settings);
 
       expect(botmaster.bots.length).to.equal(5);
@@ -211,7 +219,6 @@ describe('Botmaster', function() {
       };
 
       expect(() => new Botmaster(settings)).to.throw();
-
     });
 
     afterEach(function(done) {
