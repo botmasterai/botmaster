@@ -7,6 +7,31 @@ title: CHANGELOG
 weight: 0
 ---
 
+### MINOR: Botmaster 2.2.0
+
+This minor release allows developers to create news instances of Botmaster without bots settings by writing something like:
+
+```js
+const Botmaster = require('botmaster');
+const botmaster = new Botmaster();
+.
+. // full settings objects omitted for brevity
+.
+const messengerBot = new MessengerBot(messengerSettings);
+const slackBot = new SlackBot(slackSettings);
+const twitterBot = new TwitterBot(twitterSettings);
+const socketioBot = new SocketioBot(socketioSettings);
+const telegramBot = new TelegramBot(telegramSettings);
+
+botmaster.addBot(messengerBot);
+botmaster.addBot(slackBot);
+botmaster.addBot(twitterBot);
+botmaster.addBot(socketioBot);
+botmaster.addBot(telegramBot);
+```
+
+This is because it might be viewed as cleaner by some to add bots in the following way rather than doing this in the constructor.
+
 ### PATCH: Botmaster 2.1.1
 
 This patch fixes a bug whereby one couldn't instantiate a botmaster object that would use socket.io in all reasonably expected ways. See [here](https://github.com/jdwuarin/botmaster/pull/2) for a discussion.
