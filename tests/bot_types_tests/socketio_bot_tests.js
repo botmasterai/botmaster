@@ -66,7 +66,7 @@ describe('socketio Bot tests', function() {
       });
     });
 
-    it('a client sending a text message should go through', function(done) {
+    specify('a client sending a text message should go through', function(done) {
       const socket = io("ws://localhost:4000");
 
       socket.on('connect', function() {
@@ -80,7 +80,7 @@ describe('socketio Bot tests', function() {
       });
     });
 
-    it('a client sending a text message should work', function(done) {
+    specify('a client sending a text message should work', function(done) {
       const socket = io("ws://localhost:4000");
 
       socket.on('connect', function() {
@@ -94,7 +94,32 @@ describe('socketio Bot tests', function() {
       });
     });
 
-    it('a client sending an attachment should work', function(done) {
+    specify('a client should be able to set the sender.id', function(done) {
+      const socket = io("ws://localhost:4000");
+
+      const id = 'some_random_id';
+
+      const message = {
+        sender: {
+          id,
+        },
+        message: {
+          text: 'Party & Bullshit',
+        }
+      };
+
+      socket.on('connect', function() {
+        socket.send(JSON.stringify(message));
+      });
+
+      bot.once('update', function(update) {
+        expect(update.sender.id).to.equal(id);
+        socket.disconnect();
+        done();
+      });
+    });
+
+    specify('a client sending an attachment should work', function(done) {
       const socket = io('ws://localhost:4000');
 
       const attachments = [
@@ -117,7 +142,7 @@ describe('socketio Bot tests', function() {
       });
     });
 
-    it('developer can route message to other user if wanted without duplication', function(done) {
+    specify('developer can route message to other user if wanted without duplication', function(done) {
       const socketOne = io('ws://localhost:4000');
       const socketTwo = io('ws://localhost:4000');
       let connectedClientCount = 0;
