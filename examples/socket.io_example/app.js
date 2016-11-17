@@ -1,4 +1,4 @@
-const Botmaster = require('botmaster');
+const Botmaster = require('../../lib');
 const express = require('express');
 
 const socketioSettings = {

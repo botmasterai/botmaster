@@ -1,6 +1,8 @@
-// the following line could also be: "var socket = io('');"
-// if you know you are communicating with the same server that served you the page you are on
-var socket = io("ws://localhost:3000");
+// the following line could also be: "var socket = io('ws://localhost:3000?botmasterUserId=wantedUserId');"
+// or whatever other botmaster server you might want to connect to.
+// if you know you are communicating with the same server that served you the page you are on, you can
+// simplify it by only entering the query params.
+var socket = io('?botmasterUserId=wantedUserId');
 
 var form = document.getElementById('form');
 var textInput = document.getElementById('text-input');
@@ -21,14 +23,13 @@ form.onsubmit = function(event) {
     text: textInput.value,
   };
   // just send a stringified version of it over the webSocket
-  socket.send(JSON.stringify(message));
+  socket.send(message);
   // finally, clear the user textInput field
   textInput.value = '';
 };
 
 socket.on('message', function(botmasterMessage){
-  var messageObject = JSON.parse(botmasterMessage);
-  var textMessage = messageObject.message.text;
+  var textMessage = botmasterMessage.message.text;
 
   messages.insertAdjacentHTML('beforeend',
     `<li class="botmaster-message">${textMessage}</li>`);
