@@ -1,6 +1,6 @@
 ---
 date: 2016-11-04T01:04:24Z
-next: /working-with-botmaster
+next: /getting-started/webhooks
 prev: /getting-started/twitter-setup
 title: Telegram Setup
 toc: true

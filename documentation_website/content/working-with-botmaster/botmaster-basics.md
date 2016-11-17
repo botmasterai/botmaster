@@ -111,6 +111,9 @@ Bot objects are really the ones running the show in the Botmaster framework. You
 
 ```js
 const Botmaster = require('botmaster');
+const MessengerBot = Botmaster.botTypes.MessengerBot;
+.
+.
 const botmaster = new Botmaster();
 .
 . // full settings objects omitted for brevity
@@ -319,9 +322,9 @@ botmaster.on('update', (bot, update) => {
 });
 ```
 
-The method used is used directly from the bot object and not using the botmaster one.
+As you can see, the `sendMessage` method used is used directly from the bot object and not using the botmaster one.
 
-Because you might not always want to code in a complex json object just to send in a simple text message or photo attachment, Botmaster comes with a few methods that can be used to send messages with less code:
+Because you might not always want to code in a complex json object just to send in a simple text message or photo attachment, Botmaster comes with a few helper methods that can be used to send messages with less code:
 
 `bot.sendMessageTo`
 
@@ -349,7 +352,7 @@ botmaster.on('update', (bot, update) => {
 
 | Argument | Description
 |--- |---
-| update | and update object with a valid `update.sender.id`.
+| update | an update object with a valid `update.sender.id`.
 | text  | just a string with the text you want to send to your user
 
 This is is typically used like so:
@@ -360,18 +363,18 @@ botmaster.on('update', (bot, update) => {
 });
 ```
 
-### Attachments
+#### Attachments
 
 `bot.sendAttachmentTo`
 
-We'll note here really quickly that Messenger only takes in urls for file attachment (image, video, audio, file). Telegram doesn't support attachments in this way. So we fall back to sending the url in text. Same goes for Twitter that doesn't support attachments at all.
+We'll note here really quickly that Messenger only takes in urls for file attachment (image, video, audio, file). Most other platforms don't support sending attachments in this way. So we fall back to sending the url in text which really results in a very similar output. Same goes for Twitter that doesn't support attachments at all.
 
 | Argument | Description
 |--- |---
 | attachment | a valid Messenger style attachment. See [here](https://developers.facebook.com/docs/messenger-platform/send-api-reference) for more on that.
 | recipientId  | a string representing the id of the user to whom you want to send the message.
 
-This is the general attachment sending method that will always work for Messenger but not necessarily for other platforms. So beware when using it. To assure your attachment will be sent to all platforms, use `bot.sendAttachmentFromURLTo`.
+This is the general attachment sending method that will always work for Messenger but not necessarily for other platforms as Facebook Messenger supports all sorts of attachments that other platforms don't necessarily support. So beware when using it. To assure your attachment will be sent to all platforms, use `bot.sendAttachmentFromURLTo`.
 
 This is typically used as such for sending an image url.
 
@@ -389,7 +392,7 @@ botmaster.on('update', (bot, update) => {
 
 `bot.sendAttachmentFromURLTo`
 
-Just easier to use this to send standard url attachments:
+Just easier to use this to send standard url attachments. And URL attachments if used properly should work on all out-of-the-box platforms:
 
 | Argument | Description
 |--- |---
@@ -405,7 +408,7 @@ botmaster.on('update', (bot, update) => {
 });
 ```
 
-### Status
+#### Status
 
 `bot.sendIsTypingMessageTo`
 
@@ -426,7 +429,7 @@ botmaster.on('update', (bot, update) => {
 It will only send a request to the platforms that support it. If unsupported, nothing will happen.
 
 
-### Buttons
+#### Buttons
 
 Buttons will almost surely be part of your bot. Botmaster provides a method that will send what is assumed to be a decent way to display buttons throughout all platforms.
 
@@ -438,4 +441,60 @@ Buttons will almost surely be part of your bot. Botmaster provides a method that
 | recipientId  | a string representing the id of the user to whom you want to send the message.
 | textOrAttachment  | (__optional__) a string or an attachment object similar to the ones required in `bot.sendAttachmentTo`. This is meant to provide context to the buttons. I.e. why are there buttons here. A piece of text or an attachment could detail that. If not provided,  text will be added that reads: 'Please select one of:'.
 
-The function defaults to sending `quick_replies` in Messenger, setting `Keyboard buttons` in Telegram and simply prints button titles one on each line in Twitter as it doesn't support buttons. The user is expecting to type in their choice in Twitter.
+The function defaults to sending `quick_replies` in Messenger, setting `Keyboard buttons` in Telegram, buttons in Slack and simply prints button titles one on each line in Twitter as it doesn't support buttons. The user is expecting to type in their choice in Twitter. In the socketio implementation, the front-end/app developer is expected to write the code that would display the buttons on their front-end.
+
+## Using Botmaster with your own express() app
+
+Here's an example on how to do so:
+
+```js
+const express = require('express');
+const app = express();
+const port = 3000;
+
+const Botmaster = require('botmaster');
+
+const telegramSettings = {
+  credentials: {
+    authToken: process.env.TELEGRAM_TEST_TOKEN,
+  },
+  webhookEndpoint: '/webhook1234/',
+};
+
+const messengerSettings = {
+  credentials: {
+    verifyToken: process.env.MESSENGER_VERIFY_TOKEN,
+    pageToken: process.env.MESSENGER_PAGE_TOKEN,
+    fbAppSecret: process.env.FACEBOOK_APP_SECRET,
+  },
+  webhookEndpoint: '/webhook1234/',
+};
+
+const botsSettings = [{ telegram: telegramSettings },
+                      { messenger: messengerSettings }];
+
+const botmasterSettings = {
+  botsSettings: botsSettings,
+  app: app,
+}
+
+const botmaster = new Botmaster(botmasterSettings);
+
+botmaster.on('update', (bot, update) => {
+  bot.sendMessage({
+    recipient: {
+      id: update.sender.id,
+    },
+    message: {
+      text: 'Well right back at you!',
+    },
+  });
+});
+
+console.log(`Loading App`);
+// start server on the specified port and binding host
+app.listen(port, '0.0.0.0', () => {
+  // print a message when the server starts listening
+  console.log(`Running App on port: ${port}`);
+});
+```

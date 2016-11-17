@@ -7,12 +7,25 @@ title: CHANGELOG
 weight: 0
 ---
 
+### PATCH: 2.2.2
+
+This patch allows users to set the userId from a sender when using the bot socket.io class. socket now needs to be opened with something like this on the client side:
+
+```js
+var socket = io('?botmasterUserId=wantedUserId');
+```
+
+See updated Botmaster Socket.io bot mini-tutorial [here](/getting-started/socketio-setup/#botmaster-socket-io-bot-mini-tutorial)
+
 ### MINOR: Botmaster 2.2.0
 
 This minor release allows developers to create news instances of Botmaster without bots settings by writing something like:
 
 ```js
 const Botmaster = require('botmaster');
+const MessengerBot = Botmaster.botTypes.MessengerBot;
+.
+.
 const botmaster = new Botmaster();
 .
 . // full settings objects omitted for brevity

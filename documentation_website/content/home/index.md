@@ -3,7 +3,7 @@ chapter: false
 date: 2016-10-29T19:25:10+01:00
 icon: <i class="fa fa-home" aria-hidden="true"></i>
 next: /getting-started
-title: Botmaster v 2.1.1
+title: Botmaster v 2.2.2
 weight: 0
 ---
 

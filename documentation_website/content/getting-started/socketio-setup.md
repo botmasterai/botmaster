@@ -14,7 +14,7 @@ weight: 60
 const Botmaster = require('botmaster');
 
 const socketioSettings = {
-  id: 'SOME_ID_OF_YOUR_CHOOSING',
+  id: 'SOME_BOT_ID_OF_YOUR_CHOOSING',
 };
 
 const botsSettings = [{ socketio: socketioSettings }];
@@ -200,10 +200,12 @@ This is the exact look from the socket.io tutorial mentioned above (and mostly t
 Finally, in the `client_app.js` file, you should include the following:
 
 ```js
-// the following line could also be: "var socket = io('');"
+// the following line could also be: "var socket = io('ws://<URL>:<PORT_Number>?botmasterUserId=wantedUserId');"
 // if you know you will be communicating with a server different from the one that served you the page you are on
 // do something like this: io('ws://<URL>:<PORT_Number>');
-var socket = io('');
+// this only works because the socket.io library assumes with this syntax that the socket.io server
+// lives at the same address as the server that served this page (this should mostly be your case)
+var socket = io('?botmasterUserId=wantedUserId');
 
 // just get the html elements we will be needing by ID
 var form = document.getElementById('form');
@@ -241,6 +243,8 @@ socket.on('message', function(botmasterMessage){
 
 You should have a read through this code to make sure you understand it as that is the code communicating with our botmaster backend.
 
+On the first line, we call: `var socket = io('?botmasterUserId=wantedUserId');`. This effectively opens up a socket connection with our backend by making a request to something like this: `io('ws://localhost:3000?botmasterUserId=wantedUserId');`. Here as you can see, we are setting a query param called **botmasterUserId** to 'wantedUserId'. This is done because we want to make sure that when we are getting updates in our backend, the `update.sender.id` part will be what we set it to here and not anything else (by default the randomly allocated socket.id value). This is even more important when your users can connect from different clients and you want to make sure the botmaster reply is propagated to all the clients.
+
 In the `form.onsubmit` part, we make sure that the text contained in the input cell is correctly formatted then sent to botmaster via the websocket. We also make sure to display it in our page and to then clear the input.
 
 In the `socket.on('message')` part, we simply display the received message.
@@ -248,3 +252,24 @@ In the `socket.on('message')` part, we simply display the received message.
 Now that our code is here, simply go to your command line and run `node app.js`. If you now open a browser to 127.0.0.1:3000 you should be able to chat with your pretty useless (for now) bot. Just like this:
 
 ![Socket.io Setup 1](/images/socket.io_setup_1.png?width=90%)
+
+## Security
+
+You might be wondering how you can secure your Botmaster socket.io app. I.e. how can you make sure that a client connecting with a certain id really is who they claim they are. Well, this part is actually left to you, the developer to do. I didn't want to make any assumptions with regards to what people would want to use to secure their app. So what I do is expose the `socket.io` server object through the bot object. It can be accessed in the following way
+
+```js
+socketioBot.ioServer
+```
+
+Then you'll be able to register a middleware function to your socker.io server as such:
+
+```js
+socketioBot.ioServer.use((socket, next) => {
+  if (socket.request.headers.cookie) return next();
+  next(new Error('Authentication error'));
+});
+```
+
+This is shamelessly stolen from the socket.io documentation here: http://socket.io/docs/server-api/#namespace#use(fn:function):namespace
+
+This function will be executed every time there is an incoming socket connection. Indeed, no need to do so on every message as once the connection is made, all transfers are secured on the open socket. That's really the whole point of webSockets. 
