@@ -8,7 +8,7 @@ const io = require('socket.io-client');
 const SocketioBot = require('../../lib').botTypes.SocketioBot;
 const config = require('../config.js');
 
-describe('socketio Bot tests', function() {
+describe.only('socketio Bot tests', function() {
   const settings = {
     id: config.socketIoBotInfo.id,
   };
@@ -60,21 +60,7 @@ describe('socketio Bot tests', function() {
       });
 
       bot.once('error', function(err) {
-        err.message.should.equal(`ERROR: "Expected stringified JSON object but got 'Party & Bullshit' instead"`);
-        socket.disconnect();
-        done();
-      });
-    });
-
-    specify('a client sending a text message should go through', function(done) {
-      const socket = io("ws://localhost:4000");
-
-      socket.on('connect', function() {
-        socket.send(JSON.stringify({text: 'Party & Bullshit'}));
-      });
-
-      bot.once('update', function(update) {
-        expect(update.recipient.id).to.equal(config.socketIoBotInfo.id);
+        err.message.should.equal(`ERROR: "Expected JSON object but got 'string' Party & Bullshit instead"`);
         socket.disconnect();
         done();
       });
@@ -84,76 +70,157 @@ describe('socketio Bot tests', function() {
       const socket = io("ws://localhost:4000");
 
       socket.on('connect', function() {
-        socket.send(JSON.stringify({text: 'Party & Bullshit'}));
+        socket.send({text: 'Party & Bullshit'});
       });
 
       bot.once('update', function(update) {
         expect(update.recipient.id).to.equal(config.socketIoBotInfo.id);
+        bot.reply(update, update.message.text);
+      });
+
+      socket.on('message', function(message) {
+        expect(message.message.text).to.equal('Party & Bullshit');
         socket.disconnect();
         done();
       });
     });
 
-    specify('a client should be able to set the sender.id', function(done) {
-      const socket = io("ws://localhost:4000");
-
-      const id = 'some_random_id';
+    specify('a client should be able to set the botmasterUserId and find it ' +
+            'in the object and reply with success', function(done) {
+      const socket = io("ws://localhost:4000?botmasterUserId=something");
 
       const message = {
-        sender: {
-          id,
-        },
-        message: {
-          text: 'Party & Bullshit',
-        }
+        text: 'Party & Bullshit',
       };
 
       socket.on('connect', function() {
-        socket.send(JSON.stringify(message));
+        // expect(socket.io.opts.userId).to.equal('someUserId');
+        socket.send(message);
       });
 
       bot.once('update', function(update) {
-        expect(update.sender.id).to.equal(id);
+        expect(update.sender.id).to.equal('something');
+        bot.reply(update, 'Jelly');
+      });
+
+      socket.on('message', function(message) {
+        expect(message).not.to.equal(undefined);
         socket.disconnect();
         done();
       });
     });
 
-    specify('a client sending an attachment should work', function(done) {
-      const socket = io('ws://localhost:4000');
+    specify('two clients with the same botmasterUserId should receive ' +
+            'the same answer from botmaster', function(done) {
+      const socketOne = io('ws://localhost:4000?botmasterUserId=userId1');
+      const socketTwo = io('ws://localhost:4000?botmasterUserId=userId1');
+      let connectedClientCount = 0;
+      let gotMessageCount = 0;
 
-      const attachments = [
-        {
-          type: 'image',
-          payload: {
-            url: 'https://raw.githubusercontent.com/ttezel/twit/master/tests/img/bigbird.jpg'
-          }
+      bot.once('update', function(update) {
+        bot.reply(update, update.message.text);
+      });
+
+      const verifBothReceived = function verifBothReceived(message) {
+        expect(message.message.text).to.equal("Party & Bullshit");
+        ++gotMessageCount;
+        if (gotMessageCount === 2) {
+          socketOne.disconnect();
+          socketTwo.disconnect();
+          done();
         }
-      ];
+      };
 
-      socket.on('connect', function() {
-        socket.send(JSON.stringify({attachments: attachments}));
-      });
+      const trySendMessage = function trySendMessage() {
+        ++connectedClientCount;
+        if (connectedClientCount === 2) {
+          socketOne.send({text: "Party & Bullshit"});
+        }
+      };
 
-      bot.once('update', function(update) {
-        expect(update.recipient.id).to.equal(config.socketIoBotInfo.id);
-        socket.disconnect();
+      socketOne.on('message', verifBothReceived);
+      socketTwo.on('message', verifBothReceived);
+
+      socketOne.on('connect', trySendMessage);
+      socketTwo.on('connect', trySendMessage);
+    });
+
+    specify('The non-sender of two clients with the same botmasterUserId' +
+            ' should receive the "own message" event', function(done) {
+      const socketOne = io('ws://localhost:4000?botmasterUserId=userId1');
+      const socketTwo = io('ws://localhost:4000?botmasterUserId=userId1');
+      let connectedClientCount = 0;
+
+      const trySendMessage = function trySendMessage() {
+        ++connectedClientCount;
+        if (connectedClientCount === 2) {
+          socketOne.send({text: "Party & Bullshit"});
+        }
+      };
+
+      socketOne.on('connect', trySendMessage);
+      socketTwo.on('connect', trySendMessage);
+
+      socketTwo.on('own message', function(message) {
+        expect(message.text).to.equal("Party & Bullshit");
+        socketOne.disconnect();
+        socketTwo.disconnect();
         done();
       });
     });
 
-    specify('developer can route message to other user if wanted without duplication', function(done) {
-      const socketOne = io('ws://localhost:4000');
-      const socketTwo = io('ws://localhost:4000');
+    specify('Only the remaining connected client of two clients with the ' +
+            'same botmasterUserId should receive the update after one disconnected', function(done) {
+      const socketOne = io('ws://localhost:4000?botmasterUserId=userId1');
+      const socketTwo = io('ws://localhost:4000?botmasterUserId=userId1');
       let connectedClientCount = 0;
 
       bot.once('update', function(update) {
-        bot.sendTextMessageTo(update.message.text, socketTwo.id);
+        bot.reply(update, update.message.text);
       });
 
       socketTwo.on('message', function(msg) {
         // timeout to make sure we don't enter socketOne.on('message')
-        expect(JSON.parse(msg).message.text).to.equal("Party & Bullshit");
+        expect(msg.message.text).to.equal("Party & Bullshit");
+        setTimeout(function() {
+          socketOne.disconnect();
+          socketTwo.disconnect();
+          done();
+        }, 150);
+      });
+
+      socketOne.on('message', function() {
+        // this should never be reached
+        expect(1 === 2);
+      });
+
+      const tryDisconnectSocketTwo = function tryDisconnectSocketTwo() {
+        ++connectedClientCount;
+        if (connectedClientCount === 2) {
+          socketOne.disconnect();
+        }
+      };
+
+      socketOne.on('connect', tryDisconnectSocketTwo);
+      socketTwo.on('connect', tryDisconnectSocketTwo);
+
+      socketOne.on('disconnect', function() {
+        socketTwo.send({text: "Party & Bullshit"});
+      });
+    });
+
+    specify('developer can route message to other user if wanted without duplication', function(done) {
+      const socketOne = io('ws://localhost:4000?botmasterUserId=userId1');
+      const socketTwo = io('ws://localhost:4000?botmasterUserId=userId2');
+      let connectedClientCount = 0;
+
+      bot.once('update', function(update) {
+        bot.sendTextMessageTo(update.message.text, 'userId2');
+      });
+
+      socketTwo.on('message', function(msg) {
+        // timeout to make sure we don't enter socketOne.on('message')
+        expect(msg.message.text).to.equal("Party & Bullshit");
         setTimeout(function() {
           socketOne.disconnect();
           socketTwo.disconnect();
@@ -169,13 +236,35 @@ describe('socketio Bot tests', function() {
       const trySendMessage = function trySendMessage() {
         ++connectedClientCount;
         if (connectedClientCount === 2) {
-          socketOne.send(JSON.stringify({text: "Party & Bullshit"}));
+          socketOne.send({text: "Party & Bullshit"});
         }
       };
 
       socketOne.on('connect', trySendMessage);
       socketTwo.on('connect', trySendMessage);
+    });
 
+    specify('a client sending an attachment should work', function(done) {
+      const socket = io('ws://localhost:4000');
+
+      const attachments = [
+        {
+          type: 'image',
+          payload: {
+            url: 'https://raw.githubusercontent.com/ttezel/twit/master/tests/img/bigbird.jpg'
+          }
+        }
+      ];
+
+      socket.on('connect', function() {
+        socket.send({attachments: attachments});
+      });
+
+      bot.once('update', function(update) {
+        expect(update.recipient.id).to.equal(config.socketIoBotInfo.id);
+        socket.disconnect();
+        done();
+      });
     });
   });
 
