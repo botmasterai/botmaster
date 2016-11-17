@@ -8,7 +8,7 @@ const io = require('socket.io-client');
 const SocketioBot = require('../../lib').botTypes.SocketioBot;
 const config = require('../config.js');
 
-describe.only('socketio Bot tests', function() {
+describe('socketio Bot tests', function() {
   const settings = {
     id: config.socketIoBotInfo.id,
   };
