@@ -1,7 +1,7 @@
 ---
 date: 2016-11-17T18:16:51Z
-next: /next/path
-prev: /prev/path
+next: /tutorials
+prev: /working-with-botmaster/botmaster-basics
 title: Writing your Own Bot Class
 toc: true
 weight: 20
@@ -254,7 +254,7 @@ Your function should return the update object(or a promise that resolves a forma
 
 ### `#__emitUpdate(update)`
 
-Like `__applySettings`, this method is implemented in `BaseBot`. It handles errors, calling the `incoming` middleware stack, and most importantly, actually calling `this.emit(update)` to emit the actual update. You can overwrite this method is you wish, but in its current state, it handles the most important cases you will want to deal with. You will however need to call it with your formatted update object as a parameter in order to actually get the update object in a `bot.on('update', callback)` block.
+Like `__applySettings`, this method is implemented in `BaseBot`. It handles errors, calling the `incoming` middleware stack, and most importantly, actually calling `this.emit(update)` to emit the actual update. You can overwrite this method if you wish, but in its current state, it handles the most important cases you will want to deal with. You will however need to call it with your formatted update object as a parameter in order to actually get the update object in a `bot.on('update', callback)` block.
 
 ### `#__sendMessage(message)`
 
@@ -269,6 +269,8 @@ The `__sendMessage` method needs to be implemented. The method should take in a 
    message_id: <message_id_of_what_was_just_sent>
   }
  ```
+
+ It is important that this be a promise and not a callback. Although developers using Botmaster can use `sendMessage` type methods with callbacks. The internals of Botmaster use Promises and therefore, so should your bot class.
 
 Please note that the `BaseBot` superclass defines a set of methods that allow developers to more easily send messages to all platforms without having to build the whole Messenger compatible object themselves. These methods are the following:
 

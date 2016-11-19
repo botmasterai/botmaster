@@ -1,6 +1,6 @@
 ---
 date: 2016-11-04T01:31:15Z
-next: /working-with-botmaster/path
+next: /working-with-botmaster/writing-your-own-bot-class
 prev: /working-with-botmaster
 title: Botmaster Basics
 toc: true

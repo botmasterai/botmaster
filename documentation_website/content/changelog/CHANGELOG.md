@@ -2,7 +2,7 @@
 chapter: false
 date: 2016-10-29T19:55:42+01:00
 icon: <i class="fa fa-list" aria-hidden="true"></i>
-prev: /tutorials
+prev: /other-articles/botmaster-or-botkit
 title: CHANGELOG
 weight: 0
 ---

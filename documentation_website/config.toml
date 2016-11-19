@@ -15,4 +15,9 @@ googleAnalytics = ""
 	copyright = "MIT"
 	editURL = "https://github.com/jdwuarin/botmaster/tree/gh-pages/documentation_website/content/"
 	search = true
-	menu = [ "home", "getting-started", "working-with-botmaster", "tutorials", "changelog"]
+	menu = [ "home",
+					 "getting-started",
+					 "working-with-botmaster",
+					 "tutorials",
+					 "other-articles",
+					 "changelog"]
