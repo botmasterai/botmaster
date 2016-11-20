@@ -1,6 +1,7 @@
 # baseurl = "http://jdwuarin.github.io/botmaster/"
-baseurl = "http://www.example.com/"
+baseurl = "https://jdwuarin.github.io/botmaster/"
 languageCode = "en-us"
+publishdir = "public"
 title = "Botmaster Documentation"
 theme = "hugo-theme-learn"
 metadataformat = "yaml"
