@@ -1,4 +1,3 @@
-# baseurl = "http://jdwuarin.github.io/botmaster/"
 baseurl = "https://jdwuarin.github.io/botmaster/"
 languageCode = "en-us"
 publishdir = "public"
