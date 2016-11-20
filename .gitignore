@@ -26,4 +26,5 @@ jsconfig.json
 coverage
 
 _site
-documentation_website
+documentation_website/node_modules
+documentation_website/themes
