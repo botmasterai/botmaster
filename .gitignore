@@ -1,0 +1,31 @@
+# Folder view configuration files
+.DS_Store
+Desktop.ini
+
+# Thumbnail cache files
+._*
+Thumbs.db
+
+# Files that might appear on external disks
+.Spotlight-V100
+.Trashes
+
+example_jd.js
+tests
+
+# Application specific files
+node_modules
+npm-debug.log
+.sass-cache
+
+/logs
+slack_teams_info
+jsconfig.json
+.vscode
+coverage
+
+_site
+.sass-cache
+documentation_website/themes
+documentation_website/public
+documentation_website/node_modules
