@@ -11,8 +11,7 @@ Thumbs.db
 .Trashes
 
 example_jd.js
-testing_creds.md
-tests/config.js
+tests
 
 # Application specific files
 node_modules
@@ -26,5 +25,7 @@ jsconfig.json
 coverage
 
 _site
-documentation_website/node_modules
+.sass-cache
 documentation_website/themes
+documentation_website/public
+documentation_website/node_modules
