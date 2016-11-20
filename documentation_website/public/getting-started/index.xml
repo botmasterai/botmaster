@@ -1,0 +1,877 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Getting-started-rsses on Botmaster Documentation</title>
+    <link>https://jdwuarin.github.io/botmaster/getting-started/index.xml</link>
+    <description>Recent content in Getting-started-rsses on Botmaster Documentation</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>MIT</copyright>
+    <lastBuildDate>Sat, 29 Oct 2016 17:09:45 +0100</lastBuildDate>
+    <atom:link href="https://jdwuarin.github.io/botmaster/getting-started/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Getting started</title>
+      <link>https://jdwuarin.github.io/botmaster/getting-started/</link>
+      <pubDate>Sat, 29 Oct 2016 17:09:45 +0100</pubDate>
+      
+      <guid>https://jdwuarin.github.io/botmaster/getting-started/</guid>
+      <description>
+
+&lt;h1 id=&#34;getting-started&#34;&gt;GETTING STARTED&lt;/h1&gt;
+
+&lt;h3 id=&#34;installation-installation&#34;&gt;&lt;a href=&#34;installation&#34;&gt;Installation&lt;/a&gt;&lt;/h3&gt;
+
+&lt;h3 id=&#34;quickstart-quickstart&#34;&gt;&lt;a href=&#34;quickstart&#34;&gt;Quickstart&lt;/a&gt;&lt;/h3&gt;
+
+&lt;h3 id=&#34;getting-set-up-getting-set-up&#34;&gt;&lt;a href=&#34;getting-set-up&#34;&gt;Getting set up&lt;/a&gt;&lt;/h3&gt;
+
+&lt;h3 id=&#34;facebook-messenger-setup-messenger-setup&#34;&gt;&lt;a href=&#34;messenger-setup&#34;&gt;Facebook Messenger Setup&lt;/a&gt;&lt;/h3&gt;
+
+&lt;h3 id=&#34;slack-setup-slack-setup&#34;&gt;&lt;a href=&#34;slack-setup&#34;&gt;Slack Setup&lt;/a&gt;&lt;/h3&gt;
+
+&lt;h3 id=&#34;socket-io-setup-socketio-setup&#34;&gt;&lt;a href=&#34;socketio-setup&#34;&gt;Socket.io Setup&lt;/a&gt;&lt;/h3&gt;
+
+&lt;h3 id=&#34;twitter-setup-twitter-setup&#34;&gt;&lt;a href=&#34;twitter-setup&#34;&gt;Twitter Setup&lt;/a&gt;&lt;/h3&gt;
+
+&lt;h3 id=&#34;telegram-setup-telegram-setup&#34;&gt;&lt;a href=&#34;telegram-setup&#34;&gt;Telegram setup&lt;/a&gt;&lt;/h3&gt;
+
+&lt;h3 id=&#34;webhooks-webhooks&#34;&gt;&lt;a href=&#34;webhooks&#34;&gt;Webhooks&lt;/a&gt;&lt;/h3&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Installation</title>
+      <link>https://jdwuarin.github.io/botmaster/getting-started/installation/</link>
+      <pubDate>Mon, 31 Oct 2016 18:46:54 +0000</pubDate>
+      
+      <guid>https://jdwuarin.github.io/botmaster/getting-started/installation/</guid>
+      <description>&lt;p&gt;Make sure you have &lt;a href=&#34;https://nodejs.org/en/&#34;&gt;Node.js&lt;/a&gt; and npm installed on your machine. If you don&amp;rsquo;t, I recommend using nvm to manage your node versions. Find out more about it &lt;a href=&#34;https://github.com/creationix/nvm/blob/master/README.markdown&#34;&gt;here&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Once you have node, create a new project directory and go into it:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mkdir my_botmaster_project &amp;amp;&amp;amp; cd my_botmaster_project
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Make sure you initialize a node project in the new directory and going through the prompt by doing:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;npm init
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Finally, install the botmaster npm package.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;npm install --save botmaster
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;That should do!&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Quickstart</title>
+      <link>https://jdwuarin.github.io/botmaster/getting-started/quickstart/</link>
+      <pubDate>Mon, 31 Oct 2016 21:39:47 +0000</pubDate>
+      
+      <guid>https://jdwuarin.github.io/botmaster/getting-started/quickstart/</guid>
+      <description>&lt;p&gt;If you already know your credentials for the platforms you want to be supporting in your project the following code will help you get started&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;
+// settings stuff
+const Botmaster = require(&#39;botmaster&#39;);
+
+const messengerSettings = {
+  credentials: {
+    verifyToken: &#39;YOUR verifyToken&#39;,
+    pageToken: &#39;YOUR pageToken&#39;,
+    fbAppSecret: &#39;YOUR fbAppSecret&#39;,
+  },
+  webhookEndpoint: &#39;/webhook1234&#39;, // botmaster will mount this webhook on https://Your_Domain_Name/messenger/webhook1234
+};
+
+const twitterSettings = {
+  credentials: {
+    consumerKey: &#39;YOUR consumerKey&#39;,
+    consumerSecret: &#39;YOUR consumerSecret&#39;,
+    accessToken: &#39;YOUR accessToken&#39;,
+    accessTokenSecret: &#39;YOUR accessTokenSecret&#39;,
+  }
+}
+
+const telegramSettings = {
+  credentials: {
+    authToken: &#39;YOUR authToken&#39;,
+  },
+  webhookEndpoint: &#39;/webhook1234/&#39;,
+};
+
+const slackSettings = {
+  credentials: {
+    clientId: &#39;YOUR app client ID&#39;,
+    clientSecret: &#39;YOUR app client secret&#39;,
+    verificationToken: &#39;YOUR app verification Token&#39;,
+    landingPageURL: &#39;YOUR landing page URL&#39; // users will be redirected there after adding your bot app to slack. If not set, they will be redirected to their standard slack chats.
+  },
+  webhookEndpoint: &#39;/webhook&#39;,
+  storeTeamInfoInFile: true,
+};
+
+const socketioSettings = {
+  id: &#39;SOME_ID_OF_YOUR_CHOOSING&#39;,
+};
+
+const botsSettings = [{ telegram: telegramSettings },
+                      { messenger: messengerSettings },
+                      { twitter: twitterSettings },
+                      { slack: slackSettings },
+                      { socketio: socketioSettings }];
+
+const botmasterSettings = {
+  botsSettings: botsSettings,
+  // by default botmaster will start an express server that listens on port 3000
+  // you can pass in a port argument here to change this default setting:
+  port: 3001,
+}
+
+const botmaster = new Botmaster(botmasterSettings);
+
+// actual code
+botmaster.on(&#39;update&#39;, (bot, update) =&amp;gt; {
+  bot.sendTextMessageTo(&#39;Right back at you!&#39;, update.sender.id);
+});
+
+botmaster.on(&#39;error&#39;, (bot, err) =&amp;gt; {
+  console.log(err.stack);
+  console.log(&#39;there was an error&#39;);
+});
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Getting set up</title>
+      <link>https://jdwuarin.github.io/botmaster/getting-started/getting-set-up/</link>
+      <pubDate>Mon, 31 Oct 2016 22:33:42 +0000</pubDate>
+      
+      <guid>https://jdwuarin.github.io/botmaster/getting-started/getting-set-up/</guid>
+      <description>&lt;p&gt;In order to instantiate a &lt;code&gt;Botmaster&lt;/code&gt; object, you need to pass it some settings in the form of an object. These settings look like this.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;const botmasterSettings = {
+  botsSettings: botsSettings, // see below for a definition of botsSettings
+  app: app, // optional, an express app object if you are running your own server
+  server: server, // optional, an http server object (used if using socket.io)
+  port: port, // optional, only used if &amp;quot;app&amp;quot; is not defined. Defaults t0 3000 in that case
+  sessionStore: sessionStore // optional. Define if you will be dealing with sessions
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;See &lt;a href=&#34;https://jdwuarin.github.io/botmaster/working-with-botmaster&#34;&gt;Working with Botmaster&lt;/a&gt; for a more formal definition&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;botsSettings&lt;/code&gt; look something like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;const botsSettings = [{ messenger: messengerSettings },
+                      { twitter: twitterSettings },
+                      { twitter: otherTwitterSettings }];
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I.e. it is an array of single key objects. Where you specify the &lt;strong&gt;type as the key&lt;/strong&gt; of each object and the &lt;strong&gt;settings as the value&lt;/strong&gt;. Here I show that you can define multiple bots of the same type at once (twitter ones in this example). As you surely guessed, each different platform will expect different credentials. So platform specific settings will differ.&lt;/p&gt;
+
+&lt;p&gt;Once you have those &lt;code&gt;botmasterSettings&lt;/code&gt;, you can go on and instantiate a &lt;code&gt;Botmaster&lt;/code&gt; object. This looks something like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;const botmaster = new Botmaster(botmasterSettings);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now, I know what you&amp;rsquo;re thinking: &amp;ldquo;but how do I get these &lt;code&gt;messengerSettings&lt;/code&gt; and &lt;code&gt;twitterSettings&lt;/code&gt; or other ones?&amp;rdquo; Well, I cover all of those in the following pages.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Facebook Messenger Setup</title>
+      <link>https://jdwuarin.github.io/botmaster/getting-started/messenger-setup/</link>
+      <pubDate>Mon, 31 Oct 2016 22:24:20 +0000</pubDate>
+      
+      <guid>https://jdwuarin.github.io/botmaster/getting-started/messenger-setup/</guid>
+      <description>
+
+&lt;h2 id=&#34;code&#34;&gt;Code&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;const Botmaster = require(&#39;botmaster&#39;);
+
+const messengerSettings = {
+  credentials: {
+    verifyToken: &#39;YOUR verifyToken&#39;,
+    pageToken: &#39;YOUR pageToken&#39;,
+    fbAppSecret: &#39;YOUR fbAppSecret&#39;,
+  },
+  webhookEndpoint: &#39;/webhook1234&#39;,
+};
+
+const botsSettings = [{ messenger: messengerSettings }];
+
+const botmaster = new Botmaster({ botsSettings });
+
+botmaster.on(&#39;update&#39;, (bot, update) =&amp;gt; {
+  bot.reply(update, &#39;Right back at you&#39;);
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;getting-your-credentials&#34;&gt;Getting your Credentials&lt;/h2&gt;
+
+&lt;p&gt;If you don&amp;rsquo;t already have these, follow the steps &lt;strong&gt;1-4&lt;/strong&gt; on the Facebook Messenger guide:
+&lt;a href=&#34;https://developers.facebook.com/docs/messenger-platform/guides/quick-start&#34;&gt;https://developers.facebook.com/docs/messenger-platform/guides/quick-start&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;In &lt;strong&gt;step 2&lt;/strong&gt;, where you setup your webhook, no need to code anything. Just specify the webhook, enter any secure string you want as a verify token(&lt;code&gt;verifyToken&lt;/code&gt;) and copy that value in the settings object. Also, click on whichever message [those are &amp;ldquo;update&amp;rdquo;s using botmaster semantics] type you want to receive from Messenger (&lt;code&gt;message_deliveries&lt;/code&gt;, &lt;code&gt;messages&lt;/code&gt;, &lt;code&gt;message_postbacks&lt;/code&gt; etc&amp;hellip;).&lt;/p&gt;
+
+&lt;p&gt;To find your Facebook App Secret (&lt;code&gt;fbAppSecret&lt;/code&gt;), navigate to your apps dashboard and under &lt;code&gt;App Secret&lt;/code&gt; click show, enter your password if prompted and then there it is.&lt;/p&gt;
+
+&lt;h2 id=&#34;webhooks&#34;&gt;Webhooks&lt;/h2&gt;
+
+&lt;div class=&#34;notices note&#34; &gt;&lt;p&gt;If you are not too sure how webhooks work and/or how to get them to run locally, go to &lt;a href=&#34;https://jdwuarin.github.io/botmaster/getting-started/webhooks&#34;&gt;webhooks&lt;/a&gt; to read some more.&lt;/p&gt;
+&lt;/div&gt;
+
+</description>
+    </item>
+    
+    <item>
+      <title>Slack Setup</title>
+      <link>https://jdwuarin.github.io/botmaster/getting-started/slack-setup/</link>
+      <pubDate>Mon, 31 Oct 2016 23:01:53 +0000</pubDate>
+      
+      <guid>https://jdwuarin.github.io/botmaster/getting-started/slack-setup/</guid>
+      <description>
+
+&lt;h2 id=&#34;code&#34;&gt;Code&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;const Botmaster = require(&#39;botmaster&#39;);
+
+const slackSettings = {
+  credentials: {
+    clientId: &#39;YOUR app client ID&#39;,
+    clientSecret: &#39;YOUR app client secret&#39;,
+    verificationToken: &#39;YOUR app verification Token&#39;
+  },
+  webhookEndpoint: &#39;/webhookd24sr34se&#39;,
+  storeTeamInfoInFile: true,
+};
+
+const botsSettings = [{ slack: slackSettings }];
+
+const botmaster = new Botmaster({ botsSettings });
+
+botmaster.on(&#39;update&#39;, (bot, update) =&amp;gt; {
+  bot.reply(update, &#39;Right back at you&#39;);
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;the-botmaster-slack-bot&#34;&gt;The Botmaster Slack bot&lt;/h2&gt;
+
+&lt;p&gt;Because Slack works slightly differently from the other platforms covered in the core Botmaster package, I will briefly explain here what your botmaster Slack bot will be exactly.&lt;/p&gt;
+
+&lt;p&gt;As you surely know, Slack is a product that enables team members to communicate easily with one another. because of that, one team member can&amp;rsquo;t just &amp;ldquo;add&amp;rdquo; a bot for herself in the same way one would in Facebook Messenger or Telegram or other.&lt;/p&gt;
+
+&lt;p&gt;Teams can either build a bot that will only live within their own slack team. Or they can package a bot in a Slack app that &amp;ldquo;packages&amp;rdquo; the bot.
+Admin team members can add support for a bot (by installing an App that packages said bot) and then team members can start communicating with it as they would with another team member. At this point, they would be communicating with what is known as, in Slack semantics, a &lt;strong&gt;bot user&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;slackSettings&lt;/code&gt; object is required to allow us to communicate to end users via this &lt;strong&gt;bot user&lt;/strong&gt; that needs to be set up on Slack&amp;rsquo;s end.&lt;/p&gt;
+
+&lt;h2 id=&#34;botmaster-slack-bot-mini-tutorial&#34;&gt;Botmaster Slack bot mini-tutorial&lt;/h2&gt;
+
+&lt;p&gt;Following these steps, you will have a fully functional Slack bot using botmaster that can then be edited as wanted. This mini-tutorial uses localtunnel to expose one of your ports to the world. see why you might want to use this and how to install and setup localtunnel &lt;a href=&#34;https://jdwuarin.github.io/botmaster/getting-started/webhooks#localtunnel&#34;&gt;here&lt;/a&gt;for your local botmaster project. You can use ngrok or any other service you know or find suitable and achieve the same result.&lt;/p&gt;
+
+&lt;h4 id=&#34;create-an-app&#34;&gt;Create an app&lt;/h4&gt;
+
+&lt;p&gt;Navigate to: &lt;a href=&#34;https://api.slack.com/apps&#34;&gt;https://api.slack.com/apps&lt;/a&gt; and make sure you are signed in. If you aren&amp;rsquo;t you will be redirected to your team&amp;rsquo;s slack once logged in and will need to go back to the mentioned link.&lt;/p&gt;
+
+&lt;p&gt;Click the &lt;strong&gt;create new App&lt;/strong&gt; button and enter any App Name you want. This won&amp;rsquo;t be the name of the &lt;strong&gt;bot user&lt;/strong&gt;. However, the name should ideally be related to your bot user so as not to confuse your users. For instance, if your bot user will be called &lt;em&gt;my_super_bot&lt;/em&gt;, calling the app something like &lt;em&gt;My Super Bot App&lt;/em&gt; would make sense.&lt;/p&gt;
+
+&lt;h4 id=&#34;get-your-first-credentials&#34;&gt;Get your first credentials&lt;/h4&gt;
+
+&lt;p&gt;On this page you were redirected to, you will find an &lt;em&gt;App credentials&lt;/em&gt; section. Both your Client ID (&lt;code&gt;clientId&lt;/code&gt; in Botmaster) and your Client Secret (&lt;code&gt;clientSecret&lt;/code&gt; in Botmaster) are here. Take note of them.&lt;/p&gt;
+
+&lt;h4 id=&#34;setup-your-app-s-oauth-webhook&#34;&gt;Setup Your App&amp;rsquo;s OAuth Webhook&lt;/h4&gt;
+
+&lt;p&gt;You don&amp;rsquo;t need to know anything about OAuth to complete this step. Just know that this URL will be called when people are installing/authorizing your app.&lt;/p&gt;
+
+&lt;p&gt;In the left panel, click on the &lt;strong&gt;OAuth &amp;amp; Permissions&lt;/strong&gt; tab and enter your webhook in the &lt;strong&gt;Redirect URL(s)&lt;/strong&gt; field as shown here:
+    &lt;img src=&#34;https://jdwuarin.github.io/botmaster/images/slack_setup_1.png?width=90%&#34; alt=&#34;Slack Setup 1&#34; /&gt;
+This URL has to be of the form: &lt;strong&gt;https://&amp;lt;your_base_url&amp;gt;/slack/&amp;lt;webhookEndpoint&amp;gt;&lt;/strong&gt;. For example, &lt;strong&gt;if&lt;/strong&gt; I am using localtunnel to test the bot locally, and started localtunnel by running the following:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;  lt -p 3000 -s botmastersubdomain
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I would set my Redirect URL(s) to: &lt;code&gt;https://botmastersubdomain.localtunnel.me/slack/webhookd24sr34se&lt;/code&gt; (based on the &lt;code&gt;webhookEnpoint&lt;/code&gt; set in my &lt;code&gt;slackSettings&lt;/code&gt; at the top of this page). Click on &lt;strong&gt;Save Changes&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h4 id=&#34;add-a-bot-user&#34;&gt;Add a Bot User&lt;/h4&gt;
+
+&lt;p&gt;Go to &lt;strong&gt;Bot Users&lt;/strong&gt; and click on the &lt;strong&gt;Add a Bot User&lt;/strong&gt; button. Select a name for your bot (e.g. my_super_bot) and click the &lt;strong&gt;Add Bot User&lt;/strong&gt; button.&lt;/p&gt;
+
+&lt;h4 id=&#34;get-the-rest-of-your-credentials&#34;&gt;Get the rest of your credentials&lt;/h4&gt;
+
+&lt;p&gt;Navigate to the &lt;strong&gt;Event Subscriptions&lt;/strong&gt; tab and click on the toggle button in the to right corner to &lt;strong&gt;on&lt;/strong&gt;. Then in the &lt;strong&gt;Request URL&lt;/strong&gt; field that pops up, enter the same URL as in step 4. &lt;strong&gt;You will get an error&lt;/strong&gt;. This is normal and is due to two reasons. Firstly, we don&amp;rsquo;t actually have an app started and listening at the mentioned URL and secondly because even if we did, we don&amp;rsquo;t have our App&amp;rsquo;s verification Token. Let&amp;rsquo;s fix this!&lt;/p&gt;
+
+&lt;p&gt;Navigate back to &lt;strong&gt;Basic Information&lt;/strong&gt; and note that you now have a &lt;strong&gt;Verification Token&lt;/strong&gt; in the App Credentials box. Take note of it.&lt;/p&gt;
+
+&lt;h4 id=&#34;start-your-botmaster-app-locally&#34;&gt;Start your Botmaster App Locally&lt;/h4&gt;
+
+&lt;p&gt;Start your botmaster app in any project folder you might want (see &lt;a href=&#34;https://jdwuarin.github.io/botmaster/getting-started/installation&#34;&gt;here&lt;/a&gt; if you haven&amp;rsquo;t installed botmaster yet). To start the botmaster project, you&amp;rsquo;ll want to create an &lt;code&gt;app.js&lt;/code&gt; file with the contents from the &lt;a href=&#34;http://localhost:1313/getting-started/slack-setup/#code&#34;&gt;code&lt;/a&gt; at the top of this page in the root of your project folder. Replace the credentials with the ones you have gathered. Run &lt;code&gt;node app.js&lt;/code&gt; to start the app. Let&amp;rsquo;s now expose out bot to the world.&lt;/p&gt;
+
+&lt;p&gt;For the webhook to work locally, you&amp;rsquo;ll now need to make sure you&amp;rsquo;ve started localtunnel. If you are doing all of that from a server that already has a Domain Name, you won&amp;rsquo;t need to do this. But I am assuming most people are doing this from their local computer. so in the command line, run something like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;lt -p 3000 -s &amp;lt;wanted_base_url_for_your_bot&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;setup-your-app-s-events-and-events-webhook&#34;&gt;Setup Your App&amp;rsquo;s Events and Events Webhook&lt;/h4&gt;
+
+&lt;p&gt;Go back to the &lt;strong&gt;Event subscription&lt;/strong&gt; page and enter your webhook url again. This should now work and look something like this: &lt;img src=&#34;https://jdwuarin.github.io/botmaster/images/slack_setup_2.png?width=90%&#34; alt=&#34;Slack Setup 2&#34; /&gt; Scroll down and click on &lt;strong&gt;Add Bot User Events&lt;/strong&gt;. At the minimum, add the following events:
+    * message.ipm
+    * message.channels
+    * message.im
+    * message.groups
+Click &lt;strong&gt;Save Changes&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;install-your-slack-app&#34;&gt;Install your Slack App&lt;/h4&gt;
+
+&lt;p&gt;We&amp;rsquo;re almost done here. We need a way to install our app to test it out. This is done via what is called a &lt;strong&gt;Slack button&lt;/strong&gt;. because botmaster manages all the nitty-gritty parts of this process, all you need to do is create a &lt;code&gt;views&lt;/code&gt; folder in your project folder and create an &lt;code&gt;index.html&lt;/code&gt; file in this views folder with the following contents&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;&amp;lt;a href=&amp;quot;https://slack.com/oauth/authorize?scope=bot&amp;amp;client_id=YOUR_APP_CLIENT_ID&amp;quot;&amp;gt;
+  &amp;lt;img alt=&amp;quot;Add to Slack&amp;quot; height=&amp;quot;40&amp;quot; width=&amp;quot;139&amp;quot;
+  src=&amp;quot;https://platform.slack-edge.com/img/add_to_slack.png&amp;quot;
+  srcset=&amp;quot;https://platform.slack-edge.com/img/add_to_slack.png 1x,
+          https://platform.slack-edge.com/img/add_to_slack@2x.png 2x&amp;quot; /&amp;gt;
+&amp;lt;/a&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Note that you&amp;rsquo;ll need to replace &lt;strong&gt;YOUR_APP_CLIENT_ID&lt;/strong&gt; in the href with your own. You definitely don&amp;rsquo;t want to put in your client secret here!&lt;/p&gt;
+
+&lt;h4 id=&#34;try-out-your-bot&#34;&gt;Try out your bot!&lt;/h4&gt;
+
+&lt;p&gt;Assuming your botmaster app and localtunnel are still running, open your &lt;code&gt;index.html&lt;/code&gt; file (not in a text editor, but actually in a browser) by double clicking on it. Authorize your newly created app to add it to your team. You should now be redirected to your teams slack and be able to chat to your bot.&lt;/p&gt;
+
+&lt;h4 id=&#34;make-your-bot-available-to-the-world&#34;&gt;Make your Bot Available to the World&lt;/h4&gt;
+
+&lt;p&gt;You might actually want to allow others to install your app by using the Slack Button. However, to do so you will need to host it somewhere. We&amp;rsquo;ll take advantage of the fact that botmaster uses express.js under the hood and edit our app.js file to look like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;const Botmaster = require(&#39;botmaster&#39;);
+const express = require(&#39;express&#39;); // added
+.
+.
+.
+const botmaster = new Botmaster({ botsSettings });
+botmaster.app.use(express.static(__dirname + &#39;/views&#39;)); //added
+// or if you don&#39;t want it at the root of your app, add this:
+botmaster.app.use(&#39;/slack&#39;, express.static(__dirname + &#39;/views&#39;)); // added
+
+botmaster.on(&#39;update&#39;, (bot, update) =&amp;gt; {
+  bot.reply(update, &#39;Right back at you&#39;);
+});
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Make sure to add either one of the &lt;code&gt;botmaster.app.use...&lt;/code&gt; lines.
+If you pick the first one, navigate to your URL (&lt;code&gt;https://botmastersubdomain.localtunnel.me/&lt;/code&gt; for this example) and you will see the button.
+If your pick the second one, navigate to your sub URL (&lt;code&gt;https://botmastersubdomain.localtunnel.me/slack&lt;/code&gt; for this example) to see the Slack button.&lt;/p&gt;
+
+&lt;h2 id=&#34;webhooks&#34;&gt;Webhooks&lt;/h2&gt;
+
+&lt;p&gt;Now as with any other platform using Webhooks, you&amp;rsquo;ll need to update these to your production Domain Name once you deploy your code to production. And in a more general sense, if you are still unsure how webhooks work within the botmaster framework, go &lt;a href=&#34;https://jdwuarin.github.io/botmaster/getting-started/webhooks&#34;&gt;here&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Socket.io Setup</title>
+      <link>https://jdwuarin.github.io/botmaster/getting-started/socketio-setup/</link>
+      <pubDate>Wed, 02 Nov 2016 18:18:34 +0000</pubDate>
+      
+      <guid>https://jdwuarin.github.io/botmaster/getting-started/socketio-setup/</guid>
+      <description>
+
+&lt;h2 id=&#34;code&#34;&gt;Code&lt;/h2&gt;
+
+&lt;h4 id=&#34;server&#34;&gt;Server&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;const Botmaster = require(&#39;botmaster&#39;);
+
+const socketioSettings = {
+  id: &#39;SOME_BOT_ID_OF_YOUR_CHOOSING&#39;,
+};
+
+const botsSettings = [{ socketio: socketioSettings }];
+
+const botmaster = new Botmaster({ botsSettings });
+
+botmaster.on(&#39;update&#39;, (bot, update) =&amp;gt; {
+  bot.reply(update, &#39;Right back at you&#39;);
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;client&#34;&gt;Client&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;const io = require(&#39;socket.io-client&#39;);
+
+const socket = io(&amp;quot;ws://localhost:4000&amp;quot;);
+
+socket.on(&#39;connect&#39;, function() {
+  const message = {
+    text: &#39;Hey there botmaster!&#39;
+  };
+
+  socket.send(JSON.stringify(message));
+});
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;the-botmaster-socket-io-bot&#34;&gt;The Botmaster Socket.io bot&lt;/h2&gt;
+
+&lt;p&gt;Socket.io is a great library that allows developers to write apps using webSockets (with fallbacks to http long-polling and others when webSockets aren&amp;rsquo;t available in the client). You can read more about it on their own website here: &lt;a href=&#34;http://socket.io&#34;&gt;http://socket.io&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Because you might want to have a bot that not only works on some platform but also on your own webapp/app, support for socket.io was added to the Botmaster core. Although Socket.io enables developers to use their technology in a bunch of different applications, the fact that you want to use it in Botmaster means that you want to handle 1-1 conversations between users and your bot (managed by botmaster).&lt;/p&gt;
+
+&lt;p&gt;If you&amp;rsquo;ve never used both botmaster and socket.io, It&amp;rsquo;s probably still pretty unclear how all of this fits in together. Hopefully the next section will help you understand and get started with this.&lt;/p&gt;
+
+&lt;h2 id=&#34;botmaster-socket-io-bot-mini-tutorial&#34;&gt;Botmaster Socket.io bot mini-tutorial&lt;/h2&gt;
+
+&lt;p&gt;By following these steps, you will have a fully functional Socket.io bot using botmaster. The client will live in a tiny web-page. The point of this tutorial is to get you started so that you can develop it further in any way you wish. This is completely based on the socket.io web &amp;ldquo;get started&amp;rdquo; guide found here: &lt;a href=&#34;http://socket.io/get-started/chat/&#34;&gt;http://socket.io/get-started/chat/&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h4 id=&#34;server-1&#34;&gt;Server&lt;/h4&gt;
+
+&lt;p&gt;After making sure that we have a project folder with a node.js project initialised and the botmaster package in it as per the &lt;a href=&#34;https://jdwuarin.github.io/botmaster/getting-started/installation&#34;&gt;installation&lt;/a&gt; guide.
+We want to make sure botmaster is setup and make sure that messages coming from a websocket connection are received. So in our poject folder, in our &lt;code&gt;app.js&lt;/code&gt; file, we simply copy the code found at the top of this page:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;const Botmaster = require(&#39;botmaster&#39;);
+
+const socketioSettings = {
+  id: &#39;SOME_ID_OF_YOUR_CHOOSING&#39;,
+};
+
+const botsSettings = [{ socketio: socketioSettings }];
+
+const botmaster = new Botmaster({ botsSettings });
+
+botmaster.on(&#39;update&#39;, (bot, update) =&amp;gt; {
+  bot.reply(update, &#39;Right back at you&#39;);
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We will need to add a couple of lines to this code because we will be serving a webpage from our server. Not just listening on for botmaster messages. To do so, we take advantage of the fact that botmaster is built on top of express and that. We also assume that we will be serving our static assets (the components of our webpage) from a folder called &amp;lsquo;public&amp;rsquo; within our project directory. Our updated code looks like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;const Botmaster = require(&#39;botmaster&#39;);
+const express = require(&#39;express&#39;); //added
+
+const socketioSettings = {
+  id: &#39;SOME_ID_OF_YOUR_CHOOSING&#39;,
+};
+
+const botsSettings = [{ socketio: socketioSettings }];
+
+const botmaster = new Botmaster({ botsSettings });
+botmaster.app.use(express.static(__dirname + &#39;/public&#39;)); //added
+
+botmaster.on(&#39;update&#39;, (bot, update) =&amp;gt; {
+  bot.reply(update, &#39;Right back at you&#39;);
+});
+
+botmaster.on(&#39;error&#39;, (bot, err) =&amp;gt; {
+  console.log(err);
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We also added the botmaster &amp;lsquo;error&amp;rsquo; event listener, because that&amp;rsquo;s just always good to do.&lt;/p&gt;
+
+&lt;h3 id=&#34;client-side&#34;&gt;Client side&lt;/h3&gt;
+
+&lt;p&gt;As mentioned in the Server side, we will create a folder named &amp;lsquo;public&amp;rsquo; within our poject dir. In it, we will have the following three files:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;index.html&lt;/li&gt;
+&lt;li&gt;style.css&lt;/li&gt;
+&lt;li&gt;client_app.js&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;So that your final tree structure looks like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;your_project_folder
+├── app.js
+└── public
+    ├── client_app.js
+    ├── index.html
+    └── style.css
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In the &lt;code&gt;index.html&lt;/code&gt; file, we will put some very basic html that looks like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;&amp;lt;!doctype html&amp;gt;
+&amp;lt;html&amp;gt;
+  &amp;lt;head&amp;gt;
+    &amp;lt;title&amp;gt;Botmaster bot&amp;lt;/title&amp;gt;
+    &amp;lt;link rel=&amp;quot;stylesheet&amp;quot; type=&amp;quot;text/css&amp;quot; href=&amp;quot;style.css&amp;quot;&amp;gt;
+  &amp;lt;/head&amp;gt;
+  &amp;lt;body&amp;gt;
+    &amp;lt;div class=&amp;quot;chat&amp;quot;&amp;gt;
+      &amp;lt;ul id=&amp;quot;messages&amp;quot;&amp;gt;&amp;lt;/ul&amp;gt;
+      &amp;lt;form id=&amp;quot;form&amp;quot; action=&amp;quot;&amp;quot;&amp;gt;
+        &amp;lt;input type=&amp;quot;text&amp;quot; id=&amp;quot;text-input&amp;quot; autocomplete=&amp;quot;off&amp;quot; /&amp;gt;&amp;lt;button&amp;gt;Send&amp;lt;/button&amp;gt;
+      &amp;lt;/form&amp;gt;
+    &amp;lt;/div&amp;gt;
+
+    &amp;lt;script src=&amp;quot;/socket.io/socket.io.js&amp;quot;&amp;gt;&amp;lt;/script&amp;gt;
+    &amp;lt;script src=&amp;quot;client_app.js&amp;quot;&amp;gt;&amp;lt;/script&amp;gt;
+  &amp;lt;/body&amp;gt;
+&amp;lt;/html&amp;gt;
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The important line here is the line where we are importing socket.io. This works because socket.io adds a path to our server (in this case, a server created by botmaster under the hood) to serve this exact endpoint.
+The other imports are simply the ones we will be creating.&lt;/p&gt;
+
+&lt;p&gt;In the &lt;code&gt;style.css&lt;/code&gt; file, simply add the following:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-css&#34;&gt;* {
+  margin: 0;
+  padding: 0;
+  box-sizing:
+  border-box;
+}
+
+body {
+  font: 13px Helvetica, Arial;
+}
+
+form {
+  background: #000;
+  padding: 3px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+form input {
+  border: 0;
+  padding: 10px;
+  width: 90%;
+  margin-right: .5%;
+}
+
+form button {
+  width: 9%; background: rgb(130, 224, 255);
+  border: none; padding: 10px;
+}
+
+#messages {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+#messages li {
+  padding: 5px 10px;
+}
+
+#messages .botmaster-message {
+  background: #eee;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is the exact look from the socket.io tutorial mentioned above (and mostly their code too).&lt;/p&gt;
+
+&lt;p&gt;Finally, in the &lt;code&gt;client_app.js&lt;/code&gt; file, you should include the following:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;// the following line could also be: &amp;quot;var socket = io(&#39;ws://&amp;lt;URL&amp;gt;:&amp;lt;PORT_Number&amp;gt;?botmasterUserId=wantedUserId&#39;);&amp;quot;
+// if you know you will be communicating with a server different from the one that served you the page you are on
+// do something like this: io(&#39;ws://&amp;lt;URL&amp;gt;:&amp;lt;PORT_Number&amp;gt;&#39;);
+// this only works because the socket.io library assumes with this syntax that the socket.io server
+// lives at the same address as the server that served this page (this should mostly be your case)
+var socket = io(&#39;?botmasterUserId=wantedUserId&#39;);
+
+// just get the html elements we will be needing by ID
+var form = document.getElementById(&#39;form&#39;);
+var textInput = document.getElementById(&#39;text-input&#39;);
+var messages = document.getElementById(&#39;messages&#39;);
+
+form.onsubmit = function(event) {
+  // just making sure the page isn&#39;t refreshed
+  event.preventDefault();
+  // don&#39;t do anything if there is no text
+  if (!textInput.value) {
+    return;
+  }
+  // Add the user message to the web page
+  messages.insertAdjacentHTML(&#39;beforeend&#39;,
+    `&amp;lt;li class=&amp;quot;user-message&amp;quot;&amp;gt;${textInput.value}&amp;lt;/li&amp;gt;`);
+  // create a botmaster compatible message from the text input by user
+  const message = {
+    text: textInput.value,
+  };
+  // just send a stringified version of it over the webSocket
+  socket.send(JSON.stringify(message));
+  // finally, clear the user textInput field
+  textInput.value = &#39;&#39;;
+};
+
+socket.on(&#39;message&#39;, function(botmasterMessage){
+  var messageObject = JSON.parse(botmasterMessage);
+  var textMessage = messageObject.message.text;
+
+  messages.insertAdjacentHTML(&#39;beforeend&#39;,
+    `&amp;lt;li class=&amp;quot;botmaster-message&amp;quot;&amp;gt;${textMessage}&amp;lt;/li&amp;gt;`);
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You should have a read through this code to make sure you understand it as that is the code communicating with our botmaster backend.&lt;/p&gt;
+
+&lt;p&gt;On the first line, we call: &lt;code&gt;var socket = io(&#39;?botmasterUserId=wantedUserId&#39;);&lt;/code&gt;. This effectively opens up a socket connection with our backend by making a request to something like this: &lt;code&gt;io(&#39;ws://localhost:3000?botmasterUserId=wantedUserId&#39;);&lt;/code&gt;. Here as you can see, we are setting a query param called &lt;strong&gt;botmasterUserId&lt;/strong&gt; to &amp;lsquo;wantedUserId&amp;rsquo;. This is done because we want to make sure that when we are getting updates in our backend, the &lt;code&gt;update.sender.id&lt;/code&gt; part will be what we set it to here and not anything else (by default the randomly allocated socket.id value). This is even more important when your users can connect from different clients and you want to make sure the botmaster reply is propagated to all the clients.&lt;/p&gt;
+
+&lt;p&gt;In the &lt;code&gt;form.onsubmit&lt;/code&gt; part, we make sure that the text contained in the input cell is correctly formatted then sent to botmaster via the websocket. We also make sure to display it in our page and to then clear the input.&lt;/p&gt;
+
+&lt;p&gt;In the &lt;code&gt;socket.on(&#39;message&#39;)&lt;/code&gt; part, we simply display the received message.&lt;/p&gt;
+
+&lt;p&gt;Now that our code is here, simply go to your command line and run &lt;code&gt;node app.js&lt;/code&gt;. If you now open a browser to 127.0.0.1:3000 you should be able to chat with your pretty useless (for now) bot. Just like this:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://jdwuarin.github.io/botmaster/images/socket.io_setup_1.png?width=90%&#34; alt=&#34;Socket.io Setup 1&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;security&#34;&gt;Security&lt;/h2&gt;
+
+&lt;p&gt;You might be wondering how you can secure your Botmaster socket.io app. I.e. how can you make sure that a client connecting with a certain id really is who they claim they are. Well, this part is actually left to you, the developer to do. I didn&amp;rsquo;t want to make any assumptions with regards to what people would want to use to secure their app. So what I do is expose the &lt;code&gt;socket.io&lt;/code&gt; server object through the bot object. It can be accessed in the following way&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;socketioBot.ioServer
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then you&amp;rsquo;ll be able to register a middleware function to your socker.io server as such:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;socketioBot.ioServer.use((socket, next) =&amp;gt; {
+  if (socket.request.headers.cookie) return next();
+  next(new Error(&#39;Authentication error&#39;));
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is shamelessly stolen from the socket.io documentation here: &lt;a href=&#34;http://socket.io/docs/server-api/#namespace#use(fn:function):namespace&#34;&gt;http://socket.io/docs/server-api/#namespace#use(fn:function):namespace&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;This function will be executed every time there is an incoming socket connection. Indeed, no need to do so on every message as once the connection is made, all transfers are secured on the open socket. That&amp;rsquo;s really the whole point of webSockets.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Twitter Setup</title>
+      <link>https://jdwuarin.github.io/botmaster/getting-started/twitter-setup/</link>
+      <pubDate>Fri, 04 Nov 2016 00:57:53 +0000</pubDate>
+      
+      <guid>https://jdwuarin.github.io/botmaster/getting-started/twitter-setup/</guid>
+      <description>
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;
+const Botmaster = require(&#39;botmaster&#39;);
+
+const twitterSettings = {
+  credentials: {
+    consumerKey: &#39;YOUR consumerKey&#39;,
+    consumerSecret: &#39;YOUR consumerSecret&#39;,
+    accessToken: &#39;YOUR accessToken&#39;,
+    accessTokenSecret: &#39;YOUR accessTokenSecret&#39;,
+  }
+}
+
+const botsSettings = [{ twitter: twitterSettings }];
+
+const botmaster = new Botmaster({ botsSettings });
+
+botmaster.on(&#39;update&#39;, (bot, update) =&amp;gt; {
+  bot.reply(update, &#39;Right back at you&#39;);
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;getting-your-credentials&#34;&gt;Getting your Credentials&lt;/h2&gt;
+
+&lt;p&gt;Twitter&amp;rsquo;s setup is slightly more tricky than one would wish. Because Twitter requires you to create an actual account and not a page or a bot, you&amp;rsquo;ll have to do a few more steps.&lt;/p&gt;
+
+&lt;h4 id=&#34;setting-up-the-bot-account&#34;&gt;Setting up the bot account&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Just create a standard twitter account as you would any other. Name it as you want.&lt;/li&gt;
+&lt;li&gt;navigate to your security and privacy settings (click on your image profile &amp;gt; settings &amp;gt; privacy and security settings)&lt;/li&gt;
+&lt;li&gt;scroll to the bottom of the page and make sure &amp;ldquo;Receive Direct Messages from anyone&amp;rdquo; is ticked. (currently this has to be done because of Twitter&amp;rsquo;s rules concerning DMs, where in order to send a DM to someone, they have to be following you).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;setting-up-the-app&#34;&gt;Setting up the app&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Navigate to the somewhat hard to find Twitter developer app dashboard at: &lt;a href=&#34;https://apps.twitter.com/&#34;&gt;https://apps.twitter.com/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Click Create New App. Enter your details (callback URL is not required if you are starting from scratch here). &amp;lsquo;Website&amp;rsquo; can take in a placeholder like (&lt;a href=&#34;http://www.example.com&#34;&gt;http://www.example.com&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Now navigate straight to the &amp;lsquo;Permissions&amp;rsquo; tab(do this before going to the &amp;lsquo;Keys and Access Tokens&amp;rsquo; tab). Select &amp;lsquo;Read, Write and Access direct messages&amp;rsquo; and then click &amp;lsquo;Update Setting&amp;rsquo;&lt;/li&gt;
+&lt;li&gt;Navigate to the &amp;lsquo;Keys and Access Tokens&amp;rsquo; tab. You&amp;rsquo;ll find your consumerKey and consumerSecret right here&lt;/li&gt;
+&lt;li&gt;Scroll down and click on &amp;lsquo;Create my access token&amp;rsquo;. You now have your accessToken  and your accessTokenSecret&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;! Makes sure not to create your access token before having reset your permissions. If you do that, you will need to change your permissions then regenerate your access token.&lt;/p&gt;
+
+&lt;p&gt;That should about do it. Because twitter DM is not completely separate from the rest of Twitter, it behaves quite differently from the other platforms on many aspects. These points are covered in &lt;a href=&#34;https://jdwuarin.github.io/botmaster/working-with-botmaster&#34;&gt;working with botmaster&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Telegram Setup</title>
+      <link>https://jdwuarin.github.io/botmaster/getting-started/telegram-setup/</link>
+      <pubDate>Fri, 04 Nov 2016 01:04:24 +0000</pubDate>
+      
+      <guid>https://jdwuarin.github.io/botmaster/getting-started/telegram-setup/</guid>
+      <description>
+
+&lt;h2 id=&#34;code&#34;&gt;Code&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;
+const Botmaster = require(&#39;botmaster&#39;);
+
+const telegramSettings = {
+  credentials: {
+    authToken: &#39;YOUR authToken&#39;,
+  },
+  webhookEndpoint: &#39;/webhook1234/&#39;,
+};
+
+const botsSettings = [{ telegram: telegramSettings }];
+
+const botmaster = new Botmaster({ botsSettings });
+
+botmaster.on(&#39;update&#39;, (bot, update) =&amp;gt; {
+  bot.reply(update, &#39;Right back at you&#39;);
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;credentials&#34;&gt;Credentials&lt;/h2&gt;
+
+&lt;p&gt;All you need here is an authToken. In order to get one, you will need to either create a new bot on telegram.&lt;/p&gt;
+
+&lt;p&gt;Basically, you&amp;rsquo;ll need to send a &lt;code&gt;/newbot&lt;/code&gt; command(message) to Botfather (go talk to him &lt;a href=&#34;https://web.telegram.org/#/im?p=@BotFather&#34;&gt;here&lt;/a&gt;). Once you&amp;rsquo;re done with giving it a name and a username, BotFather will come back to you with your authToken. Make sure to store it somewhere. More info on BotFather can be found &lt;a href=&#34;https://core.telegram.org/bots#create-a-new-bot&#34;&gt;here&lt;/a&gt; if needed.&lt;/p&gt;
+
+&lt;p&gt;For more on Telegram, you can find the telegram api docs &lt;a href=&#34;https://core.telegram.org/bots/api&#34;&gt;here&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;webhooks&#34;&gt;Webhooks&lt;/h2&gt;
+
+&lt;p&gt;Setting up your webhook requires you to make the following request outside of Botmaster (using curl for instance or a browser):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-http&#34;&gt;https://api.telegram.org/bot&amp;lt;authToken&amp;gt;/setWebhook?url=&amp;lt;&#39;Your Base URL&#39;&amp;gt;/telegram/webhook1234
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div class=&#34;notices warning&#34; &gt;&lt;p&gt;Because Telegram doesn&amp;rsquo;t send any type of information to verify the identity of the origin of the update, it is highly recommended that you include a sort of hash in your webhookEndpoint. I.e., rather than having this: &lt;code&gt;webhookEndpoint: &#39;/webhook/&#39;&lt;/code&gt;, do something more like this: &lt;code&gt;webhookEndpoint: &#39;/webhook92ywrnc9qm4qoiuthecvasdf42FG/&#39;&lt;/code&gt;. This will assure that you know where the request is coming from.&lt;/p&gt;
+&lt;/div&gt;
+
+
+&lt;div class=&#34;notices note&#34; &gt;&lt;p&gt;If you are not too sure how webhooks work and/or how to get them to run locally, go to &lt;a href=&#34;https://jdwuarin.github.io/botmaster/getting-started/webhooks&#34;&gt;webhooks&lt;/a&gt; to read some more.&lt;/p&gt;
+&lt;/div&gt;
+
+</description>
+    </item>
+    
+    <item>
+      <title>Webhooks</title>
+      <link>https://jdwuarin.github.io/botmaster/getting-started/webhooks/</link>
+      <pubDate>Thu, 17 Nov 2016 15:28:40 +0000</pubDate>
+      
+      <guid>https://jdwuarin.github.io/botmaster/getting-started/webhooks/</guid>
+      <description>
+
+&lt;p&gt;Most platforms rely on webhooks to work. As such, you are expected to setup webhooks on the various platforms that use them in order to use Botmaster with these platforms. In the &amp;lsquo;Getting started&amp;rsquo; part of this documentation, we briefly touched onto that for Telegram and Messenger and more deeply for Slack.&lt;/p&gt;
+
+&lt;p&gt;If you are still unsure what webhooks are and how they work, within the context of chatbots, they are simply a URL provided by you pointing to where you expect messages and other updates to come in.&lt;/p&gt;
+
+&lt;p&gt;Any platform that requires webhooks won&amp;rsquo;t work without a webhookEndpoint parameter in their settings. E.g. for Telegram:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;const telegramSettings = {
+  credentials: {
+    authToken: &#39;YOUR authToken&#39;,
+  },
+  webhookEndpoint: &#39;/webhook1234/&#39;,
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This will mount your telegram webhook on: &lt;code&gt;https://Your_Domain_Name/messenger/webhook1234&lt;/code&gt;. And yes, you will need ssl in order to work with most platforms.&lt;/p&gt;
+
+&lt;p&gt;As an added layer of security, it is highly recommended that you include a sort of a code in your webhookEndpoint. I.e., rather that having this: &lt;code&gt;webhookEndpoint: &#39;/webhook/&#39;&lt;/code&gt;, do something more like this: &lt;code&gt;webhookEndpoint: &#39;/webhook92ywrnc9qm4qoiuthecvasdf42FG/&#39;&lt;/code&gt;. This will assure that you know where the request is coming from. It is more important on Telegram than on other platforms as Telegram doesn&amp;rsquo;t give us any way to verify the source of the message.&lt;/p&gt;
+
+&lt;p&gt;Now we realize you will want to develop and test your code without always deploying to a server with a valid url that supports ssl.&lt;/p&gt;
+
+&lt;h3 id=&#34;on-a-local-machine&#34;&gt;On a local machine:&lt;/h3&gt;
+
+&lt;p&gt;We recommend using the great localtunnel tool that proxies one of your ports to their url (with a potential wanted subdomain) using ssh.&lt;/p&gt;
+
+&lt;p&gt;Simply install localtunnel on local machine:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;npm install -g localtunnel
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then run the localtunnel with a predetermined subdomain. e.g:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;lt -p 3000 -s botmastersubdomain //for example
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;-p&lt;/code&gt; is the port and &lt;code&gt;-s&lt;/code&gt; is the subdomain we want.
+&lt;code&gt;-l&lt;/code&gt; is for the localhost we want to point to. This is useful is you are using botmaster inside of a container. For instance if using docker-machine, simply &lt;code&gt;-l&lt;/code&gt; to your docker-machines ip and &lt;code&gt;-p&lt;/code&gt; to the port that your container exposes.&lt;/p&gt;
+
+&lt;p&gt;In the example above, url will be: &lt;code&gt;http://botmastersubdomain.localtunnel.me&lt;/code&gt;. Localtunnel is great and supports both ssl and non ssl request, which means we will actually wan to use: &lt;code&gt;https://botmastersubdomain.localtunnel.me&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;So if you specified your messenger&amp;rsquo;s bot webhook endpoint to, say, /webhook1234/, you will have to set up the webhook for your demo app at:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;https://botmastersubdomain.localtunnel.me/messenger/webhook1234/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;For Telegram, it would look something like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;https://botmastersubdomain.localtunnel.me/telegram/webhook1234/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you keep on getting an error that looks like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;your url is: https://customname.localtunnel.me
+/usr/local/lib/node_modules/localtunnel/bin/client:58
+        throw err;
+        ^
+
+Error: connection refused: localtunnel.me:44404 (check your firewall settings)
+    at Socket.&amp;lt;anonymous&amp;gt; (/usr/local/lib/node_modules/localtunnel/lib/TunnelCluster.js:47:32)
+    at emitOne (events.js:96:13)
+    at Socket.emit (events.js:188:7)
+    at emitErrorNT (net.js:1272:8)
+    at _combinedTickCallback (internal/process/next_tick.js:74:11)
+    at process._tickCallback (internal/process/next_tick.js:98:9)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is due to a bug in localtunnel. You can either go try out ngrok (which you will have to pay for), or try this workaround in the terminal:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;(while true; do
+  lt -p 3000 -s botmastersubdomain
+done)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;or:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;( while true; do lt -p 3000 -s botmastersubdomain; done; )
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you prefer a one liner.&lt;/p&gt;
+
+&lt;p&gt;This will just restart the process whenever it crashes (which can happen very often&amp;hellip;), making sure your webhook will always be up and listening for incoming requests.&lt;/p&gt;
+
+&lt;p&gt;What I do in my projects is the following:&lt;/p&gt;
+
+&lt;p&gt;Install localtunnel in the project and save to dev-dependencies&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;npm install --save-dev localtunnel
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then in my &lt;code&gt;package.json&lt;/code&gt;, add something like this in my &amp;lsquo;scripts&amp;rsquo;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;&amp;quot;scripts&amp;quot;: {
+  .
+  .
+  &amp;quot;tunnel&amp;quot;: &amp;quot;( while true; do lt -p 3000 -s botmastersubdomain; done; )&amp;quot;,
+  .
+  .
+},
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I can then simply run the runnel as follows (most likely in another console tab):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;npm run tunnel
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

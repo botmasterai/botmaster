@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en" class="js csstransforms3d">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="generator" content="Hugo 0.17" />
+    <meta name="description" content="The Bot framework for your serious projects">
+<meta name="author" content="JD Wuarin">
+
+    <link rel="shortcut icon" href="https://jdwuarin.github.io/botmaster/images/favicon.ico" type="image/x-icon" />
+
+    
+    <title>Webhooks</title>
+    <link href="https://jdwuarin.github.io/botmaster/css/nucleus.css" rel="stylesheet">
+    <link href="https://jdwuarin.github.io/botmaster/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://jdwuarin.github.io/botmaster/css/hybrid.css" rel="stylesheet">
+    <link href="https://jdwuarin.github.io/botmaster/css/featherlight.min.css" rel="stylesheet">
+    <link href="https://jdwuarin.github.io/botmaster/css/perfect-scrollbar.min.css" rel="stylesheet">
+    <link href="https://jdwuarin.github.io/botmaster/css/horsey.css" rel="stylesheet">
+    <link href="https://jdwuarin.github.io/botmaster/css/theme.css" rel="stylesheet">
+    <link href="https://jdwuarin.github.io/botmaster/css/hugo-theme.css" rel="stylesheet">
+    <script src="https://jdwuarin.github.io/botmaster/js/jquery-2.x.min.js"></script>
+    <style type="text/css">:root #header + #content > #left > #rlblock_left
+    {display:none !important;}</style>
+    
+
+  </head>
+  <body class="" data-url="/getting-started/webhooks/">
+    <nav id="sidebar">
+  <div id="header-wrapper">
+    <div id="header">
+      <a id="logo" target="_blank" href="https://github.com/jdwuarin/botmaster">
+  <img src="https://jdwuarin.github.io/botmaster/images/botmaster_1.svg" onerror="this.src='/images/botmaster_1.png'" >
+</a>
+
+    </div>
+    
+        <div class="searchbox">
+    <label for="search-by"><i class="fa fa-search"></i></label>
+    <input id="search-by" type="text" placeholder="Search">
+    <span data-search-clear=""><i class="fa fa-close"></i></span>
+</div>
+<script type="text/javascript" src="https://jdwuarin.github.io/botmaster/js/lunr.min.js"></script>
+<script type="text/javascript" src="https://jdwuarin.github.io/botmaster/js/horsey.js"></script>
+<script type="text/javascript">
+    var baseurl = "https:\/\/jdwuarin.github.io\/botmaster\/";
+</script>
+<script type="text/javascript" src="https://jdwuarin.github.io/botmaster/js/search.js"></script>
+
+    
+</div>
+
+
+  <div class="highlightable">
+    <ul class="topics">
+      
+      
+        
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+      
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  " data-nav-id="/home/">
+        <a href="https://jdwuarin.github.io/botmaster/home/">
+          <span>
+            
+              <i class="fa fa-home" aria-hidden="true"></i>
+            
+             Botmaster v 2.2.2
+            
+           </span>
+        </a>
+        
+      </li>
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  parent" data-nav-id="/getting-started/">
+        <a href="https://jdwuarin.github.io/botmaster/getting-started/">
+          <span>
+            
+              <i class="fa fa-road" aria-hidden="true"></i>
+            
+             Getting started
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/installation/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/installation/">
+                <span>Installation     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/quickstart/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/quickstart/">
+                <span>Quickstart     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/getting-set-up/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/getting-set-up/">
+                <span>Getting set up     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/messenger-setup/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/messenger-setup/">
+                <span>Facebook Messenger Setup     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/slack-setup/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/slack-setup/">
+                <span>Slack Setup     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/socketio-setup/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/socketio-setup/">
+                <span>Socket.io Setup     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/twitter-setup/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/twitter-setup/">
+                <span>Twitter Setup     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/telegram-setup/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/telegram-setup/">
+                <span>Telegram Setup     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item active" data-nav-id="/getting-started/webhooks/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/webhooks/">
+                <span>Webhooks     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  " data-nav-id="/working-with-botmaster/">
+        <a href="https://jdwuarin.github.io/botmaster/working-with-botmaster/">
+          <span>
+            
+              <i class="fa fa-wrench" aria-hidden="true"></i>
+            
+             Working with Botmaster
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/working-with-botmaster/botmaster-basics/">
+              <a href="https://jdwuarin.github.io/botmaster/working-with-botmaster/botmaster-basics/">
+                <span>Botmaster Basics     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/working-with-botmaster/writing-your-own-bot-class/">
+              <a href="https://jdwuarin.github.io/botmaster/working-with-botmaster/writing-your-own-bot-class/">
+                <span>Writing your Own Bot Class     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  " data-nav-id="/tutorials/">
+        <a href="https://jdwuarin.github.io/botmaster/tutorials/">
+          <span>
+            
+              <i class="fa fa-code" aria-hidden="true"></i>
+            
+             Tutorials (coming soon)
+            
+           </span>
+        </a>
+        
+      </li>
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  " data-nav-id="/other-articles/">
+        <a href="https://jdwuarin.github.io/botmaster/other-articles/">
+          <span>
+            
+              <i class="fa fa-newspaper-o" aria-hidden="true"></i>
+            
+             Other Articles
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/other-articles/botmaster-or-botkit/">
+              <a href="https://jdwuarin.github.io/botmaster/other-articles/botmaster-or-botkit/">
+                <span>Botmaster or Botkit?     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  " data-nav-id="/changelog/CHANGELOG/">
+        <a href="https://jdwuarin.github.io/botmaster/changelog/CHANGELOG/">
+          <span>
+            
+              <i class="fa fa-list" aria-hidden="true"></i>
+            
+             CHANGELOG
+            
+           </span>
+        </a>
+        
+      </li>
+      
+      
+    </ul>
+    <hr>
+     
+    <section id="footer">
+      <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fa fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
+    </section>
+  </div>
+</nav>
+
+        <section id="body">
+        <div id="overlay"></div>
+
+        <div class="padding highlightable">
+
+            <div id="top-bar">
+              
+                
+                
+                
+              <div id="top-github-link">
+                  <a class="github-link" href="https://github.com/jdwuarin/botmaster/tree/gh-pages/documentation_website/content/getting-started/webhooks.md" target="blank">
+                    <i class="fa fa-code-fork"></i>
+                    Edit this page
+                  </a>
+              </div>
+                
+              
+              <div id="breadcrumbs" itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+                  <span id="sidebar-toggle-span">
+                      <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+                        <i class="fa fa-bars"></i>
+                      </a>
+                  </span>
+                
+                <span id="toc-menu"><a href=""><i class="fa fa-list-alt"></i></a></span>
+                
+                
+                
+                
+                  
+                
+                  
+                    
+                    
+                <a href="https://jdwuarin.github.io/botmaster/getting-started/" itemprop="url"><span itemprop="title">Getting started</span></a> <i class="fa fa-angle-right"></i>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                <span itemprop="title"> Webhooks</span>
+              </div>
+              
+                  <div class="progress">
+    <div class="wrapper">
+<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#on-a-local-machine">On a local machine:</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+
+              
+
+            </div>
+            
+    	        <div id="body-inner">
+                
+                <h1>Webhooks</h1>
+                
+
+
+
+<p>Most platforms rely on webhooks to work. As such, you are expected to setup webhooks on the various platforms that use them in order to use Botmaster with these platforms. In the &lsquo;Getting started&rsquo; part of this documentation, we briefly touched onto that for Telegram and Messenger and more deeply for Slack.</p>
+
+<p>If you are still unsure what webhooks are and how they work, within the context of chatbots, they are simply a URL provided by you pointing to where you expect messages and other updates to come in.</p>
+
+<p>Any platform that requires webhooks won&rsquo;t work without a webhookEndpoint parameter in their settings. E.g. for Telegram:</p>
+
+<pre><code class="language-js">const telegramSettings = {
+  credentials: {
+    authToken: 'YOUR authToken',
+  },
+  webhookEndpoint: '/webhook1234/',
+};
+</code></pre>
+
+<p>This will mount your telegram webhook on: <code>https://Your_Domain_Name/messenger/webhook1234</code>. And yes, you will need ssl in order to work with most platforms.</p>
+
+<p>As an added layer of security, it is highly recommended that you include a sort of a code in your webhookEndpoint. I.e., rather that having this: <code>webhookEndpoint: '/webhook/'</code>, do something more like this: <code>webhookEndpoint: '/webhook92ywrnc9qm4qoiuthecvasdf42FG/'</code>. This will assure that you know where the request is coming from. It is more important on Telegram than on other platforms as Telegram doesn&rsquo;t give us any way to verify the source of the message.</p>
+
+<p>Now we realize you will want to develop and test your code without always deploying to a server with a valid url that supports ssl.</p>
+
+<h3 id="on-a-local-machine">On a local machine:</h3>
+
+<p>We recommend using the great localtunnel tool that proxies one of your ports to their url (with a potential wanted subdomain) using ssh.</p>
+
+<p>Simply install localtunnel on local machine:</p>
+
+<pre><code class="language-bash">npm install -g localtunnel
+</code></pre>
+
+<p>Then run the localtunnel with a predetermined subdomain. e.g:</p>
+
+<pre><code class="language-bash">lt -p 3000 -s botmastersubdomain //for example
+</code></pre>
+
+<p><code>-p</code> is the port and <code>-s</code> is the subdomain we want.
+<code>-l</code> is for the localhost we want to point to. This is useful is you are using botmaster inside of a container. For instance if using docker-machine, simply <code>-l</code> to your docker-machines ip and <code>-p</code> to the port that your container exposes.</p>
+
+<p>In the example above, url will be: <code>http://botmastersubdomain.localtunnel.me</code>. Localtunnel is great and supports both ssl and non ssl request, which means we will actually wan to use: <code>https://botmastersubdomain.localtunnel.me</code></p>
+
+<p>So if you specified your messenger&rsquo;s bot webhook endpoint to, say, /webhook1234/, you will have to set up the webhook for your demo app at:</p>
+
+<pre><code>https://botmastersubdomain.localtunnel.me/messenger/webhook1234/
+</code></pre>
+
+<p>For Telegram, it would look something like this:</p>
+
+<pre><code>https://botmastersubdomain.localtunnel.me/telegram/webhook1234/
+</code></pre>
+
+<p>If you keep on getting an error that looks like this:</p>
+
+<pre><code class="language-bash">your url is: https://customname.localtunnel.me
+/usr/local/lib/node_modules/localtunnel/bin/client:58
+        throw err;
+        ^
+
+Error: connection refused: localtunnel.me:44404 (check your firewall settings)
+    at Socket.&lt;anonymous&gt; (/usr/local/lib/node_modules/localtunnel/lib/TunnelCluster.js:47:32)
+    at emitOne (events.js:96:13)
+    at Socket.emit (events.js:188:7)
+    at emitErrorNT (net.js:1272:8)
+    at _combinedTickCallback (internal/process/next_tick.js:74:11)
+    at process._tickCallback (internal/process/next_tick.js:98:9)
+</code></pre>
+
+<p>This is due to a bug in localtunnel. You can either go try out ngrok (which you will have to pay for), or try this workaround in the terminal:</p>
+
+<pre><code class="language-bash">(while true; do
+  lt -p 3000 -s botmastersubdomain
+done)
+</code></pre>
+
+<p>or:</p>
+
+<pre><code class="language-bash">( while true; do lt -p 3000 -s botmastersubdomain; done; )
+</code></pre>
+
+<p>If you prefer a one liner.</p>
+
+<p>This will just restart the process whenever it crashes (which can happen very often&hellip;), making sure your webhook will always be up and listening for incoming requests.</p>
+
+<p>What I do in my projects is the following:</p>
+
+<p>Install localtunnel in the project and save to dev-dependencies</p>
+
+<pre><code class="language-js">npm install --save-dev localtunnel
+</code></pre>
+
+<p>Then in my <code>package.json</code>, add something like this in my &lsquo;scripts&rsquo;:</p>
+
+<pre><code class="language-json">&quot;scripts&quot;: {
+  .
+  .
+  &quot;tunnel&quot;: &quot;( while true; do lt -p 3000 -s botmastersubdomain; done; )&quot;,
+  .
+  .
+},
+</code></pre>
+
+<p>I can then simply run the runnel as follows (most likely in another console tab):</p>
+
+<pre><code class="language-bash">npm run tunnel
+</code></pre>
+
+
+      
+      </div>
+    </div>
+
+    <div id="navigation">
+        <a class="nav nav-prev" href="https://jdwuarin.github.io/botmaster/getting-started/telegram-setup"> <i class="fa fa-chevron-left"></i></a>
+        <a class="nav nav-next" href="https://jdwuarin.github.io/botmaster/working-with-botmaster" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+    </div>
+
+    </section>
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="https://jdwuarin.github.io/botmaster/js/clipboard.min.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/perfect-scrollbar.min.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/perfect-scrollbar.jquery.min.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/jquery.sticky-kit.min.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/featherlight.min.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/html5shiv-printshiv.min.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="https://jdwuarin.github.io/botmaster/js/modernizr.custom.71422.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/learn.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/hugo-learn.js"></script>
+    
+
+  </body>
+</html>
+

@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en" class="js csstransforms3d">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="generator" content="Hugo 0.17" />
+    <meta name="description" content="The Bot framework for your serious projects">
+<meta name="author" content="JD Wuarin">
+
+    <link rel="shortcut icon" href="https://jdwuarin.github.io/botmaster/images/favicon.ico" type="image/x-icon" />
+
+    
+    <title>Slack Setup</title>
+    <link href="https://jdwuarin.github.io/botmaster/css/nucleus.css" rel="stylesheet">
+    <link href="https://jdwuarin.github.io/botmaster/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://jdwuarin.github.io/botmaster/css/hybrid.css" rel="stylesheet">
+    <link href="https://jdwuarin.github.io/botmaster/css/featherlight.min.css" rel="stylesheet">
+    <link href="https://jdwuarin.github.io/botmaster/css/perfect-scrollbar.min.css" rel="stylesheet">
+    <link href="https://jdwuarin.github.io/botmaster/css/horsey.css" rel="stylesheet">
+    <link href="https://jdwuarin.github.io/botmaster/css/theme.css" rel="stylesheet">
+    <link href="https://jdwuarin.github.io/botmaster/css/hugo-theme.css" rel="stylesheet">
+    <script src="https://jdwuarin.github.io/botmaster/js/jquery-2.x.min.js"></script>
+    <style type="text/css">:root #header + #content > #left > #rlblock_left
+    {display:none !important;}</style>
+    
+
+  </head>
+  <body class="" data-url="/getting-started/slack-setup/">
+    <nav id="sidebar">
+  <div id="header-wrapper">
+    <div id="header">
+      <a id="logo" target="_blank" href="https://github.com/jdwuarin/botmaster">
+  <img src="https://jdwuarin.github.io/botmaster/images/botmaster_1.svg" onerror="this.src='/images/botmaster_1.png'" >
+</a>
+
+    </div>
+    
+        <div class="searchbox">
+    <label for="search-by"><i class="fa fa-search"></i></label>
+    <input id="search-by" type="text" placeholder="Search">
+    <span data-search-clear=""><i class="fa fa-close"></i></span>
+</div>
+<script type="text/javascript" src="https://jdwuarin.github.io/botmaster/js/lunr.min.js"></script>
+<script type="text/javascript" src="https://jdwuarin.github.io/botmaster/js/horsey.js"></script>
+<script type="text/javascript">
+    var baseurl = "https:\/\/jdwuarin.github.io\/botmaster\/";
+</script>
+<script type="text/javascript" src="https://jdwuarin.github.io/botmaster/js/search.js"></script>
+
+    
+</div>
+
+
+  <div class="highlightable">
+    <ul class="topics">
+      
+      
+        
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+      
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  " data-nav-id="/home/">
+        <a href="https://jdwuarin.github.io/botmaster/home/">
+          <span>
+            
+              <i class="fa fa-home" aria-hidden="true"></i>
+            
+             Botmaster v 2.2.2
+            
+           </span>
+        </a>
+        
+      </li>
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  parent" data-nav-id="/getting-started/">
+        <a href="https://jdwuarin.github.io/botmaster/getting-started/">
+          <span>
+            
+              <i class="fa fa-road" aria-hidden="true"></i>
+            
+             Getting started
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/installation/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/installation/">
+                <span>Installation     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/quickstart/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/quickstart/">
+                <span>Quickstart     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/getting-set-up/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/getting-set-up/">
+                <span>Getting set up     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/messenger-setup/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/messenger-setup/">
+                <span>Facebook Messenger Setup     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item active" data-nav-id="/getting-started/slack-setup/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/slack-setup/">
+                <span>Slack Setup     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/socketio-setup/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/socketio-setup/">
+                <span>Socket.io Setup     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/twitter-setup/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/twitter-setup/">
+                <span>Twitter Setup     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/telegram-setup/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/telegram-setup/">
+                <span>Telegram Setup     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/webhooks/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/webhooks/">
+                <span>Webhooks     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  " data-nav-id="/working-with-botmaster/">
+        <a href="https://jdwuarin.github.io/botmaster/working-with-botmaster/">
+          <span>
+            
+              <i class="fa fa-wrench" aria-hidden="true"></i>
+            
+             Working with Botmaster
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/working-with-botmaster/botmaster-basics/">
+              <a href="https://jdwuarin.github.io/botmaster/working-with-botmaster/botmaster-basics/">
+                <span>Botmaster Basics     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/working-with-botmaster/writing-your-own-bot-class/">
+              <a href="https://jdwuarin.github.io/botmaster/working-with-botmaster/writing-your-own-bot-class/">
+                <span>Writing your Own Bot Class     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  " data-nav-id="/tutorials/">
+        <a href="https://jdwuarin.github.io/botmaster/tutorials/">
+          <span>
+            
+              <i class="fa fa-code" aria-hidden="true"></i>
+            
+             Tutorials (coming soon)
+            
+           </span>
+        </a>
+        
+      </li>
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  " data-nav-id="/other-articles/">
+        <a href="https://jdwuarin.github.io/botmaster/other-articles/">
+          <span>
+            
+              <i class="fa fa-newspaper-o" aria-hidden="true"></i>
+            
+             Other Articles
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/other-articles/botmaster-or-botkit/">
+              <a href="https://jdwuarin.github.io/botmaster/other-articles/botmaster-or-botkit/">
+                <span>Botmaster or Botkit?     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  " data-nav-id="/changelog/CHANGELOG/">
+        <a href="https://jdwuarin.github.io/botmaster/changelog/CHANGELOG/">
+          <span>
+            
+              <i class="fa fa-list" aria-hidden="true"></i>
+            
+             CHANGELOG
+            
+           </span>
+        </a>
+        
+      </li>
+      
+      
+    </ul>
+    <hr>
+     
+    <section id="footer">
+      <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fa fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
+    </section>
+  </div>
+</nav>
+
+        <section id="body">
+        <div id="overlay"></div>
+
+        <div class="padding highlightable">
+
+            <div id="top-bar">
+              
+                
+                
+                
+              <div id="top-github-link">
+                  <a class="github-link" href="https://github.com/jdwuarin/botmaster/tree/gh-pages/documentation_website/content/getting-started/slack-setup.md" target="blank">
+                    <i class="fa fa-code-fork"></i>
+                    Edit this page
+                  </a>
+              </div>
+                
+              
+              <div id="breadcrumbs" itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+                  <span id="sidebar-toggle-span">
+                      <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+                        <i class="fa fa-bars"></i>
+                      </a>
+                  </span>
+                
+                <span id="toc-menu"><a href=""><i class="fa fa-list-alt"></i></a></span>
+                
+                
+                
+                
+                  
+                
+                  
+                    
+                    
+                <a href="https://jdwuarin.github.io/botmaster/getting-started/" itemprop="url"><span itemprop="title">Getting started</span></a> <i class="fa fa-angle-right"></i>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                <span itemprop="title"> Slack Setup</span>
+              </div>
+              
+                  <div class="progress">
+    <div class="wrapper">
+<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#code">Code</a></li>
+<li><a href="#the-botmaster-slack-bot">The Botmaster Slack bot</a></li>
+<li><a href="#botmaster-slack-bot-mini-tutorial">Botmaster Slack bot mini-tutorial</a>
+<ul>
+<li>
+<ul>
+<li><a href="#create-an-app">Create an app</a></li>
+<li><a href="#get-your-first-credentials">Get your first credentials</a></li>
+<li><a href="#setup-your-app-s-oauth-webhook">Setup Your App&rsquo;s OAuth Webhook</a></li>
+<li><a href="#add-a-bot-user">Add a Bot User</a></li>
+<li><a href="#get-the-rest-of-your-credentials">Get the rest of your credentials</a></li>
+<li><a href="#start-your-botmaster-app-locally">Start your Botmaster App Locally</a></li>
+<li><a href="#setup-your-app-s-events-and-events-webhook">Setup Your App&rsquo;s Events and Events Webhook</a></li>
+<li><a href="#install-your-slack-app">Install your Slack App</a></li>
+<li><a href="#try-out-your-bot">Try out your bot!</a></li>
+<li><a href="#make-your-bot-available-to-the-world">Make your Bot Available to the World</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#webhooks">Webhooks</a></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+
+              
+
+            </div>
+            
+    	        <div id="body-inner">
+                
+                <h1>Slack Setup</h1>
+                
+
+
+
+<h2 id="code">Code</h2>
+
+<pre><code class="language-js">const Botmaster = require('botmaster');
+
+const slackSettings = {
+  credentials: {
+    clientId: 'YOUR app client ID',
+    clientSecret: 'YOUR app client secret',
+    verificationToken: 'YOUR app verification Token'
+  },
+  webhookEndpoint: '/webhookd24sr34se',
+  storeTeamInfoInFile: true,
+};
+
+const botsSettings = [{ slack: slackSettings }];
+
+const botmaster = new Botmaster({ botsSettings });
+
+botmaster.on('update', (bot, update) =&gt; {
+  bot.reply(update, 'Right back at you');
+});
+</code></pre>
+
+<h2 id="the-botmaster-slack-bot">The Botmaster Slack bot</h2>
+
+<p>Because Slack works slightly differently from the other platforms covered in the core Botmaster package, I will briefly explain here what your botmaster Slack bot will be exactly.</p>
+
+<p>As you surely know, Slack is a product that enables team members to communicate easily with one another. because of that, one team member can&rsquo;t just &ldquo;add&rdquo; a bot for herself in the same way one would in Facebook Messenger or Telegram or other.</p>
+
+<p>Teams can either build a bot that will only live within their own slack team. Or they can package a bot in a Slack app that &ldquo;packages&rdquo; the bot.
+Admin team members can add support for a bot (by installing an App that packages said bot) and then team members can start communicating with it as they would with another team member. At this point, they would be communicating with what is known as, in Slack semantics, a <strong>bot user</strong>.</p>
+
+<p>The <code>slackSettings</code> object is required to allow us to communicate to end users via this <strong>bot user</strong> that needs to be set up on Slack&rsquo;s end.</p>
+
+<h2 id="botmaster-slack-bot-mini-tutorial">Botmaster Slack bot mini-tutorial</h2>
+
+<p>Following these steps, you will have a fully functional Slack bot using botmaster that can then be edited as wanted. This mini-tutorial uses localtunnel to expose one of your ports to the world. see why you might want to use this and how to install and setup localtunnel <a href="https://jdwuarin.github.io/botmaster/getting-started/webhooks#localtunnel">here</a>for your local botmaster project. You can use ngrok or any other service you know or find suitable and achieve the same result.</p>
+
+<h4 id="create-an-app">Create an app</h4>
+
+<p>Navigate to: <a href="https://api.slack.com/apps">https://api.slack.com/apps</a> and make sure you are signed in. If you aren&rsquo;t you will be redirected to your team&rsquo;s slack once logged in and will need to go back to the mentioned link.</p>
+
+<p>Click the <strong>create new App</strong> button and enter any App Name you want. This won&rsquo;t be the name of the <strong>bot user</strong>. However, the name should ideally be related to your bot user so as not to confuse your users. For instance, if your bot user will be called <em>my_super_bot</em>, calling the app something like <em>My Super Bot App</em> would make sense.</p>
+
+<h4 id="get-your-first-credentials">Get your first credentials</h4>
+
+<p>On this page you were redirected to, you will find an <em>App credentials</em> section. Both your Client ID (<code>clientId</code> in Botmaster) and your Client Secret (<code>clientSecret</code> in Botmaster) are here. Take note of them.</p>
+
+<h4 id="setup-your-app-s-oauth-webhook">Setup Your App&rsquo;s OAuth Webhook</h4>
+
+<p>You don&rsquo;t need to know anything about OAuth to complete this step. Just know that this URL will be called when people are installing/authorizing your app.</p>
+
+<p>In the left panel, click on the <strong>OAuth &amp; Permissions</strong> tab and enter your webhook in the <strong>Redirect URL(s)</strong> field as shown here:
+    <img src="https://jdwuarin.github.io/botmaster/images/slack_setup_1.png?width=90%" alt="Slack Setup 1" />
+This URL has to be of the form: <strong>https://&lt;your_base_url&gt;/slack/&lt;webhookEndpoint&gt;</strong>. For example, <strong>if</strong> I am using localtunnel to test the bot locally, and started localtunnel by running the following:</p>
+
+<pre><code class="language-bash">  lt -p 3000 -s botmastersubdomain
+</code></pre>
+
+<p>I would set my Redirect URL(s) to: <code>https://botmastersubdomain.localtunnel.me/slack/webhookd24sr34se</code> (based on the <code>webhookEnpoint</code> set in my <code>slackSettings</code> at the top of this page). Click on <strong>Save Changes</strong>.</p>
+
+<h4 id="add-a-bot-user">Add a Bot User</h4>
+
+<p>Go to <strong>Bot Users</strong> and click on the <strong>Add a Bot User</strong> button. Select a name for your bot (e.g. my_super_bot) and click the <strong>Add Bot User</strong> button.</p>
+
+<h4 id="get-the-rest-of-your-credentials">Get the rest of your credentials</h4>
+
+<p>Navigate to the <strong>Event Subscriptions</strong> tab and click on the toggle button in the to right corner to <strong>on</strong>. Then in the <strong>Request URL</strong> field that pops up, enter the same URL as in step 4. <strong>You will get an error</strong>. This is normal and is due to two reasons. Firstly, we don&rsquo;t actually have an app started and listening at the mentioned URL and secondly because even if we did, we don&rsquo;t have our App&rsquo;s verification Token. Let&rsquo;s fix this!</p>
+
+<p>Navigate back to <strong>Basic Information</strong> and note that you now have a <strong>Verification Token</strong> in the App Credentials box. Take note of it.</p>
+
+<h4 id="start-your-botmaster-app-locally">Start your Botmaster App Locally</h4>
+
+<p>Start your botmaster app in any project folder you might want (see <a href="https://jdwuarin.github.io/botmaster/getting-started/installation">here</a> if you haven&rsquo;t installed botmaster yet). To start the botmaster project, you&rsquo;ll want to create an <code>app.js</code> file with the contents from the <a href="http://localhost:1313/getting-started/slack-setup/#code">code</a> at the top of this page in the root of your project folder. Replace the credentials with the ones you have gathered. Run <code>node app.js</code> to start the app. Let&rsquo;s now expose out bot to the world.</p>
+
+<p>For the webhook to work locally, you&rsquo;ll now need to make sure you&rsquo;ve started localtunnel. If you are doing all of that from a server that already has a Domain Name, you won&rsquo;t need to do this. But I am assuming most people are doing this from their local computer. so in the command line, run something like this:</p>
+
+<pre><code class="language-bash">lt -p 3000 -s &lt;wanted_base_url_for_your_bot&gt;
+</code></pre>
+
+<h4 id="setup-your-app-s-events-and-events-webhook">Setup Your App&rsquo;s Events and Events Webhook</h4>
+
+<p>Go back to the <strong>Event subscription</strong> page and enter your webhook url again. This should now work and look something like this: <img src="https://jdwuarin.github.io/botmaster/images/slack_setup_2.png?width=90%" alt="Slack Setup 2" /> Scroll down and click on <strong>Add Bot User Events</strong>. At the minimum, add the following events:
+    * message.ipm
+    * message.channels
+    * message.im
+    * message.groups
+Click <strong>Save Changes</strong></p>
+
+<h4 id="install-your-slack-app">Install your Slack App</h4>
+
+<p>We&rsquo;re almost done here. We need a way to install our app to test it out. This is done via what is called a <strong>Slack button</strong>. because botmaster manages all the nitty-gritty parts of this process, all you need to do is create a <code>views</code> folder in your project folder and create an <code>index.html</code> file in this views folder with the following contents</p>
+
+<pre><code class="language-html">&lt;a href=&quot;https://slack.com/oauth/authorize?scope=bot&amp;client_id=YOUR_APP_CLIENT_ID&quot;&gt;
+  &lt;img alt=&quot;Add to Slack&quot; height=&quot;40&quot; width=&quot;139&quot;
+  src=&quot;https://platform.slack-edge.com/img/add_to_slack.png&quot;
+  srcset=&quot;https://platform.slack-edge.com/img/add_to_slack.png 1x,
+          https://platform.slack-edge.com/img/add_to_slack@2x.png 2x&quot; /&gt;
+&lt;/a&gt;
+</code></pre>
+
+<p>Note that you&rsquo;ll need to replace <strong>YOUR_APP_CLIENT_ID</strong> in the href with your own. You definitely don&rsquo;t want to put in your client secret here!</p>
+
+<h4 id="try-out-your-bot">Try out your bot!</h4>
+
+<p>Assuming your botmaster app and localtunnel are still running, open your <code>index.html</code> file (not in a text editor, but actually in a browser) by double clicking on it. Authorize your newly created app to add it to your team. You should now be redirected to your teams slack and be able to chat to your bot.</p>
+
+<h4 id="make-your-bot-available-to-the-world">Make your Bot Available to the World</h4>
+
+<p>You might actually want to allow others to install your app by using the Slack Button. However, to do so you will need to host it somewhere. We&rsquo;ll take advantage of the fact that botmaster uses express.js under the hood and edit our app.js file to look like this:</p>
+
+<pre><code class="language-js">const Botmaster = require('botmaster');
+const express = require('express'); // added
+.
+.
+.
+const botmaster = new Botmaster({ botsSettings });
+botmaster.app.use(express.static(__dirname + '/views')); //added
+// or if you don't want it at the root of your app, add this:
+botmaster.app.use('/slack', express.static(__dirname + '/views')); // added
+
+botmaster.on('update', (bot, update) =&gt; {
+  bot.reply(update, 'Right back at you');
+});
+
+</code></pre>
+
+<p>Make sure to add either one of the <code>botmaster.app.use...</code> lines.
+If you pick the first one, navigate to your URL (<code>https://botmastersubdomain.localtunnel.me/</code> for this example) and you will see the button.
+If your pick the second one, navigate to your sub URL (<code>https://botmastersubdomain.localtunnel.me/slack</code> for this example) to see the Slack button.</p>
+
+<h2 id="webhooks">Webhooks</h2>
+
+<p>Now as with any other platform using Webhooks, you&rsquo;ll need to update these to your production Domain Name once you deploy your code to production. And in a more general sense, if you are still unsure how webhooks work within the botmaster framework, go <a href="https://jdwuarin.github.io/botmaster/getting-started/webhooks">here</a></p>
+
+
+      
+      </div>
+    </div>
+
+    <div id="navigation">
+        <a class="nav nav-prev" href="https://jdwuarin.github.io/botmaster/getting-started/messenger-setup"> <i class="fa fa-chevron-left"></i></a>
+        <a class="nav nav-next" href="https://jdwuarin.github.io/botmaster/getting-started/socketio-setup" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+    </div>
+
+    </section>
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="https://jdwuarin.github.io/botmaster/js/clipboard.min.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/perfect-scrollbar.min.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/perfect-scrollbar.jquery.min.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/jquery.sticky-kit.min.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/featherlight.min.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/html5shiv-printshiv.min.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="https://jdwuarin.github.io/botmaster/js/modernizr.custom.71422.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/learn.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/hugo-learn.js"></script>
+    
+
+  </body>
+</html>
+

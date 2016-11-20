@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en" class="js csstransforms3d">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="generator" content="Hugo 0.17" />
+    <meta name="description" content="The Bot framework for your serious projects">
+<meta name="author" content="JD Wuarin">
+
+    <link rel="shortcut icon" href="https://jdwuarin.github.io/botmaster/images/favicon.ico" type="image/x-icon" />
+
+    
+    <title>Socket.io Setup</title>
+    <link href="https://jdwuarin.github.io/botmaster/css/nucleus.css" rel="stylesheet">
+    <link href="https://jdwuarin.github.io/botmaster/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://jdwuarin.github.io/botmaster/css/hybrid.css" rel="stylesheet">
+    <link href="https://jdwuarin.github.io/botmaster/css/featherlight.min.css" rel="stylesheet">
+    <link href="https://jdwuarin.github.io/botmaster/css/perfect-scrollbar.min.css" rel="stylesheet">
+    <link href="https://jdwuarin.github.io/botmaster/css/horsey.css" rel="stylesheet">
+    <link href="https://jdwuarin.github.io/botmaster/css/theme.css" rel="stylesheet">
+    <link href="https://jdwuarin.github.io/botmaster/css/hugo-theme.css" rel="stylesheet">
+    <script src="https://jdwuarin.github.io/botmaster/js/jquery-2.x.min.js"></script>
+    <style type="text/css">:root #header + #content > #left > #rlblock_left
+    {display:none !important;}</style>
+    
+
+  </head>
+  <body class="" data-url="/getting-started/socketio-setup/">
+    <nav id="sidebar">
+  <div id="header-wrapper">
+    <div id="header">
+      <a id="logo" target="_blank" href="https://github.com/jdwuarin/botmaster">
+  <img src="https://jdwuarin.github.io/botmaster/images/botmaster_1.svg" onerror="this.src='/images/botmaster_1.png'" >
+</a>
+
+    </div>
+    
+        <div class="searchbox">
+    <label for="search-by"><i class="fa fa-search"></i></label>
+    <input id="search-by" type="text" placeholder="Search">
+    <span data-search-clear=""><i class="fa fa-close"></i></span>
+</div>
+<script type="text/javascript" src="https://jdwuarin.github.io/botmaster/js/lunr.min.js"></script>
+<script type="text/javascript" src="https://jdwuarin.github.io/botmaster/js/horsey.js"></script>
+<script type="text/javascript">
+    var baseurl = "https:\/\/jdwuarin.github.io\/botmaster\/";
+</script>
+<script type="text/javascript" src="https://jdwuarin.github.io/botmaster/js/search.js"></script>
+
+    
+</div>
+
+
+  <div class="highlightable">
+    <ul class="topics">
+      
+      
+        
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+      
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  " data-nav-id="/home/">
+        <a href="https://jdwuarin.github.io/botmaster/home/">
+          <span>
+            
+              <i class="fa fa-home" aria-hidden="true"></i>
+            
+             Botmaster v 2.2.2
+            
+           </span>
+        </a>
+        
+      </li>
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  parent" data-nav-id="/getting-started/">
+        <a href="https://jdwuarin.github.io/botmaster/getting-started/">
+          <span>
+            
+              <i class="fa fa-road" aria-hidden="true"></i>
+            
+             Getting started
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/installation/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/installation/">
+                <span>Installation     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/quickstart/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/quickstart/">
+                <span>Quickstart     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/getting-set-up/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/getting-set-up/">
+                <span>Getting set up     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/messenger-setup/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/messenger-setup/">
+                <span>Facebook Messenger Setup     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/slack-setup/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/slack-setup/">
+                <span>Slack Setup     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item active" data-nav-id="/getting-started/socketio-setup/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/socketio-setup/">
+                <span>Socket.io Setup     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/twitter-setup/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/twitter-setup/">
+                <span>Twitter Setup     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/telegram-setup/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/telegram-setup/">
+                <span>Telegram Setup     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/webhooks/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/webhooks/">
+                <span>Webhooks     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  " data-nav-id="/working-with-botmaster/">
+        <a href="https://jdwuarin.github.io/botmaster/working-with-botmaster/">
+          <span>
+            
+              <i class="fa fa-wrench" aria-hidden="true"></i>
+            
+             Working with Botmaster
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/working-with-botmaster/botmaster-basics/">
+              <a href="https://jdwuarin.github.io/botmaster/working-with-botmaster/botmaster-basics/">
+                <span>Botmaster Basics     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/working-with-botmaster/writing-your-own-bot-class/">
+              <a href="https://jdwuarin.github.io/botmaster/working-with-botmaster/writing-your-own-bot-class/">
+                <span>Writing your Own Bot Class     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  " data-nav-id="/tutorials/">
+        <a href="https://jdwuarin.github.io/botmaster/tutorials/">
+          <span>
+            
+              <i class="fa fa-code" aria-hidden="true"></i>
+            
+             Tutorials (coming soon)
+            
+           </span>
+        </a>
+        
+      </li>
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  " data-nav-id="/other-articles/">
+        <a href="https://jdwuarin.github.io/botmaster/other-articles/">
+          <span>
+            
+              <i class="fa fa-newspaper-o" aria-hidden="true"></i>
+            
+             Other Articles
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/other-articles/botmaster-or-botkit/">
+              <a href="https://jdwuarin.github.io/botmaster/other-articles/botmaster-or-botkit/">
+                <span>Botmaster or Botkit?     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  " data-nav-id="/changelog/CHANGELOG/">
+        <a href="https://jdwuarin.github.io/botmaster/changelog/CHANGELOG/">
+          <span>
+            
+              <i class="fa fa-list" aria-hidden="true"></i>
+            
+             CHANGELOG
+            
+           </span>
+        </a>
+        
+      </li>
+      
+      
+    </ul>
+    <hr>
+     
+    <section id="footer">
+      <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fa fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
+    </section>
+  </div>
+</nav>
+
+        <section id="body">
+        <div id="overlay"></div>
+
+        <div class="padding highlightable">
+
+            <div id="top-bar">
+              
+                
+                
+                
+              <div id="top-github-link">
+                  <a class="github-link" href="https://github.com/jdwuarin/botmaster/tree/gh-pages/documentation_website/content/getting-started/socketio-setup.md" target="blank">
+                    <i class="fa fa-code-fork"></i>
+                    Edit this page
+                  </a>
+              </div>
+                
+              
+              <div id="breadcrumbs" itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+                  <span id="sidebar-toggle-span">
+                      <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+                        <i class="fa fa-bars"></i>
+                      </a>
+                  </span>
+                
+                <span id="toc-menu"><a href=""><i class="fa fa-list-alt"></i></a></span>
+                
+                
+                
+                
+                  
+                
+                  
+                    
+                    
+                <a href="https://jdwuarin.github.io/botmaster/getting-started/" itemprop="url"><span itemprop="title">Getting started</span></a> <i class="fa fa-angle-right"></i>
+                    
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                <span itemprop="title"> Socket.io Setup</span>
+              </div>
+              
+                  <div class="progress">
+    <div class="wrapper">
+<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#code">Code</a>
+<ul>
+<li>
+<ul>
+<li><a href="#server">Server</a></li>
+<li><a href="#client">Client</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#the-botmaster-socket-io-bot">The Botmaster Socket.io bot</a></li>
+<li><a href="#botmaster-socket-io-bot-mini-tutorial">Botmaster Socket.io bot mini-tutorial</a>
+<ul>
+<li>
+<ul>
+<li><a href="#server-1">Server</a></li>
+</ul></li>
+<li><a href="#client-side">Client side</a></li>
+</ul></li>
+<li><a href="#security">Security</a></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+
+              
+
+            </div>
+            
+    	        <div id="body-inner">
+                
+                <h1>Socket.io Setup</h1>
+                
+
+
+
+<h2 id="code">Code</h2>
+
+<h4 id="server">Server</h4>
+
+<pre><code class="language-js">const Botmaster = require('botmaster');
+
+const socketioSettings = {
+  id: 'SOME_BOT_ID_OF_YOUR_CHOOSING',
+};
+
+const botsSettings = [{ socketio: socketioSettings }];
+
+const botmaster = new Botmaster({ botsSettings });
+
+botmaster.on('update', (bot, update) =&gt; {
+  bot.reply(update, 'Right back at you');
+});
+</code></pre>
+
+<h4 id="client">Client</h4>
+
+<pre><code class="language-js">const io = require('socket.io-client');
+
+const socket = io(&quot;ws://localhost:4000&quot;);
+
+socket.on('connect', function() {
+  const message = {
+    text: 'Hey there botmaster!'
+  };
+
+  socket.send(JSON.stringify(message));
+});
+
+</code></pre>
+
+<h2 id="the-botmaster-socket-io-bot">The Botmaster Socket.io bot</h2>
+
+<p>Socket.io is a great library that allows developers to write apps using webSockets (with fallbacks to http long-polling and others when webSockets aren&rsquo;t available in the client). You can read more about it on their own website here: <a href="http://socket.io">http://socket.io</a>.</p>
+
+<p>Because you might want to have a bot that not only works on some platform but also on your own webapp/app, support for socket.io was added to the Botmaster core. Although Socket.io enables developers to use their technology in a bunch of different applications, the fact that you want to use it in Botmaster means that you want to handle 1-1 conversations between users and your bot (managed by botmaster).</p>
+
+<p>If you&rsquo;ve never used both botmaster and socket.io, It&rsquo;s probably still pretty unclear how all of this fits in together. Hopefully the next section will help you understand and get started with this.</p>
+
+<h2 id="botmaster-socket-io-bot-mini-tutorial">Botmaster Socket.io bot mini-tutorial</h2>
+
+<p>By following these steps, you will have a fully functional Socket.io bot using botmaster. The client will live in a tiny web-page. The point of this tutorial is to get you started so that you can develop it further in any way you wish. This is completely based on the socket.io web &ldquo;get started&rdquo; guide found here: <a href="http://socket.io/get-started/chat/">http://socket.io/get-started/chat/</a>.</p>
+
+<h4 id="server-1">Server</h4>
+
+<p>After making sure that we have a project folder with a node.js project initialised and the botmaster package in it as per the <a href="https://jdwuarin.github.io/botmaster/getting-started/installation">installation</a> guide.
+We want to make sure botmaster is setup and make sure that messages coming from a websocket connection are received. So in our poject folder, in our <code>app.js</code> file, we simply copy the code found at the top of this page:</p>
+
+<pre><code class="language-js">const Botmaster = require('botmaster');
+
+const socketioSettings = {
+  id: 'SOME_ID_OF_YOUR_CHOOSING',
+};
+
+const botsSettings = [{ socketio: socketioSettings }];
+
+const botmaster = new Botmaster({ botsSettings });
+
+botmaster.on('update', (bot, update) =&gt; {
+  bot.reply(update, 'Right back at you');
+});
+</code></pre>
+
+<p>We will need to add a couple of lines to this code because we will be serving a webpage from our server. Not just listening on for botmaster messages. To do so, we take advantage of the fact that botmaster is built on top of express and that. We also assume that we will be serving our static assets (the components of our webpage) from a folder called &lsquo;public&rsquo; within our project directory. Our updated code looks like this:</p>
+
+<pre><code class="language-js">const Botmaster = require('botmaster');
+const express = require('express'); //added
+
+const socketioSettings = {
+  id: 'SOME_ID_OF_YOUR_CHOOSING',
+};
+
+const botsSettings = [{ socketio: socketioSettings }];
+
+const botmaster = new Botmaster({ botsSettings });
+botmaster.app.use(express.static(__dirname + '/public')); //added
+
+botmaster.on('update', (bot, update) =&gt; {
+  bot.reply(update, 'Right back at you');
+});
+
+botmaster.on('error', (bot, err) =&gt; {
+  console.log(err);
+});
+</code></pre>
+
+<p>We also added the botmaster &lsquo;error&rsquo; event listener, because that&rsquo;s just always good to do.</p>
+
+<h3 id="client-side">Client side</h3>
+
+<p>As mentioned in the Server side, we will create a folder named &lsquo;public&rsquo; within our poject dir. In it, we will have the following three files:</p>
+
+<ul>
+<li>index.html</li>
+<li>style.css</li>
+<li>client_app.js</li>
+</ul>
+
+<p>So that your final tree structure looks like this:</p>
+
+<pre><code>your_project_folder
+├── app.js
+└── public
+    ├── client_app.js
+    ├── index.html
+    └── style.css
+</code></pre>
+
+<p>In the <code>index.html</code> file, we will put some very basic html that looks like this:</p>
+
+<pre><code class="language-html">&lt;!doctype html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Botmaster bot&lt;/title&gt;
+    &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;style.css&quot;&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div class=&quot;chat&quot;&gt;
+      &lt;ul id=&quot;messages&quot;&gt;&lt;/ul&gt;
+      &lt;form id=&quot;form&quot; action=&quot;&quot;&gt;
+        &lt;input type=&quot;text&quot; id=&quot;text-input&quot; autocomplete=&quot;off&quot; /&gt;&lt;button&gt;Send&lt;/button&gt;
+      &lt;/form&gt;
+    &lt;/div&gt;
+
+    &lt;script src=&quot;/socket.io/socket.io.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;client_app.js&quot;&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+
+</code></pre>
+
+<p>The important line here is the line where we are importing socket.io. This works because socket.io adds a path to our server (in this case, a server created by botmaster under the hood) to serve this exact endpoint.
+The other imports are simply the ones we will be creating.</p>
+
+<p>In the <code>style.css</code> file, simply add the following:</p>
+
+<pre><code class="language-css">* {
+  margin: 0;
+  padding: 0;
+  box-sizing:
+  border-box;
+}
+
+body {
+  font: 13px Helvetica, Arial;
+}
+
+form {
+  background: #000;
+  padding: 3px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+form input {
+  border: 0;
+  padding: 10px;
+  width: 90%;
+  margin-right: .5%;
+}
+
+form button {
+  width: 9%; background: rgb(130, 224, 255);
+  border: none; padding: 10px;
+}
+
+#messages {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+#messages li {
+  padding: 5px 10px;
+}
+
+#messages .botmaster-message {
+  background: #eee;
+}
+</code></pre>
+
+<p>This is the exact look from the socket.io tutorial mentioned above (and mostly their code too).</p>
+
+<p>Finally, in the <code>client_app.js</code> file, you should include the following:</p>
+
+<pre><code class="language-js">// the following line could also be: &quot;var socket = io('ws://&lt;URL&gt;:&lt;PORT_Number&gt;?botmasterUserId=wantedUserId');&quot;
+// if you know you will be communicating with a server different from the one that served you the page you are on
+// do something like this: io('ws://&lt;URL&gt;:&lt;PORT_Number&gt;');
+// this only works because the socket.io library assumes with this syntax that the socket.io server
+// lives at the same address as the server that served this page (this should mostly be your case)
+var socket = io('?botmasterUserId=wantedUserId');
+
+// just get the html elements we will be needing by ID
+var form = document.getElementById('form');
+var textInput = document.getElementById('text-input');
+var messages = document.getElementById('messages');
+
+form.onsubmit = function(event) {
+  // just making sure the page isn't refreshed
+  event.preventDefault();
+  // don't do anything if there is no text
+  if (!textInput.value) {
+    return;
+  }
+  // Add the user message to the web page
+  messages.insertAdjacentHTML('beforeend',
+    `&lt;li class=&quot;user-message&quot;&gt;${textInput.value}&lt;/li&gt;`);
+  // create a botmaster compatible message from the text input by user
+  const message = {
+    text: textInput.value,
+  };
+  // just send a stringified version of it over the webSocket
+  socket.send(JSON.stringify(message));
+  // finally, clear the user textInput field
+  textInput.value = '';
+};
+
+socket.on('message', function(botmasterMessage){
+  var messageObject = JSON.parse(botmasterMessage);
+  var textMessage = messageObject.message.text;
+
+  messages.insertAdjacentHTML('beforeend',
+    `&lt;li class=&quot;botmaster-message&quot;&gt;${textMessage}&lt;/li&gt;`);
+});
+</code></pre>
+
+<p>You should have a read through this code to make sure you understand it as that is the code communicating with our botmaster backend.</p>
+
+<p>On the first line, we call: <code>var socket = io('?botmasterUserId=wantedUserId');</code>. This effectively opens up a socket connection with our backend by making a request to something like this: <code>io('ws://localhost:3000?botmasterUserId=wantedUserId');</code>. Here as you can see, we are setting a query param called <strong>botmasterUserId</strong> to &lsquo;wantedUserId&rsquo;. This is done because we want to make sure that when we are getting updates in our backend, the <code>update.sender.id</code> part will be what we set it to here and not anything else (by default the randomly allocated socket.id value). This is even more important when your users can connect from different clients and you want to make sure the botmaster reply is propagated to all the clients.</p>
+
+<p>In the <code>form.onsubmit</code> part, we make sure that the text contained in the input cell is correctly formatted then sent to botmaster via the websocket. We also make sure to display it in our page and to then clear the input.</p>
+
+<p>In the <code>socket.on('message')</code> part, we simply display the received message.</p>
+
+<p>Now that our code is here, simply go to your command line and run <code>node app.js</code>. If you now open a browser to 127.0.0.1:3000 you should be able to chat with your pretty useless (for now) bot. Just like this:</p>
+
+<p><img src="https://jdwuarin.github.io/botmaster/images/socket.io_setup_1.png?width=90%" alt="Socket.io Setup 1" /></p>
+
+<h2 id="security">Security</h2>
+
+<p>You might be wondering how you can secure your Botmaster socket.io app. I.e. how can you make sure that a client connecting with a certain id really is who they claim they are. Well, this part is actually left to you, the developer to do. I didn&rsquo;t want to make any assumptions with regards to what people would want to use to secure their app. So what I do is expose the <code>socket.io</code> server object through the bot object. It can be accessed in the following way</p>
+
+<pre><code class="language-js">socketioBot.ioServer
+</code></pre>
+
+<p>Then you&rsquo;ll be able to register a middleware function to your socker.io server as such:</p>
+
+<pre><code class="language-js">socketioBot.ioServer.use((socket, next) =&gt; {
+  if (socket.request.headers.cookie) return next();
+  next(new Error('Authentication error'));
+});
+</code></pre>
+
+<p>This is shamelessly stolen from the socket.io documentation here: <a href="http://socket.io/docs/server-api/#namespace#use(fn:function):namespace">http://socket.io/docs/server-api/#namespace#use(fn:function):namespace</a></p>
+
+<p>This function will be executed every time there is an incoming socket connection. Indeed, no need to do so on every message as once the connection is made, all transfers are secured on the open socket. That&rsquo;s really the whole point of webSockets.</p>
+
+
+      
+      </div>
+    </div>
+
+    <div id="navigation">
+        <a class="nav nav-prev" href="https://jdwuarin.github.io/botmaster/getting-started/slack-setup"> <i class="fa fa-chevron-left"></i></a>
+        <a class="nav nav-next" href="https://jdwuarin.github.io/botmaster/getting-started/twitter-setup" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+    </div>
+
+    </section>
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="https://jdwuarin.github.io/botmaster/js/clipboard.min.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/perfect-scrollbar.min.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/perfect-scrollbar.jquery.min.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/jquery.sticky-kit.min.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/featherlight.min.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/html5shiv-printshiv.min.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="https://jdwuarin.github.io/botmaster/js/modernizr.custom.71422.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/learn.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/hugo-learn.js"></script>
+    
+
+  </body>
+</html>
+

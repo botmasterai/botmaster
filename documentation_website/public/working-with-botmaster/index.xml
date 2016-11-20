@@ -1,0 +1,987 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Working-with-botmaster-rsses on Botmaster Documentation</title>
+    <link>https://jdwuarin.github.io/botmaster/working-with-botmaster/index.xml</link>
+    <description>Recent content in Working-with-botmaster-rsses on Botmaster Documentation</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>MIT</copyright>
+    <lastBuildDate>Fri, 04 Nov 2016 01:17:34 +0000</lastBuildDate>
+    <atom:link href="https://jdwuarin.github.io/botmaster/working-with-botmaster/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Working with Botmaster</title>
+      <link>https://jdwuarin.github.io/botmaster/working-with-botmaster/</link>
+      <pubDate>Fri, 04 Nov 2016 01:17:34 +0000</pubDate>
+      
+      <guid>https://jdwuarin.github.io/botmaster/working-with-botmaster/</guid>
+      <description>
+
+&lt;h1 id=&#34;working-with-botmaster&#34;&gt;Working with Botmaster&lt;/h1&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Botmaster Basics</title>
+      <link>https://jdwuarin.github.io/botmaster/working-with-botmaster/botmaster-basics/</link>
+      <pubDate>Fri, 04 Nov 2016 01:31:15 +0000</pubDate>
+      
+      <guid>https://jdwuarin.github.io/botmaster/working-with-botmaster/botmaster-basics/</guid>
+      <description>
+
+&lt;p&gt;Hopefully, by now you&amp;rsquo;ve gathered your credentials for at least one platform and got some basic bot running. We remember from the &lt;a href=&#34;https://jdwuarin.github.io/botmaster/getting-started/quickstart&#34;&gt;quickstart&lt;/a&gt; and the various Setup guides in &lt;a href=&#34;https://jdwuarin.github.io/botmaster/getting-started&#34;&gt;getting-started&lt;/a&gt; that we can start our botmaster server like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;const Botmaster = require(&#39;botmaster&#39;);
+.
+. // full settings object omitted for brevity
+.
+const botsSettings = [{ telegram: telegramSettings },
+                      { messenger: messengerSettings },
+                      { twitter: twitterSettings },
+                      { slack: slackSettings },
+                      { socketio: socketioSettings }];
+
+const botmasterSettings = {
+  botsSettings: botsSettings,
+  // by default botmaster will start an express server that listens on port 3000
+  // you can pass in a port argument here to change this default setting:
+  port: 3001
+}
+
+const botmaster = new Botmaster(botmasterSettings);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;settings&#34;&gt;Settings&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;botmasterSettings&lt;/code&gt; object has the following parameters:&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Parameter&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;botsSettings&lt;/td&gt;
+&lt;td&gt;An &lt;code&gt;array&lt;/code&gt; of platform specific settings. See &lt;a href=&#34;https://jdwuarin.github.io/botmaster/getting-started/quickstart&#34;&gt;Quickstart&lt;/a&gt; to see an example of those and the various setup guides in &lt;a href=&#34;https://jdwuarin.github.io/botmaster/getting-started&#34;&gt;Getting started&lt;/a&gt; to see how to get started with the various platforms.&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;port&lt;/td&gt;
+&lt;td&gt;(&lt;strong&gt;optional&lt;/strong&gt;) The port to use for your webhooks (see &lt;a href=&#34;#webhooks&#34;&gt;webhooks&lt;/a&gt; to understand more about webhooks). This will only be used if the &lt;code&gt;app&lt;/code&gt; parameter is not provided. Otherwise, it will be ignored&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;app&lt;/td&gt;
+&lt;td&gt;(&lt;strong&gt;optional&lt;/strong&gt;) An &lt;code&gt;express.js&lt;/code&gt; app object to mount the &lt;code&gt;webhookEnpoints&lt;/code&gt; onto. If you choose to do this, it is assumed that you will be starting your own express server and this won&amp;rsquo;t be done by Botmaster. Unless you also specify a &lt;code&gt;server&lt;/code&gt; parameter, &lt;code&gt;botmaster.server&lt;/code&gt; will be &lt;code&gt;null&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;server&lt;/td&gt;
+&lt;td&gt;(&lt;strong&gt;optional&lt;/strong&gt;) an &lt;code&gt;http&lt;/code&gt; server object. It can be accessed via &lt;code&gt;botmaster.server&lt;/code&gt; once instantiated. If passed and using socket.io. This server object will be used as the socker.io server.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;div class=&#34;notices info&#34; &gt;&lt;p&gt;Please note, if you are passing in an &lt;code&gt;app&lt;/code&gt; object to the settings, it is assumed that you are dealing with anything relating to your http server. That is start listening, closing it if necessary etc.&lt;/p&gt;
+&lt;/div&gt;
+
+
+&lt;div class=&#34;notices warning&#34; &gt;&lt;p&gt;If using socket.io (&lt;code&gt;socketio&lt;/code&gt;), you will need to either define BOTH an &lt;code&gt;app&lt;/code&gt; object and its corresponding &lt;code&gt;server&lt;/code&gt; object in the settings. Or if you would rather botmaster manage this for you, you can define none of them. Alternatively, if you want, say, to have a different http server for your main botmaster app and for socket.io, you can do something like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;.
+.
+const socketioSettings = {
+  id: &#39;SOME_ID_OF_YOUR_CHOOSING&#39;,
+  server: &#39;SOME_HTTP_SERVER_OF_YOURS&#39;, // this server can&#39;t run on port 3000 in this example
+};
+
+const botsSettings = [{ telegram: telegramSettings },
+                      { messenger: messengerSettings },
+                      { twitter: twitterSettings },
+                      { slack: slackSettings },
+                      { socketio: socketioSettings }];
+
+const botmasterSettings = {
+  botsSettings: botsSettings,
+}
+
+const botmaster = new Botmaster(botmasterSettings);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In this example, a server will be started under the hood by botmaster using your express. This http server will be a different one from the one used in&lt;/p&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;events&#34;&gt;Events&lt;/h3&gt;
+
+&lt;p&gt;Botmaster is built on top of the EventEmitter node.js class. Which means it can emit events and most importantly for us here, it can listen onto them. By doing any of the following:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;botmaster.on(&#39;server running&#39;, (message) =&amp;gt; {
+  console.log(message);
+});
+
+botmaster.on(&#39;update&#39;, (bot, update) =&amp;gt; {
+  console.log(bot.type);
+  console.log(update);
+});
+
+botmaster.on(&#39;error&#39;, (bot, err) =&amp;gt; {
+  console.log(bot.type);
+  console.log(err.stack);
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;These are the only four listeners that you can listen onto in botmaster. Let&amp;rsquo;s go though them briefly:&lt;/p&gt;
+
+&lt;h4 id=&#34;server-running&#34;&gt;server running&lt;/h4&gt;
+
+&lt;p&gt;This event will be emitted only if you are not managing your own server (i.e. you started botmaster without setting the &lt;code&gt;app&lt;/code&gt; parameter). It is just here to notify you that the server has been started. You don&amp;rsquo;t necessarily need to use it. But you might want to do things at this point.&lt;/p&gt;
+
+&lt;h4 id=&#34;update&#34;&gt;update&lt;/h4&gt;
+
+&lt;p&gt;This is really where all the magic happens. Whenever a message (update in Botmaster semantic) is sent into your application. Botmaster will parse it and format it into its [FB Messenger] standard. Along with it, you will get a &lt;code&gt;bot&lt;/code&gt; object which is the underlying object into which the message was sent. Note that the updates are standardized as well as the methods to use from the bot object (i.e. sending a message). Read further down to see how those two objects work.&lt;/p&gt;
+
+&lt;h4 id=&#34;error&#34;&gt;error&lt;/h4&gt;
+
+&lt;p&gt;This event is thrown whenever an error internal to Botmaster occurs. I.e. if for some reason a misconfigured message was sent in. Or if some other kind of error occurred directly within Botmaster. It is good to listen onto this event and keep track of potential errors. Also, if you code an error within &lt;code&gt;botmaster.on&lt;/code&gt;, and don&amp;rsquo;t catch it, it will be caught by Botmaster and emitted in to &lt;code&gt;error&lt;/code&gt;. So like this you have full control of what is going on and can log everything straight from there.&lt;/p&gt;
+
+&lt;h3 id=&#34;bot-object&#34;&gt;Bot object&lt;/h3&gt;
+
+&lt;p&gt;Bot objects are really the ones running the show in the Botmaster framework. Your &lt;code&gt;botmaster&lt;/code&gt; object is simply a central point of control for you to manage all of your bots. Botmaster assumes that most of your bots will have a central bit of code that you don&amp;rsquo;t want to have to replicate for every platform/bot instance. Which should make sense. To drive the point a little further, here is another [perfectly acceptable way] of starting botmaster.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;const Botmaster = require(&#39;botmaster&#39;);
+const MessengerBot = Botmaster.botTypes.MessengerBot;
+.
+.
+const botmaster = new Botmaster();
+.
+. // full settings objects omitted for brevity
+.
+const messengerBot = new MessengerBot(messengerSettings);
+const slackBot = new SlackBot(slackSettings);
+const twitterBot = new TwitterBot(twitterSettings);
+const socketioBot = new SocketioBot(socketioSettings);
+const telegramBot = new TelegramBot(telegramSettings);
+
+botmaster.addBot(messengerBot);
+botmaster.addBot(slackBot);
+botmaster.addBot(twitterBot);
+botmaster.addBot(socketioBot);
+botmaster.addBot(telegramBot);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Although the point of botmaster is for developers to do something like this after declaring the botmaster instance:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;botmaster.on(&#39;update&#39;, (bot, update) =&amp;gt; {
+  // do stuff with your bot and update here
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;One can just as well do:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;messengerBot.on(&#39;upadte&#39;, (update) =&amp;gt; {
+  // do stuff with your messenger bot here
+});
+
+// this applies to all the bot objects that would have been declared separately.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;code&gt;update&lt;/code&gt; object is the as the botmaster &lt;code&gt;update&lt;/code&gt; one you would get from that bot. Of course, this code would only apply to your &lt;code&gt;messengerBot&lt;/code&gt; instance and not the others.&lt;/p&gt;
+
+&lt;p&gt;As seen, bot instances can be accessed directly within an &lt;code&gt;update&lt;/code&gt; event. Because you might want to act differently on bots of a certain type or log information differently based on type, every bot comes with a &lt;code&gt;bot.type&lt;/code&gt; parameter that is one of: &lt;code&gt;messenger&lt;/code&gt;, &lt;code&gt;slack&lt;/code&gt;, &lt;code&gt;twitter&lt;/code&gt;, &lt;code&gt;socketio&lt;/code&gt;, &lt;code&gt;telegram&lt;/code&gt; or whatever third-party bot class you might have installed or created.&lt;/p&gt;
+
+&lt;p&gt;It is important to note here, that you can have multiple bot objects for a certain type. I&amp;rsquo;m sure you can find reasons for why you would want to do this. This is important to mention, as you might have, say, 2 bots of type &lt;code&gt;messenger&lt;/code&gt; dealt with via Botmaster. You might want to do platform specific code by doing the following:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;botmaster.on(&#39;update&#39;, (bot, update) =&amp;gt; {
+  if (bot.type === &#39;messenger&#39; {
+    // do messenger specific stuff
+    return;
+  })
+})
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then you might want to do bot object specific code. You would do this as such:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;botmaster.on(&#39;update&#39;, (bot, update) =&amp;gt; {
+  if (bot.type === &#39;messenger&#39; {
+    // do messenger specific stuff
+    if (bot.id === &#39;YOUR_BOT_ID&#39;) {// this will be the user id of bot for messenger
+      // do bot object specific stuff
+      return;
+    }
+  })
+})
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div class=&#34;notices warning&#34; &gt;&lt;p&gt;Botmaster does not assure you that the &lt;code&gt;id&lt;/code&gt; parameter of the &lt;code&gt;bot&lt;/code&gt; object will exist upon instantiation. the &lt;code&gt;id&lt;/code&gt; is only assured to be there once an update has been received by the bot. This is because some ids aren&amp;rsquo;t known until botmaster knows &amp;lsquo;who&amp;rsquo; [your bot] the message was sent to.&lt;/p&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;Or if you declared your bots and botmaster as in the beginning of this section, you might have done the following:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;const Botmaster = require(&#39;botmaster&#39;);
+const botmaster = new Botmaster();
+.
+. // full settings objects omitted for brevity
+.
+const messengerBot1 = new MessengerBot(messengerSettings1);
+const messengerBot2 = new MessengerBot(messengerSettings2);
+const slackBot = new SlackBot(slackSettings);
+const twitterBot = new TwitterBot(twitterSettings);
+
+botmaster.addBot(messengerBot);
+botmaster.addBot(slackBot);
+botmaster.addBot(twitterBot);
+
+botmaster.on(&#39;update&#39;, (bot, update) =&amp;gt; {
+  if (bot.type === &#39;messenger&#39; {
+    // do messenger bot specific stuff
+
+
+    if (bot === messengerBot1) { // without using ids
+      // do messengerBot1 specific stuff
+    }
+    return;
+  })
+})
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you want to perform bot object specific code, I recommend declaring your objects in this way rather than the standard way. If you want to perform platform specific way, the standard way is perfectly fine.&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;ll note quickly that each bot object created comes from one of the various bot classes as seen above. They act in the same way on the surface (because of heavy standardization), but have a few idiosynchrasies here and there. You can read about them all in their own sections.&lt;/p&gt;
+
+&lt;p&gt;Also useful to note is that you can access all the bots added to botmaster by doing &lt;code&gt;botmaster.bots&lt;/code&gt;. you can also use &lt;code&gt;botmastet.getBot&lt;/code&gt; or &lt;code&gt;botmaster.getBots&lt;/code&gt; to get a specific bot (using type or id);&lt;/p&gt;
+
+&lt;p&gt;It is important to note the &lt;code&gt;addBot&lt;/code&gt; syntax as you can create your own Bot class that extends the &lt;code&gt;Botmaster.botTypes.BaseBot&lt;/code&gt; class. For instance, you might want to create your own class that supports your pre-existing messaging standards. Have a look at the &lt;a href=&#34;working-with-botmaster/writing-a-botmaster-supported-bot-class-readme.md&#34;&gt;working with a botmaster supported bot class &lt;/a&gt; documentation to learn how to do this.&lt;/p&gt;
+
+&lt;h2 id=&#34;message-update-format&#34;&gt;Message/Update format&lt;/h2&gt;
+
+&lt;p&gt;Standardization is at the heart of Botmaster. The framework was really created for that purpose. This means that messages coming from any platform have to have the same format.&lt;/p&gt;
+
+&lt;p&gt;In order to do that, the &lt;strong&gt;Facebook Messenger message format&lt;/strong&gt; was chosen and adopted. This means that when your botmaster object receives an &amp;lsquo;update&amp;rsquo; event from anywhere, you can be sure that it will be of the same format as a similar message that would come from Facebook Messenger.&lt;/p&gt;
+
+&lt;h3 id=&#34;incoming-update&#34;&gt;Incoming update&lt;/h3&gt;
+
+&lt;p&gt;Typically, it would look something like this for a message with an image attachment. Independent of what platform the message comes from:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;{
+  raw: &amp;lt;platform_specific_raw_update&amp;gt;,
+  sender: {
+    id: &amp;lt;id_of_sender&amp;gt;
+  },
+  recipient: {
+    id: &amp;lt;id_of_the_recipent&amp;gt; // will typically be the bot&#39;s id
+  },
+  timestamp: &amp;lt;unix_miliseconds_timestamp&amp;gt;,
+  message: {
+    mid: &amp;lt;message_id&amp;gt;,
+    seq: &amp;lt;message_sequence_id&amp;gt;,
+    attachments: [
+      {
+        type: &#39;image&#39;,
+        payload: {
+          url: &#39;https://scontent.xx.fbcdn.net/v/.....&#39;
+        }
+      }
+    ]
+  }
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This allows developers to handle these messages in one place only rather than doing it in multiple places. For more info on the various incoming messages formats, read the messenger bot doc on webhooks at: &lt;a href=&#34;https://developers.facebook.com/docs/messenger-platform/webhook-reference/message-received&#34;&gt;https://developers.facebook.com/docs/messenger-platform/webhook-reference/message-received&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Currently, you will only get updates for &lt;code&gt;Messages&lt;/code&gt; (and not delivery, echo notification etc) for all platforms. On Messenger, it is assumed that you don&amp;rsquo;t want to get updates for delivery, read and echo. This can&amp;rsquo;t be turned on at the moment, but will be in later versions as it might be a requirement.&lt;/p&gt;
+
+&lt;h4 id=&#34;note-on-attachment-types-and-conversions&#34;&gt;Note on attachment types and conversions&lt;/h4&gt;
+
+&lt;p&gt;Attachment type conversion on incoming updates works as such for &lt;strong&gt;Twitter&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Twitter Type&lt;/th&gt;
+&lt;th&gt;Botmaster conversion&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;photo&lt;/td&gt;
+&lt;td&gt;image&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;video&lt;/td&gt;
+&lt;td&gt;video&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;gif&lt;/td&gt;
+&lt;td&gt;video&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;!!!Yes &lt;code&gt;gif&lt;/code&gt; becomes a &lt;code&gt;video&lt;/code&gt;. because Twitter doesn&amp;rsquo;t actually use gifs the way you would expect it to. It simply loops over a short &lt;code&gt;.mp4&lt;/code&gt; video.&lt;/p&gt;
+
+&lt;p&gt;Also, here&amp;rsquo;s an important caveat for Twitter bot developers who are receiving attachments. Image links that come in from the Twitter API will be private and not public, which makes using them quite tricky. You might need to make authenticated requests to do so. The twitterBot objects you will receive in the update will have a &lt;code&gt;bot.twit&lt;/code&gt; object. Documentation for how to use this is available &lt;a href=&#34;https://github.com/ttezel/twit&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Receiving and sending attachments [the Botmaster way] is not yet supported on &lt;strong&gt;Slack&lt;/strong&gt; as of version 2.2.1. However, Slack supports url unfurling (meaning if you send images and other types of media this will be shown in the messages and users won&amp;rsquo;t just see a url). Also, because of how Botmaster is built (don&amp;rsquo;t throw any of the original information from the message away) you can find all the necessary information in the &lt;code&gt;update.raw&lt;/code&gt; object of the update.&lt;/p&gt;
+
+&lt;p&gt;Attachment type conversion works as such for &lt;strong&gt;Telegram&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Telegram Type&lt;/th&gt;
+&lt;th&gt;Botmaster conversion&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;audio&lt;/td&gt;
+&lt;td&gt;audio&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;voice&lt;/td&gt;
+&lt;td&gt;audio&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;photo&lt;/td&gt;
+&lt;td&gt;image&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;video&lt;/td&gt;
+&lt;td&gt;video&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;location&lt;/td&gt;
+&lt;td&gt;location&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;venue&lt;/td&gt;
+&lt;td&gt;location&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;code&gt;contact&lt;/code&gt; attachment types aren&amp;rsquo;t supported in Messenger. So in order to deal with them in Botmaster, you will have to look into your &lt;code&gt;update.raw&lt;/code&gt; object which is the standard Telegram update. You will find your contact object in &lt;code&gt;update.raw.contact&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Also, concerning &lt;code&gt;location&lt;/code&gt; and &lt;code&gt;venue&lt;/code&gt; attachments. The url received in Botmaster for Telegram is a google maps one with the coordinates as query parameters. It looks something like this: &lt;code&gt;https://maps.google.com/?q=&amp;lt;lat&amp;gt;,&amp;lt;long&amp;gt;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;A few of you will want to use attachments with your &lt;code&gt;socket.io&lt;/code&gt; bots. Because the Botmaster message standard is the Facebook Messenger one, everything is URL based. Which means it is left to the developer to store both incoming and outgoing attachments. A tutorial on how to deal with this will be up soon in the &lt;a href=&#34;https://jdwuarin.github.io/botmaster/tutorials&#34;&gt;Tutorials&lt;/a&gt; section.&lt;/p&gt;
+
+&lt;h3 id=&#34;outgoing-messages&#34;&gt;Outgoing messages&lt;/h3&gt;
+
+&lt;p&gt;Again, outgoing messages are expected to be formatted like messages the Messenger platform would expect. They will typically look something like this for a text message:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;const message = {
+  recipient: {
+    id: update.sender.id,
+  },
+  message: {
+    text: &#39;Some arbitrary text of yours&#39;
+  },
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;and you would use this as such in code:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;botmaster.on(&#39;update&#39;, (bot, update) =&amp;gt; {
+  const message = {
+    recipient: {
+      id: update.sender.id,
+    },
+    message: {
+      text: &#39;Some arbitrary text of yours&#39;
+    },
+  };
+  bot.sendMessage(message);
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As you can see, the &lt;code&gt;sendMessage&lt;/code&gt; method used is used directly from the bot object and not using the botmaster one.&lt;/p&gt;
+
+&lt;p&gt;Because you might not always want to code in a complex json object just to send in a simple text message or photo attachment, Botmaster comes with a few helper methods that can be used to send messages with less code:&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;bot.sendMessageTo&lt;/code&gt;&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Argument&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;message&lt;/td&gt;
+&lt;td&gt;an object without the recipient part. In the previous example, it would be &lt;code&gt;message.message&lt;/code&gt;.&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;recipientId&lt;/td&gt;
+&lt;td&gt;a string representing the id of the user to whom you want to send the message.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;code&gt;bot.sendTextMessageTo&lt;/code&gt;&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Argument&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;text&lt;/td&gt;
+&lt;td&gt;just a string with the text you want to send to your user&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;recipientId&lt;/td&gt;
+&lt;td&gt;a string representing the id of the user to whom you want to send the message.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Typically used like so to send a text message to the user who just spoke to the bot:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;botmaster.on(&#39;update&#39;, (bot, update) =&amp;gt; {
+  bot.sendTextMessageTo(&#39;something super important&#39;, update.sender.id);
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;bot.reply&lt;/code&gt;&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Argument&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;update&lt;/td&gt;
+&lt;td&gt;an update object with a valid &lt;code&gt;update.sender.id&lt;/code&gt;.&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;text&lt;/td&gt;
+&lt;td&gt;just a string with the text you want to send to your user&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;This is is typically used like so:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;botmaster.on(&#39;update&#39;, (bot, update) =&amp;gt; {
+  bot.reply(update, &#39;something super important!&#39;);
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;attachments&#34;&gt;Attachments&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;bot.sendAttachmentTo&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;We&amp;rsquo;ll note here really quickly that Messenger only takes in urls for file attachment (image, video, audio, file). Most other platforms don&amp;rsquo;t support sending attachments in this way. So we fall back to sending the url in text which really results in a very similar output. Same goes for Twitter that doesn&amp;rsquo;t support attachments at all.&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Argument&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;attachment&lt;/td&gt;
+&lt;td&gt;a valid Messenger style attachment. See &lt;a href=&#34;https://developers.facebook.com/docs/messenger-platform/send-api-reference&#34;&gt;here&lt;/a&gt; for more on that.&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;recipientId&lt;/td&gt;
+&lt;td&gt;a string representing the id of the user to whom you want to send the message.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;This is the general attachment sending method that will always work for Messenger but not necessarily for other platforms as Facebook Messenger supports all sorts of attachments that other platforms don&amp;rsquo;t necessarily support. So beware when using it. To assure your attachment will be sent to all platforms, use &lt;code&gt;bot.sendAttachmentFromURLTo&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;This is typically used as such for sending an image url.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;botmaster.on(&#39;update&#39;, (bot, update) =&amp;gt; {
+  const attachment = {
+    type: &#39;image&#39;
+    payload: {
+      url: &amp;quot;some image url you&#39;ve got&amp;quot;,
+    },
+  };
+  bot.sendAttachment(attachment, update.sender.id);
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;bot.sendAttachmentFromURLTo&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Just easier to use this to send standard url attachments. And URL attachments if used properly should work on all out-of-the-box platforms:&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Argument&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;type&lt;/td&gt;
+&lt;td&gt;string representing the type of attachment (audio, video, image or file)&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;url&lt;/td&gt;
+&lt;td&gt;the url to your file&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;recipientId&lt;/td&gt;
+&lt;td&gt;a string representing the id of the user to whom you want to send the message.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;This is typically used as such for sending an image url.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;botmaster.on(&#39;update&#39;, (bot, update) =&amp;gt; {
+  bot.sendAttachment(&#39;image&#39;, &amp;quot;some image url you&#39;ve got&amp;quot;, update.sender.id);
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;status&#34;&gt;Status&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;bot.sendIsTypingMessageTo&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;To indicate that something is happening on your bots end, you can show your users that the bot is &amp;lsquo;working&amp;rsquo; or &amp;lsquo;typing&amp;rsquo; something. to do so, simply invoke sendIsTypingMessageTo.&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Argument&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;recipientId&lt;/td&gt;
+&lt;td&gt;a string representing the id of the user to whom you want to send the message.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;It is used as such:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;botmaster.on(&#39;update&#39;, (bot, update) =&amp;gt; {
+    bot.sendIsTypingMessageTo(update.sender.id);
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It will only send a request to the platforms that support it. If unsupported, nothing will happen.&lt;/p&gt;
+
+&lt;h4 id=&#34;buttons&#34;&gt;Buttons&lt;/h4&gt;
+
+&lt;p&gt;Buttons will almost surely be part of your bot. Botmaster provides a method that will send what is assumed to be a decent way to display buttons throughout all platforms.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;bot.sendDefaultButtonMessageTo&lt;/code&gt;&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Argument&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;buttonTitles&lt;/td&gt;
+&lt;td&gt;array of button titles (no longer than 10 in size).&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;recipientId&lt;/td&gt;
+&lt;td&gt;a string representing the id of the user to whom you want to send the message.&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;textOrAttachment&lt;/td&gt;
+&lt;td&gt;(&lt;strong&gt;optional&lt;/strong&gt;) a string or an attachment object similar to the ones required in &lt;code&gt;bot.sendAttachmentTo&lt;/code&gt;. This is meant to provide context to the buttons. I.e. why are there buttons here. A piece of text or an attachment could detail that. If not provided,  text will be added that reads: &amp;lsquo;Please select one of:&amp;lsquo;.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;The function defaults to sending &lt;code&gt;quick_replies&lt;/code&gt; in Messenger, setting &lt;code&gt;Keyboard buttons&lt;/code&gt; in Telegram, buttons in Slack and simply prints button titles one on each line in Twitter as it doesn&amp;rsquo;t support buttons. The user is expecting to type in their choice in Twitter. In the socketio implementation, the front-end/app developer is expected to write the code that would display the buttons on their front-end.&lt;/p&gt;
+
+&lt;h2 id=&#34;using-botmaster-with-your-own-express-app&#34;&gt;Using Botmaster with your own express() app&lt;/h2&gt;
+
+&lt;p&gt;Here&amp;rsquo;s an example on how to do so:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;const express = require(&#39;express&#39;);
+const app = express();
+const port = 3000;
+
+const Botmaster = require(&#39;botmaster&#39;);
+
+const telegramSettings = {
+  credentials: {
+    authToken: process.env.TELEGRAM_TEST_TOKEN,
+  },
+  webhookEndpoint: &#39;/webhook1234/&#39;,
+};
+
+const messengerSettings = {
+  credentials: {
+    verifyToken: process.env.MESSENGER_VERIFY_TOKEN,
+    pageToken: process.env.MESSENGER_PAGE_TOKEN,
+    fbAppSecret: process.env.FACEBOOK_APP_SECRET,
+  },
+  webhookEndpoint: &#39;/webhook1234/&#39;,
+};
+
+const botsSettings = [{ telegram: telegramSettings },
+                      { messenger: messengerSettings }];
+
+const botmasterSettings = {
+  botsSettings: botsSettings,
+  app: app,
+}
+
+const botmaster = new Botmaster(botmasterSettings);
+
+botmaster.on(&#39;update&#39;, (bot, update) =&amp;gt; {
+  bot.sendMessage({
+    recipient: {
+      id: update.sender.id,
+    },
+    message: {
+      text: &#39;Well right back at you!&#39;,
+    },
+  });
+});
+
+console.log(`Loading App`);
+// start server on the specified port and binding host
+app.listen(port, &#39;0.0.0.0&#39;, () =&amp;gt; {
+  // print a message when the server starts listening
+  console.log(`Running App on port: ${port}`);
+});
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Writing your Own Bot Class</title>
+      <link>https://jdwuarin.github.io/botmaster/working-with-botmaster/writing-your-own-bot-class/</link>
+      <pubDate>Thu, 17 Nov 2016 18:16:51 +0000</pubDate>
+      
+      <guid>https://jdwuarin.github.io/botmaster/working-with-botmaster/writing-your-own-bot-class/</guid>
+      <description>
+
+&lt;h2 id=&#34;bot-classes&#34;&gt;Bot classes&lt;/h2&gt;
+
+&lt;p&gt;The following assumes that you have read the main documentation in &amp;ldquo;getting started&amp;rdquo; and in &amp;ldquo;botmaster basics&amp;rdquo;. A general understand of how Botmaster and more generally how chatbots work is also assumed.&lt;/p&gt;
+
+&lt;p&gt;Because of that, we will pick up right from there and start looking into the bot classes Botmaster comes bundled with.&lt;/p&gt;
+
+&lt;p&gt;Botmaster makes five usable bot classes available to developers out of the box. &lt;code&gt;MessengerBot&lt;/code&gt;, &lt;code&gt;SlackBot&lt;/code&gt;, &lt;code&gt;SocketioBot&lt;/code&gt;, &lt;code&gt;TelegramBot&lt;/code&gt; and &lt;code&gt;TwitterBot&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;For example, you can instantiate a new &lt;code&gt;MessengerBot&lt;/code&gt; object as such:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;const Botmaster = require(&#39;botmaster&#39;);
+const MessengerBot = Botmaster.botTypes.MessengerBot;
+
+const messengerSettings = {
+  credentials: {
+    verifyToken: &#39;YOUR verifyToken&#39;,
+    pageToken: &#39;YOUR pageToken&#39;,
+    fbAppSecret: &#39;YOUR fbAppSecret&#39;
+  },
+  webhookEndpoint: &#39;/webhook1234&#39;,
+};
+
+const messengerBot = new MessengerBot(messengerSettings);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In order to get updates from Messenger, you would then be expected to mount your bot&amp;rsquo;s express mini-app &lt;code&gt;messengerBot.app&lt;/code&gt; onto your own express &lt;code&gt;app&lt;/code&gt; by doing something like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;const app = require(&#39;express&#39;)();
+app.use(&#39;/&#39;, messengerBot.app);
+app.listen(3000, function() {});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This will mount your bot onto: &lt;code&gt;https://Your_Domain_Name/webhook1234&lt;/code&gt;. Note how the bot type &lt;strong&gt;is not&lt;/strong&gt; part of the URL here.&lt;/p&gt;
+
+&lt;h2 id=&#34;making-botmaster-objects-and-bot-objects-work-together&#34;&gt;Making Botmaster objects and bot objects work together&lt;/h2&gt;
+
+&lt;p&gt;In the &lt;a href=&#34;https://jdwuarin.github.io/botmaster/working-with-botmaster/botmaster-basics&#34;&gt;botmaster basics&lt;/a&gt; sectio nwe saw how botmaster objects return a bot object along with every update it receives. I.e. something like this happens:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;botmaster.on(&#39;update&#39;, (bot, update) =&amp;gt; {
+  console.log(bot.type);
+  console.log(update);
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We also saw in the last section how to setup a bot using its own bot class. Let&amp;rsquo;s have a look at how to use this bot inside of a botmaster object.&lt;/p&gt;
+
+&lt;p&gt;As usual, we create a botmaster object. This one supports Twitter and Telegram, but not Messenger. We create it as such:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;const Botmaster = require(&#39;botmaster&#39;);
+
+const twitterSettings = {
+    consumerKey: &#39;YOUR consumerKey&#39;,
+    consumerSecret: &#39;YOUR consumerSecret&#39;,
+    accessToken: &#39;YOUR accessToken&#39;,
+    accessTokenSecret: &#39;YOUR accessTokenSecret&#39;,
+  }
+}
+
+const telegramSettings = {
+  credentials: {
+    authToken: &#39;YOUR authToken&#39;,
+  },
+  webhookEndpoint: &#39;/webhook1234/&#39;,
+};
+
+const botsSettings = [{ twitter: twitterSettings },
+                      { telegram: telegramSettings }];
+
+const botmasterSettings = { botsSettings: botsSettings };
+
+const botmaster = new Botmaster(botmasterSettings);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In this example the &lt;code&gt;botmaster&lt;/code&gt; object will start a new &lt;code&gt;express()&lt;/code&gt; &lt;code&gt;app&lt;/code&gt; server running locally on port &lt;code&gt;3000&lt;/code&gt; as expected by default (see &lt;a href=&#34;https://jdwuarin.github.io/botmaster/working-with-botmaster/botmaster-basics/#using-botmaster-with-your-own-express-app&#34;&gt;here&lt;/a&gt; to see how to change that). However, we later might want to add to botmaster the object we created in the first section, namely, &lt;code&gt;messengerBot&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;We can achieve this by doing the following:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;botmaster.addBot(messengerBot);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This will mount your bot onto: &lt;code&gt;https://Your_Domain_Name/messenger/webhook1234&lt;/code&gt;. Note how the bot type &lt;strong&gt;is&lt;/strong&gt; part of the endpoint here. This is because the Botmaster class assumes that you want your endpoint to be mounted onto its botType.&lt;/p&gt;
+
+&lt;p&gt;You will then get updates from the botmaster object as if you had instantiated it with the messenger settings too.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;What this means is that any bot class that follows a  certain set of rules will be able to be added to a botmaster object.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;creating-your-own-bot-classes&#34;&gt;Creating your own bot classes&lt;/h2&gt;
+
+&lt;p&gt;Before defining the rules that have to be respected in order to write a Botmaster compatible bot class let&amp;rsquo;s look at the constructor of one of the existing one, &lt;code&gt;TelegramBot&lt;/code&gt;:&lt;/p&gt;
+
+&lt;h3 id=&#34;constructor-settings&#34;&gt;&lt;code&gt;#constructor(settings)&lt;/code&gt;&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;class TelegramBot extends BaseBot {
+
+  constructor(settings) {
+    super(settings);
+    this.type = &#39;telegram&#39;;
+    this.requiresWebhook = true;
+    this.requiredCredentials = [&#39;authToken&#39;];
+
+    this.__applySettings(settings);
+    .
+    .
+    .
+    this.__createMountPoints();
+  }
+
+ }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Let&amp;rsquo;s look into this line by line. The first line reads &lt;code&gt;super(settings)&lt;/code&gt;. Which of course just means it calls the constructor of &lt;code&gt;TelegramBot&lt;/code&gt;&amp;rsquo;s superclass, namely, &lt;code&gt;BaseBot&lt;/code&gt;. &lt;code&gt;BaseBot&lt;/code&gt;&amp;rsquo;s constructor doesn&amp;rsquo;t actually do anything fancy a part from calling its own superclass&amp;rsquo;s constructor and setting a few default values [as pointers for you, the developer]. BaseBot calls its own superclass&amp;rsquo;s constructor as it inherits from node.js&amp;rsquo;s &lt;code&gt;EventEmitter&lt;/code&gt; which will allow your bot&amp;rsquo;s classes to listen to events as well as emit them.&lt;/p&gt;
+
+&lt;p&gt;The following three lines setup some important values.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;this.type&lt;/code&gt;: the type of bot that is being instantiated. It&amp;rsquo;s important to specify that as developers might want to condition some code on the type of bot you are writing.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;this.requiresWebhook&lt;/code&gt;: whether the bot requires webhooks. If the platform you are coding for requires webhooks, you will be expected to set a &lt;code&gt;this.app&lt;/code&gt; variable at some point in the setup. We&amp;rsquo;ll look into this when we have a look at what the &lt;code&gt;this.__createMountPoints();&lt;/code&gt; does.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;this.requiredCredentials&lt;/code&gt;: sets up an array of credentials that are expected to be defined for the platform you are coding your class for. Telegram only takes in 1, so we just have an array with the value &lt;code&gt;&#39;authToken&#39;&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;applysettings-settings&#34;&gt;&lt;code&gt;#__applySettings(settings)&lt;/code&gt;&lt;/h3&gt;
+
+&lt;p&gt;The next line calls the &lt;code&gt;this.__applySettings(settings)&lt;/code&gt; function. This function is implemented in BaseBot and will just make sure that the settings passed on to the bot constructor are valid with respect to the parameters you defined. You should always call this function directly after setting the three [or more or less depending on your bot] parameters specific to the platform you are coding for. If valid, the settings will then be applied to the bot object. e.g. &lt;code&gt;this.webhookEndpoint&lt;/code&gt; will be set to &lt;code&gt;settings.webhookEndpoint&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;createmountpoints&#34;&gt;&lt;code&gt;#__createMountPoints()&lt;/code&gt;&lt;/h3&gt;
+
+&lt;p&gt;The last line of our controller makes a call to &lt;code&gt;this.__createMountPoints();&lt;/code&gt;. This line should only be present if your bot class requires webhooks. If this is the case, you will be expected to define a class member function that looks like:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;  __createMountPoints() {
+    this.app = express();
+    // for parsing application/json
+    this.app.use(bodyParser.json());
+    // for parsing application/x-www-form-urlencoded
+    this.app.use(bodyParser.urlencoded({ extended: true }));
+
+    this.app.post(this.webhookEndpoint, (req, res) =&amp;gt; {
+      this.__formatUpdate(req.body)
+
+      .then((update) =&amp;gt; {
+        this.__emitUpdate(update);
+      }, (err) =&amp;gt; {
+        err.message = `Error in __formatUpdate &amp;quot;${err.message}&amp;quot;. Please report this.`;
+        this.emit(&#39;error&#39;, err);
+      });
+
+      // just letting telegram know we got the update
+      res.sendStatus(200);
+    });
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Very importantly, this function creates an express router &lt;code&gt;this.app&lt;/code&gt; that will be mounted onto the main &lt;code&gt;app&lt;/code&gt; router from the botmaster object if &lt;code&gt;botmaster.addBot&lt;/code&gt; is used.&lt;/p&gt;
+
+&lt;p&gt;It then sets up the post endpoint that listens onto &lt;code&gt;this.webhookEnpoint&lt;/code&gt;. No further assumption is made here.&lt;/p&gt;
+
+&lt;p&gt;Please note that you might have another function that needs to be called at this point. For instance, in the &lt;code&gt;socketioBot&lt;/code&gt; class, I make a call to: &lt;code&gt;this.__setupSocketioServer();&lt;/code&gt; and that function looks like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;__setupSocketioServer() {
+  this.ioServer = io(this.server);
+
+  this.ioServer.on(&#39;connection&#39;, (socket) =&amp;gt; {
+    socket.join(SocketioBot.__getBotmasteruserId(socket));
+
+    socket.on(&#39;message&#39;, (message) =&amp;gt; {
+      // just broadcast the message to other connected clients with same user id
+      const botmasterUserId = SocketioBot.__getBotmasteruserId(socket);
+      socket.broadcast.to(botmasterUserId).emit(&#39;own message&#39;, message);
+      // console.log(JSON.stringify(socket.rooms, null, 2));
+      const rawUpdate = message;
+      try {
+        rawUpdate.socket = socket;
+      } catch (err) {
+        err.message = `ERROR: &amp;quot;Expected JSON object but got &#39;${typeof message}&#39; ${message} instead&amp;quot;`;
+        return this.emit(&#39;error&#39;, err);
+      }
+      const update = this.__formatUpdate(rawUpdate, botmasterUserId);
+      return this.__emitUpdate(update);
+    });
+  });
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I won&amp;rsquo;t explain what is going on here as it&amp;rsquo;s not necessary for building your own Bot class.&lt;/p&gt;
+
+&lt;h3 id=&#34;setbotidifnotset-update&#34;&gt;&lt;code&gt;#__setBotIdIfNotSet(update)&lt;/code&gt;&lt;/h3&gt;
+
+&lt;p&gt;In order to help you identify between bots of different types, you will want each bot instance to have a &lt;code&gt;this.id&lt;/code&gt; value. This will often be the same as &lt;code&gt;update.recipient.id&lt;/code&gt; when getting updates. But not always (for instance with socket.io bots). If these aren&amp;rsquo;t set upon instantiation as with Facebook Messenger bots, you can write a function like this that gets called upon receiving a message.&lt;/p&gt;
+
+&lt;p&gt;The following is a good default implementation used in many of botmaster&amp;rsquo;s internal bot types:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;__setBotIdIfNotSet(update) {
+  if (!this.id) {
+  	this.id = update.recipient.id;
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;formatupdate-rawupdate&#34;&gt;&lt;code&gt;#__formatUpdate(rawUpdate)&lt;/code&gt;&lt;/h3&gt;
+
+&lt;p&gt;Although you can technically handle the body of the request as you wish. In our &lt;code&gt;__createMountPoints&lt;/code&gt; example here (from TelegramBot code), we make a call to the &lt;code&gt;__formatUpdate&lt;/code&gt; function with the body of the request.
+It would make sense for you to do so for consistency and because it has to be defined if you want your bot class to eventually be referenced in the Botmaster project.&lt;/p&gt;
+
+&lt;p&gt;This function is expected to transform the &lt;code&gt;rawUpdate&lt;/code&gt; into an object which is of the format of Messenger updates, while having an &lt;code&gt;update.raw&lt;/code&gt; bit that references that &lt;code&gt;rawUpdate&lt;/code&gt; received.&lt;/p&gt;
+
+&lt;p&gt;Typically, it would look something like this for a message with an image attachment. Independent of what platform the message comes from:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;{
+  raw: &amp;lt;platform_specific_raw_update&amp;gt;,
+  sender: {
+    id: &amp;lt;id_of_sender&amp;gt;
+  },
+  recipient: {
+    id: &amp;lt;id_of_the_recipent&amp;gt; // will typically be the bot&#39;s id
+  },
+  timestamp: &amp;lt;unix_miliseconds_timestamp&amp;gt;,
+  message: {
+    mid: &amp;lt;message_id&amp;gt;,
+    seq: &amp;lt;message_sequence_id&amp;gt;,
+    attachments: [
+      {
+        type: &#39;image&#39;,
+        payload: {
+          url: &#39;https://scontent.xx.fbcdn.net/v/.....&#39;
+        }
+      }
+    ]
+  }
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Your function should return the update object(or a promise that resolves a formatted update object) in order to then call &lt;code&gt;__emitUpdate&lt;/code&gt; with it as a parameter.&lt;/p&gt;
+
+&lt;h3 id=&#34;emitupdate-update&#34;&gt;&lt;code&gt;#__emitUpdate(update)&lt;/code&gt;&lt;/h3&gt;
+
+&lt;p&gt;Like &lt;code&gt;__applySettings&lt;/code&gt;, this method is implemented in &lt;code&gt;BaseBot&lt;/code&gt;. It handles errors, calling the &lt;code&gt;incoming&lt;/code&gt; middleware stack, and most importantly, actually calling &lt;code&gt;this.emit(update)&lt;/code&gt; to emit the actual update. You can overwrite this method if you wish, but in its current state, it handles the most important cases you will want to deal with. You will however need to call it with your formatted update object as a parameter in order to actually get the update object in a &lt;code&gt;bot.on(&#39;update&#39;, callback)&lt;/code&gt; block.&lt;/p&gt;
+
+&lt;h3 id=&#34;sendmessage-message&#34;&gt;&lt;code&gt;#__sendMessage(message)&lt;/code&gt;&lt;/h3&gt;
+
+&lt;p&gt;All previous methods had either something to do with object instantiation or with incoming messages. We&amp;rsquo;ll now have a look at what needs to be done within your bot class to send messages.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;__sendMessage&lt;/code&gt; method needs to be implemented. The method should take in a Messenger style message and send a formatted message to the bot platform. It should return a &lt;code&gt;Promise&lt;/code&gt; that resolves to something like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;  {
+   raw: rawBody,
+   recipient_id: &amp;lt;id_of_user&amp;gt;,
+   message_id: &amp;lt;message_id_of_what_was_just_sent&amp;gt;
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It is important that this be a promise and not a callback. Although developers using Botmaster can use &lt;code&gt;sendMessage&lt;/code&gt; type methods with callbacks. The internals of Botmaster use Promises and therefore, so should your bot class.&lt;/p&gt;
+
+&lt;p&gt;Please note that the &lt;code&gt;BaseBot&lt;/code&gt; superclass defines a set of methods that allow developers to more easily send messages to all platforms without having to build the whole Messenger compatible object themselves. These methods are the following:&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;sendMessage&lt;/code&gt;
+&lt;code&gt;sendMessageTo&lt;/code&gt;
+&lt;code&gt;sendTextMessageTo&lt;/code&gt;
+&lt;code&gt;reply&lt;/code&gt;
+&lt;code&gt;sendAttachmentTo&lt;/code&gt;
+&lt;code&gt;sendAttachmentFromURLTo&lt;/code&gt;
+&lt;code&gt;sendDefaultButtonMessageTo&lt;/code&gt;
+&lt;code&gt;sendIsTypingMessageTo&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;All these methods will convert a developer specified input into a Facebook Messenger compatible message that will be called as a parameter to &lt;code&gt;__sendMessage&lt;/code&gt;. That is, they all eventually will call your &lt;code&gt;__sendMessage&lt;/code&gt; method. You can however overwrite them if need be.&lt;/p&gt;
+
+&lt;h3 id=&#34;formatoutgoingmessage-message&#34;&gt;&lt;code&gt;#__formatOutgoingMessage(message)&lt;/code&gt;&lt;/h3&gt;
+
+&lt;p&gt;Your &lt;code&gt;sendMessage&lt;/code&gt; method is expected to call a &lt;code&gt;__formatOutgoingMessage(message)&lt;/code&gt; method that will format the Messenger style message into one that is compatible with the platform you are coding your bot class for.&lt;/p&gt;
+
+&lt;p&gt;You can have a look at the ones defined in the &lt;code&gt;TelegramBot&lt;/code&gt; and the &lt;code&gt;TwitterBot&lt;/code&gt; classes for inspiration.&lt;/p&gt;
+
+&lt;h2 id=&#34;is-this-really-all-there-is-to-it&#34;&gt;Is this really all there is to it?&lt;/h2&gt;
+
+&lt;p&gt;Yes it is! These few basic steps are the steps that should be followed in order to build your own bot classes. Nothing more is required. Of course, formatting the incoming updates and the outgoing messages won&amp;rsquo;t always be as trivial as we&amp;rsquo;d wish, but this guide should help you into doing this.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

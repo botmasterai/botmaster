@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en" class="js csstransforms3d">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="generator" content="Hugo 0.17" />
+    <meta name="description" content="The Bot framework for your serious projects">
+<meta name="author" content="JD Wuarin">
+
+    <link rel="shortcut icon" href="https://jdwuarin.github.io/botmaster/images/favicon.ico" type="image/x-icon" />
+
+    
+    <title>Writing your Own Bot Class</title>
+    <link href="https://jdwuarin.github.io/botmaster/css/nucleus.css" rel="stylesheet">
+    <link href="https://jdwuarin.github.io/botmaster/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://jdwuarin.github.io/botmaster/css/hybrid.css" rel="stylesheet">
+    <link href="https://jdwuarin.github.io/botmaster/css/featherlight.min.css" rel="stylesheet">
+    <link href="https://jdwuarin.github.io/botmaster/css/perfect-scrollbar.min.css" rel="stylesheet">
+    <link href="https://jdwuarin.github.io/botmaster/css/horsey.css" rel="stylesheet">
+    <link href="https://jdwuarin.github.io/botmaster/css/theme.css" rel="stylesheet">
+    <link href="https://jdwuarin.github.io/botmaster/css/hugo-theme.css" rel="stylesheet">
+    <script src="https://jdwuarin.github.io/botmaster/js/jquery-2.x.min.js"></script>
+    <style type="text/css">:root #header + #content > #left > #rlblock_left
+    {display:none !important;}</style>
+    
+
+  </head>
+  <body class="" data-url="/working-with-botmaster/writing-your-own-bot-class/">
+    <nav id="sidebar">
+  <div id="header-wrapper">
+    <div id="header">
+      <a id="logo" target="_blank" href="https://github.com/jdwuarin/botmaster">
+  <img src="https://jdwuarin.github.io/botmaster/images/botmaster_1.svg" onerror="this.src='/images/botmaster_1.png'" >
+</a>
+
+    </div>
+    
+        <div class="searchbox">
+    <label for="search-by"><i class="fa fa-search"></i></label>
+    <input id="search-by" type="text" placeholder="Search">
+    <span data-search-clear=""><i class="fa fa-close"></i></span>
+</div>
+<script type="text/javascript" src="https://jdwuarin.github.io/botmaster/js/lunr.min.js"></script>
+<script type="text/javascript" src="https://jdwuarin.github.io/botmaster/js/horsey.js"></script>
+<script type="text/javascript">
+    var baseurl = "https:\/\/jdwuarin.github.io\/botmaster\/";
+</script>
+<script type="text/javascript" src="https://jdwuarin.github.io/botmaster/js/search.js"></script>
+
+    
+</div>
+
+
+  <div class="highlightable">
+    <ul class="topics">
+      
+      
+        
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+      
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  " data-nav-id="/home/">
+        <a href="https://jdwuarin.github.io/botmaster/home/">
+          <span>
+            
+              <i class="fa fa-home" aria-hidden="true"></i>
+            
+             Botmaster v 2.2.2
+            
+           </span>
+        </a>
+        
+      </li>
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  " data-nav-id="/getting-started/">
+        <a href="https://jdwuarin.github.io/botmaster/getting-started/">
+          <span>
+            
+              <i class="fa fa-road" aria-hidden="true"></i>
+            
+             Getting started
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/installation/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/installation/">
+                <span>Installation     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/quickstart/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/quickstart/">
+                <span>Quickstart     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/getting-set-up/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/getting-set-up/">
+                <span>Getting set up     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/messenger-setup/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/messenger-setup/">
+                <span>Facebook Messenger Setup     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/slack-setup/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/slack-setup/">
+                <span>Slack Setup     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/socketio-setup/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/socketio-setup/">
+                <span>Socket.io Setup     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/twitter-setup/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/twitter-setup/">
+                <span>Twitter Setup     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/telegram-setup/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/telegram-setup/">
+                <span>Telegram Setup     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/getting-started/webhooks/">
+              <a href="https://jdwuarin.github.io/botmaster/getting-started/webhooks/">
+                <span>Webhooks     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  parent" data-nav-id="/working-with-botmaster/">
+        <a href="https://jdwuarin.github.io/botmaster/working-with-botmaster/">
+          <span>
+            
+              <i class="fa fa-wrench" aria-hidden="true"></i>
+            
+             Working with Botmaster
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/working-with-botmaster/botmaster-basics/">
+              <a href="https://jdwuarin.github.io/botmaster/working-with-botmaster/botmaster-basics/">
+                <span>Botmaster Basics     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item active" data-nav-id="/working-with-botmaster/writing-your-own-bot-class/">
+              <a href="https://jdwuarin.github.io/botmaster/working-with-botmaster/writing-your-own-bot-class/">
+                <span>Writing your Own Bot Class     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  " data-nav-id="/tutorials/">
+        <a href="https://jdwuarin.github.io/botmaster/tutorials/">
+          <span>
+            
+              <i class="fa fa-code" aria-hidden="true"></i>
+            
+             Tutorials (coming soon)
+            
+           </span>
+        </a>
+        
+      </li>
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  " data-nav-id="/other-articles/">
+        <a href="https://jdwuarin.github.io/botmaster/other-articles/">
+          <span>
+            
+              <i class="fa fa-newspaper-o" aria-hidden="true"></i>
+            
+             Other Articles
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/other-articles/botmaster-or-botkit/">
+              <a href="https://jdwuarin.github.io/botmaster/other-articles/botmaster-or-botkit/">
+                <span>Botmaster or Botkit?     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  " data-nav-id="/changelog/CHANGELOG/">
+        <a href="https://jdwuarin.github.io/botmaster/changelog/CHANGELOG/">
+          <span>
+            
+              <i class="fa fa-list" aria-hidden="true"></i>
+            
+             CHANGELOG
+            
+           </span>
+        </a>
+        
+      </li>
+      
+      
+    </ul>
+    <hr>
+     
+    <section id="footer">
+      <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fa fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
+    </section>
+  </div>
+</nav>
+
+        <section id="body">
+        <div id="overlay"></div>
+
+        <div class="padding highlightable">
+
+            <div id="top-bar">
+              
+                
+                
+                
+              <div id="top-github-link">
+                  <a class="github-link" href="https://github.com/jdwuarin/botmaster/tree/gh-pages/documentation_website/content/working-with-botmaster/writing-your-own-bot-class.md" target="blank">
+                    <i class="fa fa-code-fork"></i>
+                    Edit this page
+                  </a>
+              </div>
+                
+              
+              <div id="breadcrumbs" itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+                  <span id="sidebar-toggle-span">
+                      <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+                        <i class="fa fa-bars"></i>
+                      </a>
+                  </span>
+                
+                <span id="toc-menu"><a href=""><i class="fa fa-list-alt"></i></a></span>
+                
+                
+                
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                    
+                    
+                <a href="https://jdwuarin.github.io/botmaster/working-with-botmaster/" itemprop="url"><span itemprop="title">Working with Botmaster</span></a> <i class="fa fa-angle-right"></i>
+                    
+                  
+                
+                <span itemprop="title"> Writing your Own Bot Class</span>
+              </div>
+              
+                  <div class="progress">
+    <div class="wrapper">
+<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#bot-classes">Bot classes</a></li>
+<li><a href="#making-botmaster-objects-and-bot-objects-work-together">Making Botmaster objects and bot objects work together</a></li>
+<li><a href="#creating-your-own-bot-classes">Creating your own bot classes</a>
+<ul>
+<li><a href="#constructor-settings"><code>#constructor(settings)</code></a></li>
+<li><a href="#applysettings-settings"><code>#__applySettings(settings)</code></a></li>
+<li><a href="#createmountpoints"><code>#__createMountPoints()</code></a></li>
+<li><a href="#setbotidifnotset-update"><code>#__setBotIdIfNotSet(update)</code></a></li>
+<li><a href="#formatupdate-rawupdate"><code>#__formatUpdate(rawUpdate)</code></a></li>
+<li><a href="#emitupdate-update"><code>#__emitUpdate(update)</code></a></li>
+<li><a href="#sendmessage-message"><code>#__sendMessage(message)</code></a></li>
+<li><a href="#formatoutgoingmessage-message"><code>#__formatOutgoingMessage(message)</code></a></li>
+</ul></li>
+<li><a href="#is-this-really-all-there-is-to-it">Is this really all there is to it?</a></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+
+              
+
+            </div>
+            
+    	        <div id="body-inner">
+                
+                <h1>Writing your Own Bot Class</h1>
+                
+
+
+
+<h2 id="bot-classes">Bot classes</h2>
+
+<p>The following assumes that you have read the main documentation in &ldquo;getting started&rdquo; and in &ldquo;botmaster basics&rdquo;. A general understand of how Botmaster and more generally how chatbots work is also assumed.</p>
+
+<p>Because of that, we will pick up right from there and start looking into the bot classes Botmaster comes bundled with.</p>
+
+<p>Botmaster makes five usable bot classes available to developers out of the box. <code>MessengerBot</code>, <code>SlackBot</code>, <code>SocketioBot</code>, <code>TelegramBot</code> and <code>TwitterBot</code>.</p>
+
+<p>For example, you can instantiate a new <code>MessengerBot</code> object as such:</p>
+
+<pre><code class="language-js">const Botmaster = require('botmaster');
+const MessengerBot = Botmaster.botTypes.MessengerBot;
+
+const messengerSettings = {
+  credentials: {
+    verifyToken: 'YOUR verifyToken',
+    pageToken: 'YOUR pageToken',
+    fbAppSecret: 'YOUR fbAppSecret'
+  },
+  webhookEndpoint: '/webhook1234',
+};
+
+const messengerBot = new MessengerBot(messengerSettings);
+</code></pre>
+
+<p>In order to get updates from Messenger, you would then be expected to mount your bot&rsquo;s express mini-app <code>messengerBot.app</code> onto your own express <code>app</code> by doing something like this:</p>
+
+<pre><code class="language-js">const app = require('express')();
+app.use('/', messengerBot.app);
+app.listen(3000, function() {});
+</code></pre>
+
+<p>This will mount your bot onto: <code>https://Your_Domain_Name/webhook1234</code>. Note how the bot type <strong>is not</strong> part of the URL here.</p>
+
+<h2 id="making-botmaster-objects-and-bot-objects-work-together">Making Botmaster objects and bot objects work together</h2>
+
+<p>In the <a href="https://jdwuarin.github.io/botmaster/working-with-botmaster/botmaster-basics">botmaster basics</a> sectio nwe saw how botmaster objects return a bot object along with every update it receives. I.e. something like this happens:</p>
+
+<pre><code class="language-js">botmaster.on('update', (bot, update) =&gt; {
+  console.log(bot.type);
+  console.log(update);
+});
+</code></pre>
+
+<p>We also saw in the last section how to setup a bot using its own bot class. Let&rsquo;s have a look at how to use this bot inside of a botmaster object.</p>
+
+<p>As usual, we create a botmaster object. This one supports Twitter and Telegram, but not Messenger. We create it as such:</p>
+
+<pre><code class="language-js">const Botmaster = require('botmaster');
+
+const twitterSettings = {
+    consumerKey: 'YOUR consumerKey',
+    consumerSecret: 'YOUR consumerSecret',
+    accessToken: 'YOUR accessToken',
+    accessTokenSecret: 'YOUR accessTokenSecret',
+  }
+}
+
+const telegramSettings = {
+  credentials: {
+    authToken: 'YOUR authToken',
+  },
+  webhookEndpoint: '/webhook1234/',
+};
+
+const botsSettings = [{ twitter: twitterSettings },
+                      { telegram: telegramSettings }];
+
+const botmasterSettings = { botsSettings: botsSettings };
+
+const botmaster = new Botmaster(botmasterSettings);
+</code></pre>
+
+<p>In this example the <code>botmaster</code> object will start a new <code>express()</code> <code>app</code> server running locally on port <code>3000</code> as expected by default (see <a href="https://jdwuarin.github.io/botmaster/working-with-botmaster/botmaster-basics/#using-botmaster-with-your-own-express-app">here</a> to see how to change that). However, we later might want to add to botmaster the object we created in the first section, namely, <code>messengerBot</code>.</p>
+
+<p>We can achieve this by doing the following:</p>
+
+<pre><code class="language-js">botmaster.addBot(messengerBot);
+</code></pre>
+
+<p>This will mount your bot onto: <code>https://Your_Domain_Name/messenger/webhook1234</code>. Note how the bot type <strong>is</strong> part of the endpoint here. This is because the Botmaster class assumes that you want your endpoint to be mounted onto its botType.</p>
+
+<p>You will then get updates from the botmaster object as if you had instantiated it with the messenger settings too.</p>
+
+<p><strong>What this means is that any bot class that follows a  certain set of rules will be able to be added to a botmaster object.</strong></p>
+
+<h2 id="creating-your-own-bot-classes">Creating your own bot classes</h2>
+
+<p>Before defining the rules that have to be respected in order to write a Botmaster compatible bot class let&rsquo;s look at the constructor of one of the existing one, <code>TelegramBot</code>:</p>
+
+<h3 id="constructor-settings"><code>#constructor(settings)</code></h3>
+
+<pre><code class="language-js">class TelegramBot extends BaseBot {
+
+  constructor(settings) {
+    super(settings);
+    this.type = 'telegram';
+    this.requiresWebhook = true;
+    this.requiredCredentials = ['authToken'];
+
+    this.__applySettings(settings);
+    .
+    .
+    .
+    this.__createMountPoints();
+  }
+
+ }
+</code></pre>
+
+<p>Let&rsquo;s look into this line by line. The first line reads <code>super(settings)</code>. Which of course just means it calls the constructor of <code>TelegramBot</code>&rsquo;s superclass, namely, <code>BaseBot</code>. <code>BaseBot</code>&rsquo;s constructor doesn&rsquo;t actually do anything fancy a part from calling its own superclass&rsquo;s constructor and setting a few default values [as pointers for you, the developer]. BaseBot calls its own superclass&rsquo;s constructor as it inherits from node.js&rsquo;s <code>EventEmitter</code> which will allow your bot&rsquo;s classes to listen to events as well as emit them.</p>
+
+<p>The following three lines setup some important values.</p>
+
+<ol>
+<li><code>this.type</code>: the type of bot that is being instantiated. It&rsquo;s important to specify that as developers might want to condition some code on the type of bot you are writing.</li>
+<li><code>this.requiresWebhook</code>: whether the bot requires webhooks. If the platform you are coding for requires webhooks, you will be expected to set a <code>this.app</code> variable at some point in the setup. We&rsquo;ll look into this when we have a look at what the <code>this.__createMountPoints();</code> does.</li>
+<li><code>this.requiredCredentials</code>: sets up an array of credentials that are expected to be defined for the platform you are coding your class for. Telegram only takes in 1, so we just have an array with the value <code>'authToken'</code>.</li>
+</ol>
+
+<h3 id="applysettings-settings"><code>#__applySettings(settings)</code></h3>
+
+<p>The next line calls the <code>this.__applySettings(settings)</code> function. This function is implemented in BaseBot and will just make sure that the settings passed on to the bot constructor are valid with respect to the parameters you defined. You should always call this function directly after setting the three [or more or less depending on your bot] parameters specific to the platform you are coding for. If valid, the settings will then be applied to the bot object. e.g. <code>this.webhookEndpoint</code> will be set to <code>settings.webhookEndpoint</code>.</p>
+
+<h3 id="createmountpoints"><code>#__createMountPoints()</code></h3>
+
+<p>The last line of our controller makes a call to <code>this.__createMountPoints();</code>. This line should only be present if your bot class requires webhooks. If this is the case, you will be expected to define a class member function that looks like:</p>
+
+<pre><code class="language-js">  __createMountPoints() {
+    this.app = express();
+    // for parsing application/json
+    this.app.use(bodyParser.json());
+    // for parsing application/x-www-form-urlencoded
+    this.app.use(bodyParser.urlencoded({ extended: true }));
+
+    this.app.post(this.webhookEndpoint, (req, res) =&gt; {
+      this.__formatUpdate(req.body)
+
+      .then((update) =&gt; {
+        this.__emitUpdate(update);
+      }, (err) =&gt; {
+        err.message = `Error in __formatUpdate &quot;${err.message}&quot;. Please report this.`;
+        this.emit('error', err);
+      });
+
+      // just letting telegram know we got the update
+      res.sendStatus(200);
+    });
+  }
+</code></pre>
+
+<p>Very importantly, this function creates an express router <code>this.app</code> that will be mounted onto the main <code>app</code> router from the botmaster object if <code>botmaster.addBot</code> is used.</p>
+
+<p>It then sets up the post endpoint that listens onto <code>this.webhookEnpoint</code>. No further assumption is made here.</p>
+
+<p>Please note that you might have another function that needs to be called at this point. For instance, in the <code>socketioBot</code> class, I make a call to: <code>this.__setupSocketioServer();</code> and that function looks like this:</p>
+
+<pre><code class="language-js">__setupSocketioServer() {
+  this.ioServer = io(this.server);
+
+  this.ioServer.on('connection', (socket) =&gt; {
+    socket.join(SocketioBot.__getBotmasteruserId(socket));
+
+    socket.on('message', (message) =&gt; {
+      // just broadcast the message to other connected clients with same user id
+      const botmasterUserId = SocketioBot.__getBotmasteruserId(socket);
+      socket.broadcast.to(botmasterUserId).emit('own message', message);
+      // console.log(JSON.stringify(socket.rooms, null, 2));
+      const rawUpdate = message;
+      try {
+        rawUpdate.socket = socket;
+      } catch (err) {
+        err.message = `ERROR: &quot;Expected JSON object but got '${typeof message}' ${message} instead&quot;`;
+        return this.emit('error', err);
+      }
+      const update = this.__formatUpdate(rawUpdate, botmasterUserId);
+      return this.__emitUpdate(update);
+    });
+  });
+}
+</code></pre>
+
+<p>I won&rsquo;t explain what is going on here as it&rsquo;s not necessary for building your own Bot class.</p>
+
+<h3 id="setbotidifnotset-update"><code>#__setBotIdIfNotSet(update)</code></h3>
+
+<p>In order to help you identify between bots of different types, you will want each bot instance to have a <code>this.id</code> value. This will often be the same as <code>update.recipient.id</code> when getting updates. But not always (for instance with socket.io bots). If these aren&rsquo;t set upon instantiation as with Facebook Messenger bots, you can write a function like this that gets called upon receiving a message.</p>
+
+<p>The following is a good default implementation used in many of botmaster&rsquo;s internal bot types:</p>
+
+<pre><code class="language-js">__setBotIdIfNotSet(update) {
+  if (!this.id) {
+  	this.id = update.recipient.id;
+  }
+}
+</code></pre>
+
+<h3 id="formatupdate-rawupdate"><code>#__formatUpdate(rawUpdate)</code></h3>
+
+<p>Although you can technically handle the body of the request as you wish. In our <code>__createMountPoints</code> example here (from TelegramBot code), we make a call to the <code>__formatUpdate</code> function with the body of the request.
+It would make sense for you to do so for consistency and because it has to be defined if you want your bot class to eventually be referenced in the Botmaster project.</p>
+
+<p>This function is expected to transform the <code>rawUpdate</code> into an object which is of the format of Messenger updates, while having an <code>update.raw</code> bit that references that <code>rawUpdate</code> received.</p>
+
+<p>Typically, it would look something like this for a message with an image attachment. Independent of what platform the message comes from:</p>
+
+<pre><code class="language-js">{
+  raw: &lt;platform_specific_raw_update&gt;,
+  sender: {
+    id: &lt;id_of_sender&gt;
+  },
+  recipient: {
+    id: &lt;id_of_the_recipent&gt; // will typically be the bot's id
+  },
+  timestamp: &lt;unix_miliseconds_timestamp&gt;,
+  message: {
+    mid: &lt;message_id&gt;,
+    seq: &lt;message_sequence_id&gt;,
+    attachments: [
+      {
+        type: 'image',
+        payload: {
+          url: 'https://scontent.xx.fbcdn.net/v/.....'
+        }
+      }
+    ]
+  }
+};
+</code></pre>
+
+<p>Your function should return the update object(or a promise that resolves a formatted update object) in order to then call <code>__emitUpdate</code> with it as a parameter.</p>
+
+<h3 id="emitupdate-update"><code>#__emitUpdate(update)</code></h3>
+
+<p>Like <code>__applySettings</code>, this method is implemented in <code>BaseBot</code>. It handles errors, calling the <code>incoming</code> middleware stack, and most importantly, actually calling <code>this.emit(update)</code> to emit the actual update. You can overwrite this method if you wish, but in its current state, it handles the most important cases you will want to deal with. You will however need to call it with your formatted update object as a parameter in order to actually get the update object in a <code>bot.on('update', callback)</code> block.</p>
+
+<h3 id="sendmessage-message"><code>#__sendMessage(message)</code></h3>
+
+<p>All previous methods had either something to do with object instantiation or with incoming messages. We&rsquo;ll now have a look at what needs to be done within your bot class to send messages.</p>
+
+<p>The <code>__sendMessage</code> method needs to be implemented. The method should take in a Messenger style message and send a formatted message to the bot platform. It should return a <code>Promise</code> that resolves to something like this:</p>
+
+<pre><code class="language-js">  {
+   raw: rawBody,
+   recipient_id: &lt;id_of_user&gt;,
+   message_id: &lt;message_id_of_what_was_just_sent&gt;
+  }
+</code></pre>
+
+<p>It is important that this be a promise and not a callback. Although developers using Botmaster can use <code>sendMessage</code> type methods with callbacks. The internals of Botmaster use Promises and therefore, so should your bot class.</p>
+
+<p>Please note that the <code>BaseBot</code> superclass defines a set of methods that allow developers to more easily send messages to all platforms without having to build the whole Messenger compatible object themselves. These methods are the following:</p>
+
+<p><code>sendMessage</code>
+<code>sendMessageTo</code>
+<code>sendTextMessageTo</code>
+<code>reply</code>
+<code>sendAttachmentTo</code>
+<code>sendAttachmentFromURLTo</code>
+<code>sendDefaultButtonMessageTo</code>
+<code>sendIsTypingMessageTo</code></p>
+
+<p>All these methods will convert a developer specified input into a Facebook Messenger compatible message that will be called as a parameter to <code>__sendMessage</code>. That is, they all eventually will call your <code>__sendMessage</code> method. You can however overwrite them if need be.</p>
+
+<h3 id="formatoutgoingmessage-message"><code>#__formatOutgoingMessage(message)</code></h3>
+
+<p>Your <code>sendMessage</code> method is expected to call a <code>__formatOutgoingMessage(message)</code> method that will format the Messenger style message into one that is compatible with the platform you are coding your bot class for.</p>
+
+<p>You can have a look at the ones defined in the <code>TelegramBot</code> and the <code>TwitterBot</code> classes for inspiration.</p>
+
+<h2 id="is-this-really-all-there-is-to-it">Is this really all there is to it?</h2>
+
+<p>Yes it is! These few basic steps are the steps that should be followed in order to build your own bot classes. Nothing more is required. Of course, formatting the incoming updates and the outgoing messages won&rsquo;t always be as trivial as we&rsquo;d wish, but this guide should help you into doing this.</p>
+
+
+      
+      </div>
+    </div>
+
+    <div id="navigation">
+        <a class="nav nav-prev" href="https://jdwuarin.github.io/botmaster/working-with-botmaster/botmaster-basics"> <i class="fa fa-chevron-left"></i></a>
+        <a class="nav nav-next" href="https://jdwuarin.github.io/botmaster/tutorials" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+    </div>
+
+    </section>
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="https://jdwuarin.github.io/botmaster/js/clipboard.min.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/perfect-scrollbar.min.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/perfect-scrollbar.jquery.min.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/jquery.sticky-kit.min.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/featherlight.min.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/html5shiv-printshiv.min.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="https://jdwuarin.github.io/botmaster/js/modernizr.custom.71422.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/learn.js"></script>
+    <script src="https://jdwuarin.github.io/botmaster/js/hugo-learn.js"></script>
+    
+
+  </body>
+</html>
+

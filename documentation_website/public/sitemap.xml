@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <url>
+    <loc>https://jdwuarin.github.io/botmaster/</loc>
+    <lastmod>2016-11-19T17:08:11+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jdwuarin.github.io/botmaster/other-articles/</loc>
+    <lastmod>2016-11-19T17:08:11+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jdwuarin.github.io/botmaster/tutorials/</loc>
+    <lastmod>2016-11-11T20:42:42+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jdwuarin.github.io/botmaster/working-with-botmaster/</loc>
+    <lastmod>2016-11-04T01:17:34+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jdwuarin.github.io/botmaster/changelog/CHANGELOG/</loc>
+    <lastmod>2016-10-29T19:55:42+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jdwuarin.github.io/botmaster/home/</loc>
+    <lastmod>2016-10-29T19:25:10+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jdwuarin.github.io/botmaster/getting-started/</loc>
+    <lastmod>2016-10-29T17:09:45+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jdwuarin.github.io/botmaster/other-articles/botmaster-or-botkit/</loc>
+    <lastmod>2016-11-19T17:07:40+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jdwuarin.github.io/botmaster/working-with-botmaster/botmaster-basics/</loc>
+    <lastmod>2016-11-04T01:31:15+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jdwuarin.github.io/botmaster/getting-started/installation/</loc>
+    <lastmod>2016-10-31T18:46:54+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jdwuarin.github.io/botmaster/working-with-botmaster/writing-your-own-bot-class/</loc>
+    <lastmod>2016-11-17T18:16:51+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jdwuarin.github.io/botmaster/getting-started/quickstart/</loc>
+    <lastmod>2016-10-31T21:39:47+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jdwuarin.github.io/botmaster/getting-started/getting-set-up/</loc>
+    <lastmod>2016-10-31T22:33:42+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jdwuarin.github.io/botmaster/getting-started/messenger-setup/</loc>
+    <lastmod>2016-10-31T22:24:20+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jdwuarin.github.io/botmaster/getting-started/slack-setup/</loc>
+    <lastmod>2016-10-31T23:01:53+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jdwuarin.github.io/botmaster/getting-started/socketio-setup/</loc>
+    <lastmod>2016-11-02T18:18:34+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jdwuarin.github.io/botmaster/getting-started/twitter-setup/</loc>
+    <lastmod>2016-11-04T00:57:53+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jdwuarin.github.io/botmaster/getting-started/telegram-setup/</loc>
+    <lastmod>2016-11-04T01:04:24+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jdwuarin.github.io/botmaster/getting-started/webhooks/</loc>
+    <lastmod>2016-11-17T15:28:40+00:00</lastmod>
+  </url>
+  
+</urlset>

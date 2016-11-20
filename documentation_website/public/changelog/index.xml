@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Changelog-rsses on Botmaster Documentation</title>
+    <link>https://jdwuarin.github.io/botmaster/changelog/index.xml</link>
+    <description>Recent content in Changelog-rsses on Botmaster Documentation</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>MIT</copyright>
+    <lastBuildDate>Sat, 29 Oct 2016 19:55:42 +0100</lastBuildDate>
+    <atom:link href="https://jdwuarin.github.io/botmaster/changelog/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>CHANGELOG</title>
+      <link>https://jdwuarin.github.io/botmaster/changelog/CHANGELOG/</link>
+      <pubDate>Sat, 29 Oct 2016 19:55:42 +0100</pubDate>
+      
+      <guid>https://jdwuarin.github.io/botmaster/changelog/CHANGELOG/</guid>
+      <description>
+
+&lt;h3 id=&#34;patch-2-2-2&#34;&gt;PATCH: 2.2.2&lt;/h3&gt;
+
+&lt;p&gt;This patch allows users to set the userId from a sender when using the bot socket.io class. socket now needs to be opened with something like this on the client side:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;var socket = io(&#39;?botmasterUserId=wantedUserId&#39;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;See updated Botmaster Socket.io bot mini-tutorial &lt;a href=&#34;https://jdwuarin.github.io/botmaster/getting-started/socketio-setup/#botmaster-socket-io-bot-mini-tutorial&#34;&gt;here&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;minor-botmaster-2-2-0&#34;&gt;MINOR: Botmaster 2.2.0&lt;/h3&gt;
+
+&lt;p&gt;This minor release allows developers to create news instances of Botmaster without bots settings by writing something like:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;const Botmaster = require(&#39;botmaster&#39;);
+const MessengerBot = Botmaster.botTypes.MessengerBot;
+.
+.
+const botmaster = new Botmaster();
+.
+. // full settings objects omitted for brevity
+.
+const messengerBot = new MessengerBot(messengerSettings);
+const slackBot = new SlackBot(slackSettings);
+const twitterBot = new TwitterBot(twitterSettings);
+const socketioBot = new SocketioBot(socketioSettings);
+const telegramBot = new TelegramBot(telegramSettings);
+
+botmaster.addBot(messengerBot);
+botmaster.addBot(slackBot);
+botmaster.addBot(twitterBot);
+botmaster.addBot(socketioBot);
+botmaster.addBot(telegramBot);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is because it might be viewed as cleaner by some to add bots in the following way rather than doing this in the constructor.&lt;/p&gt;
+
+&lt;h3 id=&#34;patch-botmaster-2-1-1&#34;&gt;PATCH: Botmaster 2.1.1&lt;/h3&gt;
+
+&lt;p&gt;This patch fixes a bug whereby one couldn&amp;rsquo;t instantiate a botmaster object that would use socket.io in all reasonably expected ways. See &lt;a href=&#34;https://github.com/jdwuarin/botmaster/pull/2&#34;&gt;here&lt;/a&gt; for a discussion.&lt;/p&gt;
+
+&lt;h3 id=&#34;minor-botmaster-2-1-0&#34;&gt;MINOR: Botmaster 2.1.0&lt;/h3&gt;
+
+&lt;p&gt;This version adds support for socket.io bots within the botmaster core. This is the last
+bot class that will be in the core&lt;/p&gt;
+
+&lt;h3 id=&#34;major-botmaster-2-0-0&#34;&gt;MAJOR: Botmaster 2.0.0&lt;/h3&gt;
+
+&lt;p&gt;In this new version, a lot of new things were added to Botmaster. A few others were removed.&lt;/p&gt;
+
+&lt;h4 id=&#34;breaking-changes&#34;&gt;Breaking Changes&lt;/h4&gt;
+
+&lt;p&gt;If you were using SessionStore in version 1.x.x, you won&amp;rsquo;t be able to anymore in version 2.x.x. They have been scratched for the far more common middleware design pattern common in so many other frameworks (e.g. express). Middleware can be hooked into right before receiving an update and right before sending out a message. It fits ideally with people wanting to setup session storage at these points.&lt;/p&gt;
+
+&lt;h4 id=&#34;adding-slack&#34;&gt;Adding Slack&lt;/h4&gt;
+
+&lt;p&gt;Support for Slack as the fourth channel supported by Botmaster has been added. Using the Events API, you can now send and receive messages on the platform.&lt;/p&gt;
+
+&lt;h4 id=&#34;get-user-info&#34;&gt;get User info&lt;/h4&gt;
+
+&lt;p&gt;If the platform supports it and the bot class you are using supports it too, you can now use the &lt;code&gt;bot.getUserInfo&lt;/code&gt; method to retrieve basic information on a user, including their name and profile pic.&lt;/p&gt;
+
+&lt;h4 id=&#34;bug-fixes&#34;&gt;bug fixes&lt;/h4&gt;
+
+&lt;p&gt;As with any release, a bunch of bugfixes were done.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
