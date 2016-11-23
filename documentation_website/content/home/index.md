@@ -13,7 +13,7 @@ Botmaster is a lightweight highly extendable, highly configurable chatbot framew
 
 ```js
 const Botmaster = require('botmaster');
-const config = require(./config);
+const config = require('./config');
 const botsSettings = [{ telegram: config.telegramSettings },
                       { messenger: config.messengerSettings },
                       { twitter: config.twitterSettings },
