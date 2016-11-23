@@ -8,4 +8,15 @@
 
 Botmaster is a lightweight chatbot framework. Its purpose is to integrate your existing chatbot into a variety of messaging channels - currently Facebook Messenger, Twitter DM and Telegram.
 
+## Documentation
+
 Find the whole documentation for the framework on: https://botmasterai.github.io/home/
+
+
+## Examples
+
+Checkout the examples folder for some examples of how to use botmaster (adding more as they come in)
+
+## License
+
+This library is licensed under the MIT [license](LICENSE)
