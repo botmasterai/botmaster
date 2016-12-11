@@ -523,6 +523,297 @@ describe('Botmaster', function() {
             done();
           });
         });
+
+        // just execute those for socketio as all the underlying helper functionalities
+        // have been tested above
+        if (bot.type === 'socketio') {
+          specify.only('using #sendCascadeTo with no valid params in an object does not work', function() {
+            const messageArray = [
+              {},
+            ];
+            expect(bot.sendCascadeTo.bind(bot, messageArray, recipientId)).to.throw();
+          });
+
+          specify('using #sendCascadeTo a with a "raw" message works', function(done) {
+            const rawMessage1 = {
+              nonStandard: 'message1',
+              recipientId,
+            };
+            const rawMessage2 = {
+              nonStandard: 'message2',
+              recipientId,
+            };
+
+            const receivedMessageArray = [];
+            const messageArray = [{ raw: rawMessage1 }, { raw: rawMessage2 }];
+
+            bot.sendCascadeTo(messageArray, recipientId);
+
+            socket.on('message', (message) => {
+              receivedMessageArray.push(message);
+
+              if (receivedMessageArray.length === 2) {
+                expect(receivedMessageArray[0].nonStandard).to.equal('message1');
+                expect(receivedMessageArray[0].nonStandard).to.equal('message2');
+                done();
+              }
+            });
+          });
+
+          specify('using #sendCascadeTo with a valid botmaster "message" works', function(done) {
+            const message1 = {
+              recipient: {
+                id: recipientId,
+              },
+              message : {
+                text: 'message1',
+              }
+            };
+            const message2 = {
+              recipient: {
+                id: recipientId,
+              },
+              message : {
+                text: 'message2',
+              }
+            };
+
+            const receivedMessageArray = [];
+            const messageArray = [{ message: message1 }, { message: message2 }];
+
+            bot.sendCascadeTo(messageArray, recipientId);
+
+            socket.on('message', (message) => {
+              receivedMessageArray.push(message);
+
+              if (receivedMessageArray.length === 2) {
+                expect(receivedMessageArray[0].message.text).to.equal('message1');
+                expect(receivedMessageArray[1].message.text).to.equal('message2');
+                done();
+              }
+            });
+          });
+
+          specify('using #sendCascadeTo sending mixed "message" and "raw" works', function(done) {
+            const rawMessage1 = {
+              nonStandard: 'message1',
+              recipientId,
+            };
+            const message2 = {
+              recipient: {
+                id: recipientId,
+              },
+              message : {
+                text: 'message2',
+              }
+            };
+
+            const receivedMessageArray = [];
+            const messageArray = [{ raw: rawMessage1 }, { message: message2 }];
+
+            bot.sendCascadeTo(messageArray, recipientId);
+
+            socket.on('message', (message) => {
+              receivedMessageArray.push(message);
+
+              if (receivedMessageArray.length === 2) {
+                expect(receivedMessageArray[0].nonStandard).to.equal('message1');
+                expect(receivedMessageArray[1].message.text).to.equal('message2');
+                done();
+              }
+            });
+          });
+
+          specify('using #sendCascadeTo with text only works', function(done) {
+            const message1 = {
+              text: 'message1',
+            };
+
+            const message2 = {
+              text: 'message2',
+            };
+
+            const receivedMessageArray = [];
+            const messageArray = [message1, message2];
+
+            bot.sendCascadeTo(messageArray, recipientId);
+
+            socket.on('message', (message) => {
+              receivedMessageArray.push(message);
+
+              if (receivedMessageArray.length === 2) {
+                expect(receivedMessageArray[0].message.text).to.equal('message1');
+                expect(receivedMessageArray[1].message.text).to.equal('message2');
+                done();
+              }
+            });
+          });
+
+          specify('using #sendCascadeTo with buttons works', function(done) {
+            const message1 = {
+              text: 'message1',
+              buttons: ['button1', 'button2'],
+            };
+
+            const message2 = {
+              text: 'message2',
+              buttons: ['button1', 'button90'],
+            };
+
+            const receivedMessageArray = [];
+            const messageArray = [message1, message2];
+
+            bot.sendCascadeTo(messageArray, recipientId);
+
+            socket.on('message', (message) => {
+              receivedMessageArray.push(message);
+
+              if (receivedMessageArray.length === 2) {
+                expect(receivedMessageArray[0].message.text).to.equal('message1');
+                expect(receivedMessageArray[0].message.buttons[0]).to.equal('button1');
+                expect(receivedMessageArray[1].message.text).to.equal('message2');
+                expect(receivedMessageArray[1].message.buttons[1]).to.equal('button90');
+
+                done();
+              }
+            });
+          });
+
+          specify('using #sendCascadeTo with attachments works', function(done) {
+            const message1 = {
+              attachment: {
+                type: 'image',
+                payload: {
+                  url: 'https://raw.githubusercontent.com/ttezel/twit/master/tests/img/bigbird.jpg',
+                }
+              }
+            };
+
+            const message2 = {
+              attachment: {
+                type: 'image',
+                payload: {
+                  url: 'https://raw.githubusercontent.com/ttezel/twit/master/tests/img/bigbird.jpg',
+                }
+              }
+            };
+
+            const receivedMessageArray = [];
+            const messageArray = [message1, message2];
+
+            bot.sendCascadeTo(messageArray, recipientId);
+
+            socket.on('message', (message) => {
+              receivedMessageArray.push(message);
+
+              if (receivedMessageArray.length === 2) {
+                expect(receivedMessageArray[0].message.attachment.type).to.equal('image');
+                expect(receivedMessageArray[1].message.attachment.type).to.equal('image');
+
+                done();
+              }
+            });
+          });
+
+          specify('using #sendCascadeTo with a pre param executes the pre function before sending', function(done) {
+            const message1 = {
+              text: 'message1',
+              pre: (bot, msg, done) => { // without promise
+                msg.text = 'Party & Bullshit';
+                done();
+              },
+            };
+
+            const message2 = {
+              text: 'message2',
+              pre: (bot, msg) => { // with promise
+                return new Promise((resolve) => {
+                  msg.text = 'Party & good stuff';
+                  resolve();
+                });
+              },
+            };
+
+            const receivedMessageArray = [];
+            const messageArray = [message1, message2];
+
+            bot.sendCascadeTo(messageArray, recipientId);
+
+            socket.on('message', (message) => {
+              receivedMessageArray.push(message);
+
+              if (receivedMessageArray.length === 2) {
+                expect(receivedMessageArray[0].message.text).to.equal('Party & Bullshit');
+                expect(receivedMessageArray[1].message.text).to.equal('Party & good stuff');
+                done();
+              }
+            });
+          });
+
+          specify('using #sendCascadeTo with a post param executes the post function after sending', function(done) {
+            const message1 = {
+              text: 'message1',
+              post: (bot, msg, body, done) => { // without promise
+                msg.text = 'Party & Bullshit'; // this should do anything
+                done();
+              },
+            };
+
+            const message2 = {
+              text: 'message2',
+              post: (bot, msg, body) => { // with promise
+                return new Promise((resolve) => {
+
+                  msg.text = 'Party & good stuff'; // this should do anything
+                  resolve();
+                });
+              },
+            };
+
+            const receivedMessageArray = [];
+            const messageArray = [message1, message2];
+
+            bot.sendCascadeTo(messageArray, recipientId)
+
+            .then((bodies) => {
+              const messageId1 = bodies[0].message_id;
+              const timestamp1 = messageId1.split('.')[2];
+
+              const messageId2 = bodies[1].message_id;
+              const timestamp2 = messageId2.split('.')[2];
+
+              assert(timestamp1 < timestamp2);
+              done();
+            });
+
+            socket.on('message', (message) => {
+              receivedMessageArray.push(message);
+
+              if (receivedMessageArray.length === 2) {
+                expect(receivedMessageArray[0].message.text).to.equal('message1');
+                expect(receivedMessageArray[1].message.text).to.equal('message2');
+              }
+            });
+          });
+
+          specify('using #sendTextCascadeTo works', function(done) {
+            const receivedMessageArray = [];
+            const messageArray = ['message1', 'message2'];
+
+            bot.sendCascadeTo(messageArray, recipientId);
+
+            socket.on('message', (message) => {
+              receivedMessageArray.push(message);
+
+              if (receivedMessageArray.length === 2) {
+                expect(receivedMessageArray[0].message.text).to.equal('message1');
+                expect(receivedMessageArray[1].message.text).to.equal('message2');
+                done();
+              }
+            });
+          });
+        }
+
       });
 
       // after each run of the loop (runs in parallel)
