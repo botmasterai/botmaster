@@ -815,52 +815,6 @@ describe('Botmaster', function() {
             });
           });
 
-          specify('using #sendCascadeTo with a post param executes the post function after sending', function(done) {
-            const message1 = {
-              text: 'message1',
-              post: (bot, msg, body, done) => { // without promise
-                msg.text = 'Party & Bullshit'; // this should do anything
-                done();
-              },
-            };
-
-            const message2 = {
-              text: 'message2',
-              post: (bot, msg, body) => { // with promise
-                return new Promise((resolve) => {
-
-                  msg.text = 'Party & good stuff'; // this should do anything
-                  resolve();
-                });
-              },
-            };
-
-            const receivedMessageArray = [];
-            const messageArray = [message1, message2];
-
-            bot.sendCascadeTo(messageArray, recipientId)
-
-            .then((bodies) => {
-              const messageId1 = bodies[0].message_id;
-              const timestamp1 = messageId1.split('.')[2];
-
-              const messageId2 = bodies[1].message_id;
-              const timestamp2 = messageId2.split('.')[2];
-
-              assert(timestamp1 < timestamp2);
-              done();
-            });
-
-            socket.on('message', (message) => {
-              receivedMessageArray.push(message);
-
-              if (receivedMessageArray.length === 2) {
-                expect(receivedMessageArray[0].message.text).to.equal('message1');
-                expect(receivedMessageArray[1].message.text).to.equal('message2');
-              }
-            });
-          });
-
           specify('using #sendTextCascadeTo works', function(done) {
             const receivedMessageArray = [];
             const messageArray = ['message1', 'message2'];
