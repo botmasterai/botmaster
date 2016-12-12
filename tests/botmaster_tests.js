@@ -364,7 +364,7 @@ describe('Botmaster', function() {
     const botmaster = new Botmaster(botmasterSettings);
 
     for (const bot of botmaster.bots) {
-      if (bot.type !== 'socketio') continue; // for now
+      // if (bot.type !== 'socketio') continue; // for now
       let recipientId = null;
       let socket;
 
