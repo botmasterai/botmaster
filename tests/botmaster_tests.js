@@ -780,41 +780,6 @@ describe('Botmaster', function() {
             });
           });
 
-          specify.only('using #sendCascadeTo with a pre param executes the pre function before sending', function(done) {
-            const message1 = {
-              text: 'message1',
-              pre: (bot, msg, done) => { // without promise
-                msg.text = 'Party & Bullshit';
-                done();
-              },
-            };
-
-            const message2 = {
-              text: 'message2',
-              pre: (bot, msg) => { // with promise
-                return new Promise((resolve) => {
-                  msg.text = 'Party & good stuff';
-                  resolve();
-                });
-              },
-            };
-
-            const receivedMessageArray = [];
-            const messageArray = [message1, message2];
-
-            bot.sendCascadeTo(messageArray, recipientId);
-
-            socket.on('message', (message) => {
-              receivedMessageArray.push(message);
-
-              if (receivedMessageArray.length === 2) {
-                expect(receivedMessageArray[0].message.text).to.equal('Party & Bullshit');
-                expect(receivedMessageArray[1].message.text).to.equal('Party & good stuff');
-                done();
-              }
-            });
-          });
-
           specify('using #sendTextCascadeTo works', function(done) {
             const receivedMessageArray = [];
             const messageArray = ['message1', 'message2'];
