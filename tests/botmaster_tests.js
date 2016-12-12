@@ -364,7 +364,7 @@ describe('Botmaster', function() {
     const botmaster = new Botmaster(botmasterSettings);
 
     for (const bot of botmaster.bots) {
-      // if (bot.type !== 'slack') continue; // for now
+      if (bot.type !== 'socketio') continue; // for now
       let recipientId = null;
       let socket;
 
@@ -570,7 +570,10 @@ describe('Botmaster', function() {
             .then((bodies) => {
               assert(bodies.length === 2);
               amDone += 1;
-              if (amDone === 2) done();
+              if (amDone === 2) {
+                socket.removeAllListeners('message');
+                done();
+              }
             });
 
             socket.on('message', (message) => {
@@ -580,7 +583,11 @@ describe('Botmaster', function() {
                 expect(receivedMessageArray[0].nonStandard).to.equal('message1');
                 expect(receivedMessageArray[1].nonStandard).to.equal('message2');
                 amDone += 1;
-                if (amDone === 2) done();              }
+                if (amDone === 2) {
+                  socket.removeAllListeners('message');
+                  done();
+                }
+              }
             });
           });
 
@@ -613,6 +620,7 @@ describe('Botmaster', function() {
               if (receivedMessageArray.length === 2) {
                 expect(receivedMessageArray[0].message.text).to.equal('message1');
                 expect(receivedMessageArray[1].message.text).to.equal('message2');
+                socket.removeAllListeners('message');
                 done();
               }
             });
@@ -640,7 +648,10 @@ describe('Botmaster', function() {
             bot.sendCascadeTo(messageArray, recipientId, function(err, bodies) {
               expect(bodies.length).to.equal(2);
               amDone += 1;
-              if (amDone === 2) done();
+              if (amDone === 2) {
+                socket.removeAllListeners('message');
+                done();
+              }
             });
 
             socket.on('message', (message) => {
@@ -650,7 +661,10 @@ describe('Botmaster', function() {
                 expect(receivedMessageArray[0].nonStandard).to.equal('message1');
                 expect(receivedMessageArray[1].message.text).to.equal('message2');
                 amDone += 1;
-                if (amDone === 2) done();
+                if (amDone === 2) {
+                  socket.removeAllListeners('message');
+                  done();
+                }
               }
             });
           });
@@ -675,6 +689,7 @@ describe('Botmaster', function() {
               if (receivedMessageArray.length === 2) {
                 expect(receivedMessageArray[0].message.text).to.equal('message1');
                 expect(receivedMessageArray[1].message.text).to.equal('message2');
+                socket.removeAllListeners('message');
                 done();
               }
             });
@@ -691,6 +706,7 @@ describe('Botmaster', function() {
 
             socket.on('message', (message) => {
               expect(message.sender_action).to.equal('typing_on');
+              socket.removeAllListeners('message');
               done();
             });
           });
@@ -738,6 +754,7 @@ describe('Botmaster', function() {
                 expect(receivedMessageArray[0].message.quick_replies[0].title).to.equal('button1');
                 expect(receivedMessageArray[1].message.text).to.equal('message2');
                 expect(receivedMessageArray[1].message.quick_replies[1].title).to.equal('button90');
+                socket.removeAllListeners('message');
 
                 done();
               }
@@ -774,6 +791,7 @@ describe('Botmaster', function() {
               if (receivedMessageArray.length === 2) {
                 expect(receivedMessageArray[0].message.attachment.type).to.equal('image');
                 expect(receivedMessageArray[1].message.attachment.type).to.equal('image');
+                socket.removeAllListeners('message');
 
                 done();
               }
@@ -790,7 +808,10 @@ describe('Botmaster', function() {
             .then((bodies) => {
               assert(bodies.length === 2);
               amDone += 1;
-              if (amDone === 2) done();
+              if (amDone === 2) {
+                socket.removeAllListeners('message');
+                done();
+              }
             });
 
             socket.on('message', (message) => {
@@ -800,7 +821,11 @@ describe('Botmaster', function() {
                 expect(receivedMessageArray[0].message.text).to.equal('message1');
                 expect(receivedMessageArray[1].message.text).to.equal('message2');
                 amDone += 1;
-                if (amDone === 2) done();              }
+                if (amDone === 2) {
+                  socket.removeAllListeners('message');
+                  done();
+                }
+              }
             });
           });
         }
