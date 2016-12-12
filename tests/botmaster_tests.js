@@ -524,39 +524,63 @@ describe('Botmaster', function() {
           });
         });
 
+        // specify('using #sendRaw', function(done) {
+        //   // if is here just for now
+        //   if (bot.type === 'socketio') {
+        //
+        //   } else {
+        //     done();
+        //   }
+        // });
+
         // just execute those for socketio as all the underlying helper functionalities
         // have been tested above
         if (bot.type === 'socketio') {
-          specify.only('using #sendCascadeTo with no valid params in an object does not work', function() {
+          specify('using #sendCascadeTo with no valid params in an object does not work', function(done) {
             const messageArray = [
               {},
             ];
-            expect(bot.sendCascadeTo.bind(bot, messageArray, recipientId)).to.throw();
+
+            bot.sendCascadeTo(messageArray, recipientId, function(err) {
+              expect(err.message).to.equal('No valid message options specified');
+              done();
+            });
           });
 
           specify('using #sendCascadeTo a with a "raw" message works', function(done) {
             const rawMessage1 = {
               nonStandard: 'message1',
-              recipientId,
+              recipient: {
+                id: recipientId,
+              },
             };
             const rawMessage2 = {
               nonStandard: 'message2',
-              recipientId,
+              recipient: {
+                id: recipientId,
+              },
             };
 
             const receivedMessageArray = [];
             const messageArray = [{ raw: rawMessage1 }, { raw: rawMessage2 }];
+            let amDone = 0;
 
-            bot.sendCascadeTo(messageArray, recipientId);
+            bot.sendCascadeTo(messageArray, recipientId)
+
+            .then((bodies) => {
+              assert(bodies.length === 2);
+              amDone += 1;
+              if (amDone === 2) done();
+            });
 
             socket.on('message', (message) => {
               receivedMessageArray.push(message);
 
               if (receivedMessageArray.length === 2) {
                 expect(receivedMessageArray[0].nonStandard).to.equal('message1');
-                expect(receivedMessageArray[0].nonStandard).to.equal('message2');
-                done();
-              }
+                expect(receivedMessageArray[1].nonStandard).to.equal('message2');
+                amDone += 1;
+                if (amDone === 2) done();              }
             });
           });
 
@@ -597,8 +621,9 @@ describe('Botmaster', function() {
           specify('using #sendCascadeTo sending mixed "message" and "raw" works', function(done) {
             const rawMessage1 = {
               nonStandard: 'message1',
-              recipientId,
-            };
+              recipient: {
+                id: recipientId,
+              },            };
             const message2 = {
               recipient: {
                 id: recipientId,
@@ -610,8 +635,13 @@ describe('Botmaster', function() {
 
             const receivedMessageArray = [];
             const messageArray = [{ raw: rawMessage1 }, { message: message2 }];
+            let amDone = 0;
 
-            bot.sendCascadeTo(messageArray, recipientId);
+            bot.sendCascadeTo(messageArray, recipientId, function(err, bodies) {
+              expect(bodies.length).to.equal(2);
+              amDone += 1;
+              if (amDone === 2) done();
+            });
 
             socket.on('message', (message) => {
               receivedMessageArray.push(message);
@@ -619,7 +649,8 @@ describe('Botmaster', function() {
               if (receivedMessageArray.length === 2) {
                 expect(receivedMessageArray[0].nonStandard).to.equal('message1');
                 expect(receivedMessageArray[1].message.text).to.equal('message2');
-                done();
+                amDone += 1;
+                if (amDone === 2) done();
               }
             });
           });
@@ -649,9 +680,43 @@ describe('Botmaster', function() {
             });
           });
 
+          specify('using #sendCascadeTo with typing indicators works', function(done) {
+            const message1 = {
+              isTyping: true,
+            };
+
+            const messageArray = [message1];
+
+            bot.sendCascadeTo(messageArray, recipientId);
+
+            socket.on('message', (message) => {
+              expect(message.sender_action).to.equal('typing_on');
+              done();
+            });
+          });
+
+          specify('using #sendCascadeTo with buttons throws error if both attachment and text are there', function(done) {
+            const messageArray = [
+              {
+                text: 'message1',
+              },
+              {
+                buttons: ['one', 'two'],
+                text: 'Those are buttons',
+                attachment: {},
+              },
+            ];
+
+            bot.sendCascadeTo(messageArray, recipientId)
+
+            .catch((err) => {
+              expect(err.message).to.equal('Please use either one of text or attachment with buttons');
+              done();
+            });
+          });
+
           specify('using #sendCascadeTo with buttons works', function(done) {
             const message1 = {
-              text: 'message1',
               buttons: ['button1', 'button2'],
             };
 
@@ -669,10 +734,10 @@ describe('Botmaster', function() {
               receivedMessageArray.push(message);
 
               if (receivedMessageArray.length === 2) {
-                expect(receivedMessageArray[0].message.text).to.equal('message1');
-                expect(receivedMessageArray[0].message.buttons[0]).to.equal('button1');
+                expect(receivedMessageArray[0].message.text).to.equal('Please select one of:');
+                expect(receivedMessageArray[0].message.quick_replies[0].title).to.equal('button1');
                 expect(receivedMessageArray[1].message.text).to.equal('message2');
-                expect(receivedMessageArray[1].message.buttons[1]).to.equal('button90');
+                expect(receivedMessageArray[1].message.quick_replies[1].title).to.equal('button90');
 
                 done();
               }
@@ -715,7 +780,7 @@ describe('Botmaster', function() {
             });
           });
 
-          specify('using #sendCascadeTo with a pre param executes the pre function before sending', function(done) {
+          specify.only('using #sendCascadeTo with a pre param executes the pre function before sending', function(done) {
             const message1 = {
               text: 'message1',
               pre: (bot, msg, done) => { // without promise
