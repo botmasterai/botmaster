@@ -783,8 +783,15 @@ describe('Botmaster', function() {
           specify('using #sendTextCascadeTo works', function(done) {
             const receivedMessageArray = [];
             const messageArray = ['message1', 'message2'];
+            let amDone = 0;
 
-            bot.sendCascadeTo(messageArray, recipientId);
+            bot.sendTextCascadeTo(messageArray, recipientId)
+
+            .then((bodies) => {
+              assert(bodies.length === 2);
+              amDone += 1;
+              if (amDone === 2) done();
+            });
 
             socket.on('message', (message) => {
               receivedMessageArray.push(message);
@@ -792,8 +799,8 @@ describe('Botmaster', function() {
               if (receivedMessageArray.length === 2) {
                 expect(receivedMessageArray[0].message.text).to.equal('message1');
                 expect(receivedMessageArray[1].message.text).to.equal('message2');
-                done();
-              }
+                amDone += 1;
+                if (amDone === 2) done();              }
             });
           });
         }
