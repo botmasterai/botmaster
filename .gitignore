@@ -11,6 +11,7 @@ Thumbs.db
 .Trashes
 
 example_jd.js
+slack_button.html
 testing_creds.md
 tests/config.js
 
@@ -24,7 +25,3 @@ slack_teams_info
 jsconfig.json
 .vscode
 coverage
-
-_site
-documentation_website/node_modules
-documentation_website/themes
