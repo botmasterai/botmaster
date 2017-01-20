@@ -432,7 +432,7 @@ describe('Botmaster', function() {
           });
         });
 
-        specify('using #sendTextMessageTo', function(done) {
+        specify('using #sendTextMessageTo with callback (cb)', function(done) {
           // using callback here
           bot.sendTextMessageTo('Party & bullshit', recipientId, function(err, body) {
             expect(body.message_id).to.not.equal(undefined);

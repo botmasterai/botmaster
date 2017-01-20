@@ -9,7 +9,7 @@ const config = require('./config.js');
 
 describe('Middleware', function() {
 
-  const incomingUdpate = {
+  const incomingUpdate = {
     raw: 'some raw object data',
     sender: {
       id: config.telegramUserId // not really important which one is used here
@@ -113,8 +113,8 @@ describe('Middleware', function() {
 
       // middleware is called right before being actually emitted, =>
       // in __emitUpdate;
-      const incomingUdpateCopy = _.cloneDeep(incomingUdpate);
-      bot.__emitUpdate( incomingUdpateCopy);
+      const incomingUpdateCopy = _.cloneDeep(incomingUpdate);
+      bot.__emitUpdate(incomingUpdateCopy);
 
     });
 
@@ -132,7 +132,7 @@ describe('Middleware', function() {
 
       const bot = botmaster.getBots('telegram')[0];
 
-      bot.__emitUpdate(incomingUdpate);
+      bot.__emitUpdate(incomingUpdate);
     });
 
     specify('Botmaster should call the middleware functions in order of declaration', function(done) {
@@ -157,8 +157,8 @@ describe('Middleware', function() {
 
       const bot = botmaster.getBots('telegram')[0];
 
-      const incomingUdpateCopy = _.cloneDeep(incomingUdpate);
-      bot.__emitUpdate(incomingUdpateCopy);
+      const incomingUpdateCopy = _.cloneDeep(incomingUpdate);
+      bot.__emitUpdate(incomingUpdateCopy);
     });
 
     specify('Botmaster should call the middleware functions on a specific bot type only if specified', function(done) {
@@ -170,7 +170,7 @@ describe('Middleware', function() {
       const bots = botmaster.bots;
 
       for (const bot of bots) {
-        bot.__emitUpdate(incomingUdpate);
+        bot.__emitUpdate(incomingUpdate);
       }
     });
 
@@ -188,7 +188,7 @@ describe('Middleware', function() {
 
       const bot = botmaster.getBots('messenger')[0];
 
-      bot.__emitUpdate(incomingUdpate);
+      bot.__emitUpdate(incomingUpdate);
     });
 
     specify('Botmaster should call the middleware functions on multiple specific bot types only if specified', function(done) {
@@ -205,7 +205,7 @@ describe('Middleware', function() {
       const bots = botmaster.bots;
 
       for (const bot of bots) {
-        bot.__emitUpdate(incomingUdpate);
+        bot.__emitUpdate(incomingUpdate);
       }
     });
 
@@ -223,7 +223,7 @@ describe('Middleware', function() {
         done();
       });
 
-      bot.__emitUpdate(incomingUdpate);
+      bot.__emitUpdate(incomingUpdate);
     });
   });
 
@@ -275,6 +275,122 @@ describe('Middleware', function() {
         });
       });
     });
+
+    specify('Outgoing middleware should be ignored if configured so using reply', function(done) {
+      // outgoing middleware should never be hit
+      botmaster.use('outgoing', function(bot, message, next) {
+        expect(1).to.equal(2);
+        return next();
+      });
+
+      const bot = botmaster.getBots('messenger')[0];
+
+      const outgoingMessageCopy = _.cloneDeep(outgoingMessage);
+      outgoingMessageCopy.recipient.id = config.messengerUserId;
+
+      bot.sendMessage(outgoingMessageCopy, { ignoreMiddleware: true })
+
+      .then(function() {
+        // using reply
+        const incomingUpdateCopy = _.cloneDeep(incomingUpdate);
+        incomingUpdateCopy.sender.id = config.messengerUserId;
+
+        return bot.reply(incomingUpdateCopy, 'Party & Bullshit',
+                         { ignoreMiddleware: true });
+      })
+
+      .then(function() {
+        done();
+      });
+    });
+
+    specify('Outgoing middleware should be ignored if configured so using sendAttachmentFromURLTo', function(done) {
+      // outgoing middleware should never be hit
+      botmaster.use('outgoing', function(bot, message, next) {
+        expect(1).to.equal(2);
+        return next();
+      });
+
+      const bot = botmaster.getBots('messenger')[0];
+
+      const url = 'https://raw.githubusercontent.com/ttezel/twit/master/tests/img/bigbird.jpg';
+      bot.sendAttachmentFromURLTo(
+        'image', url, config.messengerUserId, { ignoreMiddleware: true })
+
+      .then(function() {
+        done();
+      });
+    });
+
+    specify('Outgoing middleware should be ignored if configured so using sendDefaultButtonMessageTo', function(done) {
+      // outgoing middleware should never be hit
+      botmaster.use('outgoing', function(bot, message, next) {
+        expect(1).to.equal(2);
+        return next();
+      });
+
+      const bot = botmaster.getBots('messenger')[0];
+
+      bot.sendDefaultButtonMessageTo(
+        ['button1', 'button2'], config.messengerUserId, 'select something',
+        { ignoreMiddleware: true })
+
+      .then(function() {
+        // using sendDefaultButtonMessageTo with callback
+        bot.sendDefaultButtonMessageTo(
+          ['button1', 'button2'], config.messengerUserId, 'select something',
+          { ignoreMiddleware: true }, function() {
+
+          done();
+        });
+      });
+    });
+
+    specify('Outgoing middleware should be ignored if configured so using sendIsTypingMessageTo', function(done) {
+      // outgoing middleware should never be hit
+      botmaster.use('outgoing', function(bot, message, next) {
+        expect(1).to.equal(2);
+        return next();
+      });
+
+      const bot = botmaster.getBots('messenger')[0];
+
+      const outgoingMessageCopy = _.cloneDeep(outgoingMessage);
+      outgoingMessageCopy.recipient.id = config.messengerUserId;
+
+      bot.sendIsTypingMessageTo(config.messengerUserId,
+          { ignoreMiddleware: true })
+
+      .then(function() {
+        done();
+      });
+    });
+
+    specify('Outgoing middleware should be ignored if configured so using sendTextCascadeTo', function(done) {
+      this.timeout(4000);
+      // outgoing middleware should never be hit
+      botmaster.use('outgoing', function(bot, message, next) {
+        expect(1).to.equal(2);
+        return next();
+      });
+
+      const bot = botmaster.getBots('messenger')[0];
+
+      bot.sendTextCascadeTo(
+          ['message1', 'message2'], config.messengerUserId,
+          { ignoreMiddleware: true })
+
+      .then(function() {
+        // using sednCascade without callback
+        return bot.sendTextCascadeTo(
+          ['message1', 'message2'], config.messengerUserId,
+          { ignoreMiddleware: true }, function() {
+
+          done();
+        });
+      });
+    });
+
 
     specify('Botmaster should not call incoming middleware', function(done) {
       botmaster.use('incoming', function(bot, update, next) {
