@@ -285,22 +285,18 @@ describe('Middleware', function() {
 
       const bot = botmaster.getBots('messenger')[0];
 
-      const outgoingMessageCopy = _.cloneDeep(outgoingMessage);
-      outgoingMessageCopy.recipient.id = config.messengerUserId;
+      // using reply
+      const incomingUpdateCopy = _.cloneDeep(incomingUpdate);
+      incomingUpdateCopy.sender.id = config.messengerUserId;
 
-      bot.sendMessage(outgoingMessageCopy, { ignoreMiddleware: true })
+      bot.reply(incomingUpdateCopy, 'Party & Bullshit',
+                { ignoreMiddleware: true })
 
       .then(function() {
-        // using reply
-        const incomingUpdateCopy = _.cloneDeep(incomingUpdate);
-        incomingUpdateCopy.sender.id = config.messengerUserId;
-
         return bot.reply(incomingUpdateCopy, 'Party & Bullshit',
-                         { ignoreMiddleware: true });
-      })
-
-      .then(function() {
-        done();
+                         { ignoreMiddleware: true }, function() {
+          done();
+        });
       });
     });
 
