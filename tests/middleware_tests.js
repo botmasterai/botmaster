@@ -373,8 +373,8 @@ describe('Middleware', function() {
       const bot = botmaster.getBots('messenger')[0];
 
       bot.sendTextCascadeTo(
-          ['message1', 'message2'], config.messengerUserId,
-          { ignoreMiddleware: true })
+        ['message1', 'message2'], config.messengerUserId,
+        { ignoreMiddleware: true })
 
       .then(function() {
         // using sednCascade without callback

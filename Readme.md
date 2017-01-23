@@ -10,7 +10,7 @@ Botmaster is a lightweight chatbot framework. Its purpose is to integrate your e
 
 ## Documentation
 
-Find the whole documentation for the framework on: https://botmasterai.github.io
+Find the whole documentation for the framework on: https://botmasterai.com/
 
 
 ## Examples
