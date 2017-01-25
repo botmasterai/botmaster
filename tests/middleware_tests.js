@@ -193,7 +193,7 @@ describe('Middleware', function() {
 
     specify('Botmaster should call the middleware functions on multiple specific bot types only if specified', function(done) {
       let visitedCount = 0;
-      botmaster.use('incoming', { type: ['messenger', 'telegram'] }, function(bot, update, next) {
+      botmaster.use('incoming', { type: 'messenger telegram' }, function(bot, update, next) {
         assert(bot.type === 'messenger' || bot.type === 'telegram');
         ++visitedCount;
         if (visitedCount === 1) {
@@ -235,11 +235,6 @@ describe('Middleware', function() {
       botmaster.use('outgoing', function(bot, message, next) {
         message.recipient.id = config.messengerUserId;
         return next();
-      });
-
-      botmaster.once('update', function(bot, update){
-        expect(update.session).to.equal('disASession');
-        done();
       });
 
       const bot = botmaster.getBots('messenger')[0];
@@ -387,6 +382,20 @@ describe('Middleware', function() {
       });
     });
 
+
+    specify('Using send helper with "middlewareAccessible" gives access to that object in outgoing middleware', function(done) {
+      const neededInMiddleware = "some random text";
+
+      botmaster.use('outgoing', function(bot, message, middlewareAccessible, next) {
+        expect(middlewareAccessible).to.equal(neededInMiddleware);
+        done();
+      });
+
+      const bot = botmaster.getBots('messenger')[0];
+
+      bot.sendTextMessageTo('Party & Bullshit', config.messengerUserId,
+        { middlewareAccessible: neededInMiddleware });
+    });
 
     specify('Botmaster should not call incoming middleware', function(done) {
       botmaster.use('incoming', function(bot, update, next) {
