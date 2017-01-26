@@ -479,7 +479,7 @@ describe('Botmaster', function() {
           bot.sendDefaultButtonMessageTo(buttons, recipientId, bot)
 
           .catch((err) => {
-            err.message.should.equal('ERROR: third argument must be a "String", "Object" or absent');
+            err.message.should.equal('ERROR: third argument must be a "String", an attachment "Object" or absent');
             done();
           });
         });
@@ -488,7 +488,7 @@ describe('Botmaster', function() {
           const buttons = ['option One', 'Option Two', 'Option Three', 'Option Four'];
 
           bot.sendDefaultButtonMessageTo(buttons, recipientId, bot, function(err) {
-            err.message.should.equal('ERROR: third argument must be a "String", "Object" or absent');
+            err.message.should.equal('ERROR: third argument must be a "String", an attachment "Object" or absent');
             done();
           });
         });
