@@ -362,8 +362,8 @@ describe('Middleware', function() {
       });
     });
 
-    specify('Outgoing middleware should be ignored if configured so using sendTextCascadeTo', function(done) {
-      this.timeout(4000);
+    specify.only('Outgoing middleware should be ignored if configured so using sendTextCascadeTo', function(done) {
+      this.timeout(8000);
       // outgoing middleware should never be hit
       botmaster.use('outgoing', function(bot, message, next) {
         expect(1).to.equal(2);
