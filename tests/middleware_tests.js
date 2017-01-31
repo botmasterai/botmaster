@@ -80,6 +80,12 @@ describe('Middleware', function() {
       })).to.throw('ERROR: invalid middleware type. Type should be either \'incoming\' or \'outgoing\'');
     });
 
+    it('should throw an error if the first argument is a string but there is no callback defined', function() {
+      expect(function() {
+        botmaster.use('incoming');
+      }).to.throw('ERROR: middlewareCallback needs to be defined');
+    });
+
     it('should throw an error if the second argument exists and it isn\'t an object', function() {
       expect(() => botmaster.use('incoming', 'some string', function(bot, update, next) {
         next();
