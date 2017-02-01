@@ -236,7 +236,7 @@ describe('Middleware', function() {
   describe('Outgoing Middleware', function() {
     this.retries(4);
 
-    specify.only('Botmaster should call a middleware function that was setup', function(done) {
+    specify('Botmaster should call a middleware function that was setup', function(done) {
       // outgoing middleware
       botmaster.use('outgoing', function(bot, message, next) {
         message.recipient.id = config.messengerUserId;
