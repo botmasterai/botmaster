@@ -236,16 +236,11 @@ describe('Middleware', function() {
   describe('Outgoing Middleware', function() {
     this.retries(4);
 
-    specify('Botmaster should call a middleware function that was setup', function(done) {
+    specify.only('Botmaster should call a middleware function that was setup', function(done) {
       // outgoing middleware
       botmaster.use('outgoing', function(bot, message, next) {
         message.recipient.id = config.messengerUserId;
         return next();
-      });
-
-      botmaster.once('update', function(bot, update){
-        expect(update.session).to.equal('disASession');
-        done();
       });
 
       const bot = botmaster.getBots('messenger')[0];
@@ -254,7 +249,7 @@ describe('Middleware', function() {
       bot.sendMessage(outgoingMessageCopy)
 
       .then(function(body) {
-        expect(body).to.not.equal(undefined);
+        expect(body.sent_message).to.not.equal(undefined);
         done();
       });
     });
