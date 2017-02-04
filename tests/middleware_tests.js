@@ -388,21 +388,6 @@ describe('Middleware', function() {
       });
     });
 
-
-    specify('Using send helper with "middlewareAccessible" gives access to that object in outgoing middleware', function(done) {
-      const neededInMiddleware = "some random text";
-
-      botmaster.use('outgoing', function(bot, message, middlewareAccessible, next) {
-        expect(middlewareAccessible).to.equal(neededInMiddleware);
-        done();
-      });
-
-      const bot = botmaster.getBots('messenger')[0];
-
-      bot.sendTextMessageTo('Party & Bullshit', config.messengerUserId,
-        { middlewareAccessible: neededInMiddleware });
-    });
-
     specify('Botmaster should not call incoming middleware', function(done) {
       botmaster.use('incoming', function(bot, update, next) {
         // something wrong as this should not happen
