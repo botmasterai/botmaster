@@ -5,6 +5,9 @@
   "main": "./lib/index.js",
   "scripts": {
     "s": "DEBUG=botmaster:botmaster nodemon --legacy-watch ./example_jd.js",
+    "example1": "nodemon ./examples/slack_example/app.js",
+    "example2": "nodemon ./examples/socket.io_example/app.js",
+    "example3": "nodemon ./examples/watson_conversation_example/app.js",
     "start": "node ./example_jd.js",
     "test": "istanbul cover _mocha -- --recursive tests",
     "tests": "mocha --recursive tests",
@@ -50,7 +53,7 @@
     "node": ">=4.x.x <8.0.0"
   },
   "devDependencies": {
-    "socket.io-client": "^1.5.0",
+    "botmaster-fulfill": "^1.1.0",
     "chai": "^3.5.0",
     "coveralls": "^2.11.14",
     "eslint": "^3.5.0",
@@ -62,7 +65,8 @@
     "jsdoc": "^3.4.2",
     "mocha": "^2.5.3",
     "mocha-eslint": "^2.1.1",
-    "nodemon": "^1.10.2"
+    "nodemon": "^1.10.2",
+    "socket.io-client": "^1.5.0"
   },
   "author": "JD Wuarin <jwuarin@uk.ibm.com>",
   "license": "MIT"
