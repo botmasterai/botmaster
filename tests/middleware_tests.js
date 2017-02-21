@@ -408,6 +408,18 @@ describe('Middleware', function() {
 
   });
 
+  specify('new syntax', function(done) {
+      const mockUpdate = {id: 1};
+      const messageToSend = {id: 2};
+      botmaster.use('outgoing', function(bot, update, message, next) {
+         assert(message === messageToSend);
+         assert(update === mockUpdate);
+         done();
+     });
+     const bot = botmaster.getBots('messenger')[0];
+     bot.sendMessage(messageToSend, {update: mockUpdate});
+ });
+
   afterEach(function(done) {
     this.retries(4);
     process.nextTick(function() {
