@@ -12,7 +12,7 @@ const twitterIncomingDms = require('./twitter_incoming_dms');
 const botCredentials = config.twitterCredentials1;
 const senderCredentials = config.twitterCredentials2;
 
-describe.skip('Twitter Bot tests', function() {
+describe('Twitter Bot tests', function() {
   const settings = {
     credentials: botCredentials
   };

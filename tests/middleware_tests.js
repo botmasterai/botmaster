@@ -7,7 +7,7 @@ const _ = require('lodash');
 const Botmaster = require('../lib');
 const config = require('./config.js');
 
-describe.only('Middleware', function() {
+describe('Middleware', function() {
 
   const incomingUpdate = {
     raw: 'some raw object data',
@@ -446,6 +446,22 @@ describe.only('Middleware', function() {
 
     specify('from a reply in incoming middleware the update should be sent through to outgoing adopting the new syntax', function(done) {
       botmaster.use('incoming', function(bot, update, next) {
+          update.newProp = 1;
+          bot.reply(update, 'right back at you!');
+      });
+      botmaster.use('outgoing', function(bot, update, message, next) {
+         assert(message.message.text === 'right back at you!', 'the message should be correct');
+         assert(update.newProp === 1, 'new prop should exist in update');
+         assert(update === incomingUpdateCopy, 'should still have the same reference to the update');
+         done();
+       });
+       const bot = botmaster.getBots('messenger')[0];
+       const incomingUpdateCopy = _.cloneDeep(incomingUpdate);
+       bot.__emitUpdate(incomingUpdateCopy);
+    });
+
+    specify('from a reply in an on update handler for botmaster the update should be sent through to outgoing adopting the new syntax', function(done) {
+      botmaster.once('update', function(bot, update, next) {
           update.newProp = 1;
           bot.reply(update, 'right back at you!');
       });
