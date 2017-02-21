@@ -462,8 +462,8 @@ describe('Middleware', function() {
 
     specify('from a reply in an on update handler for botmaster the update should be sent through to outgoing adopting the new syntax', function(done) {
       botmaster.once('update', function(bot, update, next) {
-          update.newProp = 1;
-          bot.reply(update, 'right back at you!');
+        update.newProp = 1;
+        bot.reply(update, 'right back at you!');
       });
       botmaster.use('outgoing', function(bot, update, message, next) {
          assert(message.message.text === 'right back at you!', 'the message should be correct');
