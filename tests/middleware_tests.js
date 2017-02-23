@@ -408,79 +408,68 @@ describe('Middleware', function() {
 
   });
 
-  describe('new syntax (bot, update, message, next) in outgoing', function() {
-     specify('manually setting update in sendOptions should pass it through to outgoing adopting the new syntax', function(done) {
-       const mockUpdate = {id: 1};
-       const messageToSend = {id: 2};
-       botmaster.use('outgoing', function(bot, update, message, next) {
-          assert(message === messageToSend);
-          assert(update === mockUpdate);
-          done();
-        });
-        const bot = botmaster.getBots('messenger')[0];
-        bot.sendMessage(messageToSend, {update: mockUpdate});
-    });
-
-    specify('using bindUpdate should pass update with sendMessage through to outgoing adopting the new syntax', function(done) {
-      const mockUpdate = {id: 2};
-      const messageToSend = {id: 3};
-      botmaster.use('outgoing', function(bot, update, message, next) {
-         assert(message === messageToSend);
-         assert(update === mockUpdate);
-         done();
-       });
-       const bot = botmaster.getBots('messenger')[0];
-       bot.bindUpdate(mockUpdate).sendMessage(messageToSend);
-    });
-
-    specify('using bindUpdate with sendTextMessageTo should pass update through to outgoing adopting the new syntax', function(done) {
-      const mockUpdate = {id: 2};
-      botmaster.use('outgoing', function(bot, update, message, next) {
-         assert(message.message.text === 'hi');
-         assert(update === mockUpdate);
-         done();
-       });
-       const bot = botmaster.getBots('messenger')[0];
-       bot.bindUpdate(mockUpdate).sendTextMessageTo('hi', 1);
-    });
-
-    specify('from a reply in incoming middleware the update should be sent through to outgoing adopting the new syntax', function(done) {
-      botmaster.use('incoming', function(bot, update, next) {
-          update.newProp = 1;
-          bot.reply(update, 'right back at you!');
+  describe('new syntax (bot, update, message, next) in outgoing', function () {
+    specify('manually setting __update in sendOptions should pass it through to outgoing adopting the new syntax', function (done) {
+      const mockUpdate = { id: 1 };
+      const messageToSend = { id: 2 };
+      botmaster.use('outgoing', function (bot, update, message, next) {
+        assert(message === messageToSend);
+        assert(update === mockUpdate);
+        done();
       });
-      botmaster.use('outgoing', function(bot, update, message, next) {
-         assert(message.message.text === 'right back at you!', 'the message should be correct');
-         assert(update.newProp === 1, 'new prop should exist in update');
-         assert(update === incomingUpdateCopy, 'should still have the same reference to the update');
-         done();
-       });
-       const bot = botmaster.getBots('messenger')[0];
-       const incomingUpdateCopy = _.cloneDeep(incomingUpdate);
-       bot.__emitUpdate(incomingUpdateCopy);
+      const bot = botmaster.getBots('messenger')[0];
+      bot.sendMessage(messageToSend, { __update: mockUpdate });
     });
 
-    specify('from a reply in an on update handler for botmaster the update should be sent through to outgoing adopting the new syntax', function(done) {
-      botmaster.once('update', function(bot, update, next) {
+    specify('using __createBotPatchedWithUpdate should pass update with sendMessage through to outgoing adopting the new syntax', function (done) {
+      const mockUpdate = { id: 2 };
+      const messageToSend = { id: 3 };
+      botmaster.use('outgoing', function (bot, update, message, next) {
+        assert(message === messageToSend);
+        assert(update === mockUpdate);
+        done();
+      });
+      const bot = botmaster.getBots('messenger')[0].__createBotPatchedWithUpdate(mockUpdate);
+      bot.sendMessage(messageToSend);
+    });
+
+    specify('from a reply in incoming middleware the update should be sent through to outgoing adopting the new syntax', function (done) {
+      botmaster.use('incoming', function (bot, update, next) {
         update.newProp = 1;
         bot.reply(update, 'right back at you!');
       });
-      botmaster.use('outgoing', function(bot, update, message, next) {
-         assert(message.message.text === 'right back at you!', 'the message should be correct');
-         assert(update.newProp === 1, 'new prop should exist in update');
-         assert(update === incomingUpdateCopy, 'should still have the same reference to the update');
-         done();
-       });
-       const bot = botmaster.getBots('messenger')[0];
-       const incomingUpdateCopy = _.cloneDeep(incomingUpdate);
-       bot.__emitUpdate(incomingUpdateCopy);
+      botmaster.use('outgoing', function (bot, update, message, next) {
+        assert(message.message.text === 'right back at you!', 'the message should be correct');
+        assert(update.newProp === 1, 'new prop should exist in update');
+        assert(update === incomingUpdateCopy, 'should still have the same reference to the update');
+        done();
+      });
+      const bot = botmaster.getBots('messenger')[0];
+      const incomingUpdateCopy = _.cloneDeep(incomingUpdate);
+      bot.__emitUpdate(incomingUpdateCopy);
+    });
+
+    specify('from a reply in an on update handler for botmaster the update should be sent through to outgoing adopting the new syntax', function (done) {
+      botmaster.once('update', function (bot, update, next) {
+        update.newProp = 1;
+        bot.reply(update, 'right back at you!');
+      });
+      botmaster.use('outgoing', function (bot, update, message, next) {
+        assert(message.message.text === 'right back at you!', 'the message should be correct');
+        assert(update.newProp === 1, 'new prop should exist in update');
+        assert(update === incomingUpdateCopy, 'should still have the same reference to the update');
+        done();
+      });
+      const bot = botmaster.getBots('messenger')[0];
+      const incomingUpdateCopy = _.cloneDeep(incomingUpdate);
+      bot.__emitUpdate(incomingUpdateCopy);
     });
   });
 
-  afterEach(function(done) {
+  afterEach(function (done) {
     this.retries(4);
-    process.nextTick(function() {
-      botmaster.server.close(function() { done(); });
+    process.nextTick(function () {
+      botmaster.server.close(function () { done(); });
     });
   });
 
