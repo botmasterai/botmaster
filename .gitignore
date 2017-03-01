@@ -21,7 +21,6 @@ npm-debug.log
 .sass-cache
 
 /logs
-slack_teams_info
 jsconfig.json
 .vscode
 coverage

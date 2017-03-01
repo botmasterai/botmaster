@@ -353,7 +353,12 @@ describe('Botmaster', function() {
     });
   });
 
+  describe('receiving messages', function() {
+    // TODO, do this using mock_bot_class
+  });
+
   describe('sending messages', function() {
+    // Do this with mock_bot_class also
     this.retries(4);
     // botmaster.server stops listening onto port 3200 in the after hook
     // of 'sending message'
