@@ -481,6 +481,34 @@ describe('Middleware', function() {
       const incomingUpdateCopy = _.cloneDeep(incomingUpdate);
       bot.__emitUpdate(incomingUpdateCopy);
     });
+
+    specify('When sending a message in an outgoing middleware, the update object should be present on the second pass', function (done) {
+      let pass = 1;
+      botmaster.once('update', function (bot, update, next) {
+        update.newProp = 1;
+        bot.reply(update, 'right back at you!');
+      });
+      botmaster.use('outgoing', function (bot, update, message, next) {
+        if (pass === 1) {
+          assert(message.message.text === 'right back at you!', 'the message should be correct');
+          assert(update.newProp === 1, 'new prop should exist in update');
+          assert(update === incomingUpdateCopy, 'should still have the same reference to the update');
+          update.newProp = 2;
+          pass += 1;
+
+          bot.reply(update, 'Hi you!');
+        } else if (pass === 2) {
+          assert(message.message.text === 'Hi you!', 'the message should be correct');
+          assert(update.newProp === 2, 'new prop should exist in update');
+          assert(update === incomingUpdateCopy, 'should still have the same reference to the update');
+          done();
+        }
+      });
+      const bot = botmaster.getBots('messenger')[0];
+      const incomingUpdateCopy = _.cloneDeep(incomingUpdate);
+      bot.__emitUpdate(incomingUpdateCopy);
+    });
+
   });
 
   afterEach(function (done) {
