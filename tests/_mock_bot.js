@@ -8,6 +8,7 @@ class MockBot extends BaseBot {
   constructor(settings) {
     super(settings);
     this.type = 'mock';
+    this.requiresWebhook = true;
 
     this.receives = {
       text: true,
@@ -29,7 +30,11 @@ class MockBot extends BaseBot {
       text: true,
       quickReply: true,
       locationQuickReply: true,
-      typing: true,
+      senderAction: {
+        typingOn: true,
+        typingOff: true,
+        markSeen: true,
+      },
       attachment: {
         audio: true,
         file: true,
@@ -46,7 +51,6 @@ class MockBot extends BaseBot {
   mockIncomingUpdate(update) {
     
   }
-
 
   __formatUpdate(rawUpdate, botmasterUserId) {
     const timestamp = Math.floor(Date.now());
@@ -101,4 +105,4 @@ class MockBot extends BaseBot {
 
 }
 
-module.exports = SocketioBot;
+module.exports = MockBot;
