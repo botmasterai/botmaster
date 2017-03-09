@@ -1,15 +1,11 @@
 module.exports = {
-    extends: "eslint:recommended",
-    parserOptions: {
-      ecmaVersion: 6,
-    },
-    env: {
-      node: true,
-      mocha: true,
-      amd: true
-    },
-    rules: {
-      semi: [2, 'always'],
-      'no-console': 'off'
-    },
+  extends: 'airbnb',
+  plugins: [
+    'ava'
+  ],
+  rules: {
+    'import/no-extraneous-dependencies': ['off'],
+    'no-underscore-dangle': ["off"],
+    semi: [2, 'always'],
+  }
 };

@@ -21,7 +21,5 @@ describe('Outgoing Message', function() {
 
       assert(outgoingMessageWrapper.get() == outgoingMessages.textMessage);
     });
-
-
   });
 });
