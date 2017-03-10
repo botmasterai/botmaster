@@ -5,7 +5,6 @@ const BaseBot = require('../lib/base_bot');
 const express = require('express');
 const expressBodyParser = require('body-parser');
 const Koa = require('koa');
-const koaBodyParser = require('koa-bodyparser');
 
 class MockBot extends BaseBot {
 
@@ -17,6 +16,9 @@ class MockBot extends BaseBot {
    */
   constructor(settings) {
     super(settings);
+    if (!settings) {
+      settings = {};
+    }
     this.type = 'mock';
     // the following settings would be hard coded in a standard
     // bot class implementation.
@@ -90,8 +92,6 @@ class MockBot extends BaseBot {
   __createKoaMountPoints() {
     const app = new Koa();
     this.requestListener = app.callback();
-    // for parsing application/json
-    app.use(koaBodyParser());
 
     app.use((ctx) => {
       const update = this.__formatUpdate(ctx.request.body);
