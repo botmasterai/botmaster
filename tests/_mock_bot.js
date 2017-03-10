@@ -94,10 +94,18 @@ class MockBot extends BaseBot {
     this.requestListener = app.callback();
 
     app.use((ctx) => {
-      const update = this.__formatUpdate(ctx.request.body);
-      this.__emitUpdate(update);
+      let bodyString = '';
+      ctx.req.on('data', (chunk) => {
+        bodyString += chunk;
+      });
 
-      ctx.status(200);
+      ctx.req.on('end', () => {
+        const body = JSON.parse(bodyString);
+        const update = this.__formatUpdate(body);
+        this.__emitUpdate(update);
+      });
+
+      ctx.status = 200;
     });
   }
 

@@ -7,5 +7,6 @@ module.exports = {
     'import/no-extraneous-dependencies': ['off'],
     'no-underscore-dangle': ["off"],
     semi: [2, 'always'],
+    'no-param-reassign': 'off',
   }
 };
