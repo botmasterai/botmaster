@@ -1,7 +1,6 @@
 import test from 'ava';
 import http from 'http';
 import express from 'express';
-import _ from 'lodash';
 import request from 'request-promise';
 
 import Botmaster from '../../lib';
@@ -98,7 +97,7 @@ test(`${testTitleBase} works with an express server AND both an express and a ko
       const expressBotSettings = {
         requiresWebhook: true,
         webhookEndpoint: 'express',
-      }
+      };
       const koaBot = new MockBot(koaBotSettings);
       const expressBot = new MockBot(expressBotSettings);
 
