@@ -81,7 +81,7 @@ class MockBot extends BaseBot {
     // for parsing application/json
     app.use(expressBodyParser.json());
 
-    app.post((req, res) => {
+    app.post('*', (req, res) => {
       const update = this.__formatUpdate(req.body);
       this.__emitUpdate(update);
 

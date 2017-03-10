@@ -73,7 +73,7 @@ test(`${testTitleBase} should use my server when passed in settings`, (t) => {
 });
 
 test(`${testTitleBase} should correctly set port when passed in settings`, (t) => {
-  t.plan(2);
+  t.plan(1);
 
   return new Promise((resolve) => {
     const settings = {
@@ -83,10 +83,7 @@ test(`${testTitleBase} should correctly set port when passed in settings`, (t) =
 
     botmaster.on('server running', () => {
       t.is(botmaster.server.address().port, 5000);
-      botmaster.server.close(() => {
-        t.pass();
-        resolve();
-      });
+      botmaster.server.close(resolve);
     });
   });
 });
@@ -105,6 +102,28 @@ test(`${testTitleBase} should throw and error when server and port passed in set
   } catch (e) {
     t.is(e.message.indexOf('IncompatibleArgumentsError') > -1, true);
   }
+});
+
+test(`${testTitleBase} when used with default botmaster server,` +
+     'requestListener should return 404s to unfound routes', (t) => {
+  t.plan(1);
+
+  return new Promise((resolve) => {
+    const botmaster = new Botmaster();
+
+    botmaster.on('server running', () => {
+      const options = {
+        uri: 'http://localhost:3000/someRoute',
+        json: true,
+      };
+      request.get(options)
+
+      .catch((err) => {
+        t.is(err.error.message, 'Couldn\'t GET /someRoute');
+        botmaster.server.close(resolve);
+      });
+    });
+  });
 });
 
 test(`${testTitleBase} when used with a server created with an express app` +
