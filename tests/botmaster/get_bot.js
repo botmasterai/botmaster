@@ -1,5 +1,4 @@
 import test from 'ava';
-import http from 'http';
 
 import Botmaster from '../../lib';
 import MockBot from '../_mock_bot';
