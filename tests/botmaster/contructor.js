@@ -1,7 +1,7 @@
 import test from 'ava';
 import http from 'http';
 import express from 'express';
-import koa from 'koa';
+import Koa from 'koa';
 import _ from 'lodash';
 import request from 'request-promise';
 
@@ -107,153 +107,72 @@ test(`${testTitleBase} should throw and error when server and port passed in set
   }
 });
 
+test(`${testTitleBase} when used with a server created with an express app` +
+     'requestListener should route non botmaster requests to express app', (t) => {
+  t.plan(2);
+  const app = express();
+  const appResponse = {
+    text: 'wadup?',
+  };
 
-// describe('Botmaster', function() {
-//   const mockBotSettings = {
+  app.use('/someRoute', (req, res) => {
+    res.json(appResponse);
+  });
 
-//   };
+  return new Promise((resolve) => {
+    const myServer = app.listen(3000);
+    const botmaster = new Botmaster({ server: myServer });
 
-//   const KoaBotSettings = {
+    myServer.on('listening', () => {
+      const options = {
+        uri: 'http://localhost:3000/someRoute',
+        json: true,
+      };
+      request.get(options)
 
-//   };
+      .then((body) => {
+        t.deepEqual(appResponse, body);
+        t.is(botmaster.server, myServer);
+        botmaster.server.close(() => {
+          resolve();
+        });
+      });
+    });
+  });
+});
 
-//   describe('#constructor', function() {
-//     // let server = null;
-//     // let app = null;
-//     // beforeEach(function(done) {
-//     //   app = express();
-//     //   server = app.listen(3100, function() { done(); });
-//     // });
+test(`${testTitleBase} when used with a server created with a koa app` +
+     'requestListener should route non botmaster requests to koa app', (t) => {
+  t.plan(2);
+  const app = new Koa();
+  const appResponse = {
+    text: 'wadup?',
+  };
 
+  app.use((ctx) => {
+    if (ctx.request.url === '/someRoute') {
+      ctx.body = appResponse;
+    }
+  });
 
+  return new Promise((resolve) => {
+    const myServer = app.listen(3000);
+    const botmaster = new Botmaster({ server: myServer });
 
-//     it('should otherwise properly create and setup the bot objects when no ' +
-//        'optional parameters is specified', function(done) {
-//       const settings = { botsSettings: baseBotsSettings };
-//       const botmaster = new  Botmaster(settings);
+    myServer.on('listening', () => {
+      const options = {
+        uri: 'http://localhost:3000/someRoute',
+        json: true,
+      };
+      request.get(options)
 
-//       expect(botmaster.bots.length).to.equal(5);
-
-//       botmaster.once('server running', function(serverMessage) {
-//         expect(serverMessage).to.equal(
-//           'App parameter not specified. Running new App on port: 3000');
-
-//         for (const bot of botmaster.bots) {
-//           if (bot.requiresWebhook) {
-//             expect(bot.app).to.not.equal(undefined);
-//           }
-//         }
-
-//         botmaster.server.close(function() { done(); });
-//       });
-//     });
-
-//     it('should otherwise properly create and setup the bot objects when ' +
-//        'port parameter is specified', function(done) {
-//       const settings = {
-//         botsSettings: baseBotsSettings,
-//         port: 3101
-//       };
-//       const botmaster = new  Botmaster(settings);
-
-//       botmaster.once('server running', function(serverMessage) {
-//         expect(serverMessage).to.equal(
-//           'App parameter not specified. Running new App on port: 3101');
-
-//         botmaster.server.close(function() { done(); });
-//       });
-//     });
-
-//     it('should otherwise properly create and setup the bot objects when ' +
-//        'app parameter is specified and socketio is not used', function() {
-
-//       let botsSettings = _.cloneDeep(baseBotsSettings);
-//       botsSettings = botsSettings.slice(0, 4);
-//       const settings = {
-//         botsSettings,
-//         app,
-//       };
-//       const botmaster = new  Botmaster(settings);
-
-//       expect(botmaster.bots.length).to.equal(4);
-//     });
-
-//     it('should work when using botmaster with socketio and both app ' +
-//        'and server parameter are defined in botmaster settings', function() {
-
-//       const settings = {
-//         app,
-//         server,
-//         botsSettings: baseBotsSettings,
-//       };
-
-//       const botmaster = new  Botmaster(settings);
-
-//       expect(botmaster.bots.length).to.equal(5);
-//     });
-
-//     it('should work when using botmaster with socketio ' +
-//        'and server parameter is defined in socketio settings', function() {
-
-//       const socketioSettingsWithServer = _.cloneDeep(socketioSettings);
-//       socketioSettingsWithServer.server = server;
-//       const botsSettings = _.cloneDeep(baseBotsSettings);
-//       botsSettings[4].socketio = socketioSettingsWithServer;
-
-//       const settings = {
-//         botsSettings,
-//         app,
-//       };
-//       const botmaster = new  Botmaster(settings);
-
-//       expect(botmaster.bots.length).to.equal(5);
-//     });
-
-//     it('should throw an error if a server parameter is specified ' +
-//        'without a corresponding app parameter', function() {
-
-//       const settings = {
-//         botsSettings: baseBotsSettings,
-//         server,
-//       };
-
-//       expect(() => new Botmaster(settings)).to.throw();
-//     });
-
-//     it('should NOT throw an error if a server parameter is specified ' +
-//        'in socketIoSettings without a botmasterSettings app parameter', function(done) {
-
-//       const socketioSettingsWithServer = _.cloneDeep(socketioSettings);
-//       socketioSettingsWithServer.server = server;
-//       const botsSettings = _.cloneDeep(baseBotsSettings);
-//       botsSettings[4].socketio = socketioSettingsWithServer;
-
-//       const settings = {
-//         botsSettings,
-//       };
-
-//       const botmaster = new Botmaster(settings);
-
-//       botmaster.once('server running', function() {
-//         expect(botmaster.server).not.to.equal(server);
-//         botmaster.server.close(function() { done(); });
-//       });
-
-//     });
-
-//     it('should throw (from socketioBot) if app is in parameters, ' +
-//        'server is not, socketio is being used and has no server param', function() {
-
-//       const settings = {
-//         botsSettings: baseBotsSettings,
-//         app
-//       };
-
-//       expect(() => new Botmaster(settings)).to.throw();
-//     });
-
-//     afterEach(function(done) {
-//       server.close(function() { done(); });
-//     });
-//   });
-// });
+      .then((body) => {
+        t.deepEqual(body, appResponse);
+        t.is(botmaster.server, myServer);
+        botmaster.server.close(() => {
+          resolve();
+        });
+      });
+    });
+  });
+});

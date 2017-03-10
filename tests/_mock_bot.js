@@ -2,15 +2,28 @@
 
 const _cloneDeep = require('lodash').cloneDeep;
 const BaseBot = require('../lib/base_bot');
+const express = require('express');
+const expressBodyParser = require('body-parser');
+const Koa = require('koa');
+const koaBodyParser = require('koa-bodyparser');
 
 class MockBot extends BaseBot {
 
+  /**
+   * Bot class that allows testers to create instances of a large number
+   * of different bot instances with various different settings.
+   *
+   * @param {object} settings
+   */
   constructor(settings) {
     super(settings);
     this.type = 'mock';
-    this.requiresWebhook = true;
+    // the following settings would be hard coded in a standard
+    // bot class implementation.
+    this.requiresWebhook = settings.requiresWebhook || false;
+    this.requiredCredentials = settings.requiredCredentials || [];
 
-    this.receives = {
+    this.receives = settings.receives || {
       text: true,
       attachment: {
         audio: true,
@@ -26,7 +39,7 @@ class MockBot extends BaseBot {
       read: true,
     };
 
-    this.sends = {
+    this.sends = settings.sends || {
       text: true,
       quickReply: true,
       locationQuickReply: true,
@@ -46,11 +59,48 @@ class MockBot extends BaseBot {
     this.id = 'mockId';
 
     this.__applySettings(settings);
+    if (this.webhookEndpoint) {
+      if (this.webhookEndpoint.indexOf('koa') > -1) {
+        this.__createKoaMountPoints();
+      } else {
+        // default to express
+        this.__createExpressMountPoints();
+      }
+    }
   }
 
-  mockIncomingUpdate(update) {
-    
+  // Note how neither of those classes uses webhookEndpoint.
+  // This is because I can now count on botmaster to make sure that requests
+  // meant to go to this bot are indeed routed to this bot.
+  __createExpressMountPoints() {
+    const app = express();
+    this.requestListener = app;
+
+    // for parsing application/json
+    app.use(expressBodyParser.json());
+
+    app.post((req, res) => {
+      const update = this.__formatUpdate(req.body);
+      this.__emitUpdate(update);
+
+      res.sendStatus(200);
+    });
   }
+
+  __createKoaMountPoints() {
+    const app = new Koa();
+    this.requestListener = app.callback();
+    // for parsing application/json
+    app.use(koaBodyParser());
+
+    app.use((ctx) => {
+      const update = this.__formatUpdate(ctx.request.body);
+      this.__emitUpdate(update);
+
+      ctx.status(200);
+    });
+  }
+
 
   __formatUpdate(rawUpdate, botmasterUserId) {
     const timestamp = Math.floor(Date.now());
