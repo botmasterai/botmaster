@@ -41,7 +41,7 @@ const arbitraryBotMacro = (t, botSettings) => {
       const updateToSend = { text: 'Hello world' };
       const requestOptions = {
         method: 'POST',
-        uri: `http://localhost:3000/mock/${botSettings.webhookEndpoint}`,
+        uri: `http://localhost:3000/${botSettings.type}/webhook`,
         json: updateToSend,
       };
 
@@ -57,12 +57,14 @@ const arbitraryBotMacro = (t, botSettings) => {
 
 test(`${testTitleBase} works with an express bot`, arbitraryBotMacro, {
   requiresWebhook: true,
-  webhookEndpoint: 'express',
+  webhookEndpoint: 'webhook',
+  type: 'express',
 });
 
 test(`${testTitleBase} works with a koa bot`, arbitraryBotMacro, {
   requiresWebhook: true,
-  webhookEndpoint: 'koa',
+  webhookEndpoint: 'webhook',
+  type: 'koa',
 });
 
 test(`${testTitleBase} works with an express server AND both an express and a koa bot`, (t) => {
@@ -91,12 +93,14 @@ test(`${testTitleBase} works with an express server AND both an express and a ko
       // creating and adding bots
       const koaBotSettings = {
         requiresWebhook: true,
-        webhookEndpoint: 'koa',
+        webhookEndpoint: 'webhook',
+        type: 'koa',
       };
 
       const expressBotSettings = {
         requiresWebhook: true,
-        webhookEndpoint: 'express',
+        webhookEndpoint: 'webhook',
+        type: 'express',
       };
       const koaBot = new MockBot(koaBotSettings);
       const expressBot = new MockBot(expressBotSettings);
@@ -105,25 +109,29 @@ test(`${testTitleBase} works with an express server AND both an express and a ko
       botmaster.addBot(expressBot);
       t.is(Object.keys(botmaster.__serverRequestListeners).length, 2);
       t.is(botmaster.bots.length, 2);
+      // ///////////////////////////////
 
+      // send requests to bots
       const updateToSendToKoaBot = { text: 'Hello Koa Bot' };
       const updateToSendToExpressBot = { text: 'Hello express Bot' };
 
       const koaBotRequestOptions = {
         method: 'POST',
-        uri: 'http://localhost:3000/mock/koa',
+        uri: 'http://localhost:3000/koa/webhook',
         json: updateToSendToKoaBot,
       };
 
       const expressBotRequestOptions = {
         method: 'POST',
-        uri: 'http://localhost:3000/mock/express',
+        uri: 'http://localhost:3000/express/webhook',
         json: updateToSendToExpressBot,
       };
 
       request(koaBotRequestOptions)
       .then(() => request(expressBotRequestOptions));
+      // ////////////////////////////
 
+      // catch update events
       let receivedUpdatesCount = 0;
       botmaster.on('update', (onUpdateBot, update) => {
         receivedUpdatesCount += 1;
@@ -146,6 +154,7 @@ test(`${testTitleBase} works with an express server AND both an express and a ko
           });
         }
       });
+      // ////////////////////////////
     });
   });
 });

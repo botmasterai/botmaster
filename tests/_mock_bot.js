@@ -19,7 +19,7 @@ class MockBot extends BaseBot {
     if (!settings) {
       settings = {};
     }
-    this.type = 'mock';
+    this.type = settings.type || 'mock';
     // the following settings would be hard coded in a standard
     // bot class implementation.
     this.requiresWebhook = settings.requiresWebhook || false;
@@ -58,7 +58,7 @@ class MockBot extends BaseBot {
       },
     };
 
-    this.id = 'mockId';
+    this.id = settings.id || 'mockId';
 
     this.__applySettings(settings);
     if (this.webhookEndpoint) {
