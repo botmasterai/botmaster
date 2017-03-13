@@ -27,7 +27,7 @@
     "match": [],
     "serial": true,
     "verbose": true,
-    "failFast": true,
+    "failFast": false,
     "tap": false,
     "powerAssert": false
   },
@@ -60,7 +60,7 @@
   "devDependencies": {
     "ava": "^0.18.2",
     "body-parser": "^1.17.1",
-    "botmaster-test-fixtures": "^2.0.1",
+    "botmaster-test-fixtures": "^2.0.4",
     "coveralls": "^2.11.16",
     "eslint": "^3.17.0",
     "eslint-config-airbnb": "^14.1.0",
