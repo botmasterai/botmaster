@@ -2,8 +2,8 @@ import test from 'ava';
 
 import MockBot from '../_mock_bot';
 
-const errorTestTitleBase = 'BaseBot #__applySettings should throw an error when controler is called';
-const successTestTitleBase = 'BaseBot #__applySettings should not throw an error when controler is called';
+const errorTestTitleBase = 'should throw an error when controler is called';
+const successTestTitleBase = 'should not throw an error when controler is called';
 
 test(`${errorTestTitleBase} with a string`, (t) => {
   t.plan(1);

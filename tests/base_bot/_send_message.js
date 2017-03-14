@@ -1,3 +1,57 @@
+import test from 'ava';
+import request from 'request-promise'; // just want to see if I can send an outgoingMessage
+import express from 'express';
+import expressBodyParser from 'body-parser';
+
+
+import MockBot from '../_mock_bot';
+
+const testTitleBase = 'BaseBot';
+
+const createBaseOutgoingMessage = () => {
+  const outgoingMessage = {
+    recipient: {
+      id: 'user_id',
+    },
+  };
+
+  return new OutgoingMessage(outgoingMessage);
+};
+
+test.only(`${testTitleBase}'s #sendMessage' works`, (t) => {
+  t.plan(3);
+
+  const app = express();
+
+  app.use(expressBodyParser.json());
+
+  app.use('/', (req, res) => {
+    console.log(req.body);
+    console.log(typeof req.body);
+
+    res.json({ message: 'all good' });
+  });
+
+  return new Promise((resolve) => {
+    app.listen(3000, () => {
+      // const bot = new MockBot();
+      const outgoingMessage = createBaseOutgoingMessage().addText('someText');
+
+      const options = {
+        uri: '/',
+        method: 'POST',
+        json: outgoingMessage,
+      };
+
+      request(options)
+
+      .then((body) => {
+        console.log(body);
+      });
+    });
+  });
+});
+
 //   describe('receiving messages', function() {
 //     // TODO, do this using mock_bot_class
 //   });

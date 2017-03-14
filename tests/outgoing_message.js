@@ -4,8 +4,6 @@ import { assign } from 'lodash';
 
 import OutgoingMessage from '../lib/outgoing_message';
 
-const titleBase = 'OutgoingMessage';
-
 const createBaseOutgoingMessage = () => {
   const outgoingMessage = {
     recipient: {
@@ -16,7 +14,7 @@ const createBaseOutgoingMessage = () => {
   return new OutgoingMessage(outgoingMessage);
 };
 
-test(`${titleBase}'s #constructor throws an error when initialised without argument'`, (t) => {
+test('#constructor throws an error when initialised without argument', (t) => {
   t.plan(1);
 
   try {
@@ -27,7 +25,7 @@ test(`${titleBase}'s #constructor throws an error when initialised without argum
   }
 });
 
-test(`${titleBase}'s throws an error when argument passed is not an object'`, (t) => {
+test('throws an error when argument passed is not an object', (t) => {
   t.plan(1);
 
   try {
@@ -38,7 +36,7 @@ test(`${titleBase}'s throws an error when argument passed is not an object'`, (t
   }
 });
 
-test(`${titleBase}'s #constructor properly assigns passed in object'`, (t) => {
+test('#constructor properly assigns passed in object', (t) => {
   t.plan(1);
 
   const message = outgoingMessageFixtures.textMessage();
@@ -50,7 +48,7 @@ test(`${titleBase}'s #constructor properly assigns passed in object'`, (t) => {
   t.deepEqual(assign({}, outgoingMessage), message);
 });
 
-test(`${titleBase}'s #__addPropery throws error when trying to add property with falsy value`, (t) => {
+test('#__addPropery throws error when trying to add property with falsy value', (t) => {
   t.plan(1);
 
   const outgoingMessage = createBaseOutgoingMessage();
@@ -63,7 +61,7 @@ test(`${titleBase}'s #__addPropery throws error when trying to add property with
   }
 });
 
-test(`${titleBase}'s #__addPropery throws error when trying to add property that already has a value`, (t) => {
+test('#__addPropery throws error when trying to add property that already has a value', (t) => {
   t.plan(1);
 
   const outgoingMessage = createBaseOutgoingMessage();
@@ -77,7 +75,7 @@ test(`${titleBase}'s #__addPropery throws error when trying to add property that
   }
 });
 
-test(`${titleBase}'s #__removePropery throws error when trying to remove property that doesn't have a value`, (t) => {
+test('#__removePropery throws error when trying to remove property that doesn\'t have a value', (t) => {
   t.plan(1);
 
   const outgoingMessage = createBaseOutgoingMessage();
@@ -90,7 +88,7 @@ test(`${titleBase}'s #__removePropery throws error when trying to remove propert
   }
 });
 
-test(`${titleBase}'s #addText properly works'`, (t) => {
+test('#addText properly works', (t) => {
   t.plan(1);
 
   const outgoingMessage = createBaseOutgoingMessage();
@@ -99,7 +97,7 @@ test(`${titleBase}'s #addText properly works'`, (t) => {
   t.deepEqual(assign({}, outgoingMessage), outgoingMessageFixtures.textMessage());
 });
 
-test(`${titleBase}'s #removeText properly works'`, (t) => {
+test('#removeText properly works', (t) => {
   t.plan(1);
 
   const outgoingMessage = createBaseOutgoingMessage();
@@ -111,7 +109,7 @@ test(`${titleBase}'s #removeText properly works'`, (t) => {
   t.deepEqual(outgoingMessage, expectedOutgoingMessage);
 });
 
-test(`${titleBase}'s #addAttachment works'`, (t) => {
+test('#addAttachment works', (t) => {
   t.plan(1);
 
   const outgoingMessage = createBaseOutgoingMessage();
@@ -120,7 +118,7 @@ test(`${titleBase}'s #addAttachment works'`, (t) => {
   t.deepEqual(assign({}, outgoingMessage), outgoingMessageFixtures.audioMessage());
 });
 
-test(`${titleBase}'s #addAttachmentFromUrl throws error if not passed in strings'`, (t) => {
+test('#addAttachmentFromUrl throws error if not passed in strings', (t) => {
   t.plan(2);
 
   const outgoingMessage = createBaseOutgoingMessage();
@@ -139,7 +137,7 @@ test(`${titleBase}'s #addAttachmentFromUrl throws error if not passed in strings
   }
 });
 
-test(`${titleBase}'s #addAttachmentFromUrl throws error if not passed in both type and url'`, (t) => {
+test('#addAttachmentFromUrl throws error if not passed in both type and url', (t) => {
   t.plan(1);
 
   const outgoingMessage = createBaseOutgoingMessage();
@@ -151,7 +149,7 @@ test(`${titleBase}'s #addAttachmentFromUrl throws error if not passed in both ty
   }
 });
 
-test(`${titleBase}'s #addAttachmentFromUrl works when using the right arguments'`, (t) => {
+test('#addAttachmentFromUrl works when using the right arguments', (t) => {
   t.plan(1);
 
   const outgoingMessage = createBaseOutgoingMessage();
@@ -160,7 +158,7 @@ test(`${titleBase}'s #addAttachmentFromUrl works when using the right arguments'
   t.deepEqual(assign({}, outgoingMessage), outgoingMessageFixtures.audioMessage());
 });
 
-test(`${titleBase}'s #removeAttachment works'`, (t) => {
+test('#removeAttachment works', (t) => {
   t.plan(1);
 
   const outgoingMessage = createBaseOutgoingMessage();
@@ -174,7 +172,7 @@ test(`${titleBase}'s #removeAttachment works'`, (t) => {
   t.deepEqual(outgoingMessage, expectedOutgoingMessage);
 });
 
-test(`${titleBase}'s #addQuickReplies properly works without settings text'`, (t) => {
+test('#addQuickReplies properly works without settings text', (t) => {
   t.plan(1);
 
   const outgoingMessage = createBaseOutgoingMessage();
@@ -184,7 +182,7 @@ test(`${titleBase}'s #addQuickReplies properly works without settings text'`, (t
   t.deepEqual(assign({}, outgoingMessage), outgoingMessageFixtures.textOnlyQuickReplyMessage());
 });
 
-test(`${titleBase}'s #addQuickReplies properly works while settings text'`, (t) => {
+test('#addQuickReplies properly works while settings text', (t) => {
   t.plan(1);
 
   const outgoingMessage = createBaseOutgoingMessage();
@@ -198,7 +196,7 @@ test(`${titleBase}'s #addQuickReplies properly works while settings text'`, (t) 
   t.deepEqual(assign({}, outgoingMessage), expectedOutgoingMessage);
 });
 
-test(`${titleBase}'s #addPayloadLessQuickReplies throws error if not passed in array of strings'`, (t) => {
+test('#addPayloadLessQuickReplies throws error if not passed in array of strings', (t) => {
   t.plan(2);
 
   const outgoingMessage = createBaseOutgoingMessage();
@@ -217,7 +215,7 @@ test(`${titleBase}'s #addPayloadLessQuickReplies throws error if not passed in a
   }
 });
 
-test(`${titleBase}'s #addPayloadLessQuickReplies properly works when passed array of strings'`, (t) => {
+test('#addPayloadLessQuickReplies properly works when passed array of strings', (t) => {
   t.plan(1);
 
   const outgoingMessage = createBaseOutgoingMessage();
@@ -242,7 +240,7 @@ test(`${titleBase}'s #addPayloadLessQuickReplies properly works when passed arra
   t.deepEqual(assign({}, outgoingMessage), expectedOutgoingMessage);
 });
 
-test(`${titleBase}'s #addLocationQuickReply properly works'`, (t) => {
+test('#addLocationQuickReply properly works', (t) => {
   t.plan(1);
 
   const outgoingMessage = createBaseOutgoingMessage();
@@ -251,7 +249,7 @@ test(`${titleBase}'s #addLocationQuickReply properly works'`, (t) => {
   t.deepEqual(assign({}, outgoingMessage), outgoingMessageFixtures.locationQuickReplyMessage());
 });
 
-test(`${titleBase}'s #removeQuickReplies works'`, (t) => {
+test('#removeQuickReplies works', (t) => {
   t.plan(1);
 
   const outgoingMessage = createBaseOutgoingMessage();
@@ -265,7 +263,7 @@ test(`${titleBase}'s #removeQuickReplies works'`, (t) => {
   t.deepEqual(outgoingMessage, expectedOutgoingMessage);
 });
 
-test(`${titleBase}'s #addSenderAction properly works'`, (t) => {
+test('#addSenderAction properly works', (t) => {
   t.plan(1);
 
   const outgoingMessage = createBaseOutgoingMessage();
@@ -274,7 +272,7 @@ test(`${titleBase}'s #addSenderAction properly works'`, (t) => {
   t.deepEqual(assign({}, outgoingMessage), outgoingMessageFixtures.typingOnMessage());
 });
 
-test(`${titleBase}'s #removeSenderAction properly works'`, (t) => {
+test('#removeSenderAction properly works', (t) => {
   t.plan(1);
 
   const outgoingMessage = createBaseOutgoingMessage();
@@ -285,7 +283,7 @@ test(`${titleBase}'s #removeSenderAction properly works'`, (t) => {
   t.deepEqual(outgoingMessage, expectedOutgoingMessage);
 });
 
-test(`${titleBase}'s #addTypingOnSenderAction properly works'`, (t) => {
+test('#addTypingOnSenderAction properly works', (t) => {
   t.plan(1);
 
   const outgoingMessage = createBaseOutgoingMessage();
@@ -294,7 +292,7 @@ test(`${titleBase}'s #addTypingOnSenderAction properly works'`, (t) => {
   t.deepEqual(assign({}, outgoingMessage), outgoingMessageFixtures.typingOnMessage());
 });
 
-test(`${titleBase}'s #addTypingOffSenderAction properly works'`, (t) => {
+test('#addTypingOffSenderAction properly works', (t) => {
   t.plan(1);
 
   const outgoingMessage = createBaseOutgoingMessage();
@@ -303,7 +301,7 @@ test(`${titleBase}'s #addTypingOffSenderAction properly works'`, (t) => {
   t.deepEqual(assign({}, outgoingMessage), outgoingMessageFixtures.typingOffMessage());
 });
 
-test(`${titleBase}'s #addMarkSeenSenderAction properly works'`, (t) => {
+test('#addMarkSeenSenderAction properly works', (t) => {
   t.plan(1);
 
   const outgoingMessage = createBaseOutgoingMessage();
@@ -312,7 +310,7 @@ test(`${titleBase}'s #addMarkSeenSenderAction properly works'`, (t) => {
   t.deepEqual(assign({}, outgoingMessage), outgoingMessageFixtures.markSeenMessage());
 });
 
-test(`${titleBase} chaining of all methods works`, (t) => {
+test('chaining of all methods works', (t) => {
   t.plan(1);
 
   const outgoingMessage = createBaseOutgoingMessage()

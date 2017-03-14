@@ -16,9 +16,7 @@ process.on('unhandledRejection', (err) => {
 // const request = require('request-promise');
 // const JsonFileStore = require('jfs');
 
-const testTitleBase = 'Botmaster constructor';
-
-test(`${testTitleBase} shouldn't throw any error if settings aren't specified`, (t) => {
+test('shouldn\'t throw any error if settings aren\'t specified', (t) => {
   t.plan(2);
 
   return new Promise((resolve) => {
@@ -34,7 +32,7 @@ test(`${testTitleBase} shouldn't throw any error if settings aren't specified`, 
   });
 });
 
-test(`${testTitleBase} should throw any error if settings.botsSetting are specified`, (t) => {
+test('should throw any error if settings.botsSetting are specified', (t) => {
   t.plan(1);
 
   const settings = {
@@ -47,7 +45,7 @@ test(`${testTitleBase} should throw any error if settings.botsSetting are specif
   }
 });
 
-test(`${testTitleBase} should throw any error if settings.app are specified`, (t) => {
+test('should throw any error if settings.app are specified', (t) => {
   t.plan(1);
 
   const settings = {
@@ -60,7 +58,7 @@ test(`${testTitleBase} should throw any error if settings.app are specified`, (t
   }
 });
 
-test(`${testTitleBase} should use my server when passed in settings`, (t) => {
+test('should use my server when passed in settings', (t) => {
   t.plan(2);
   const myServer = http.createServer();
 
@@ -72,7 +70,7 @@ test(`${testTitleBase} should use my server when passed in settings`, (t) => {
   t.is(botmaster.server, myServer);
 });
 
-test(`${testTitleBase} should correctly set port when passed in settings`, (t) => {
+test('should correctly set port when passed in settings', (t) => {
   t.plan(1);
 
   return new Promise((resolve) => {
@@ -88,7 +86,7 @@ test(`${testTitleBase} should correctly set port when passed in settings`, (t) =
   });
 });
 
-test(`${testTitleBase} should throw and error when server and port passed in settings`, (t) => {
+test('should throw and error when server and port passed in settings', (t) => {
   t.plan(1);
 
   const myServer = http.createServer();
@@ -104,7 +102,7 @@ test(`${testTitleBase} should throw and error when server and port passed in set
   }
 });
 
-test(`${testTitleBase} when used with default botmaster server,` +
+test('when used with default botmaster server,' +
      'requestListener should return 404s to unfound routes', (t) => {
   t.plan(1);
 
@@ -126,7 +124,7 @@ test(`${testTitleBase} when used with default botmaster server,` +
   });
 });
 
-test(`${testTitleBase} when used with a server created with an express app` +
+test('when used with a server created with an express app' +
      'requestListener should route non botmaster requests to express app', (t) => {
   t.plan(2);
   const app = express();
@@ -158,7 +156,7 @@ test(`${testTitleBase} when used with a server created with an express app` +
   });
 });
 
-test(`${testTitleBase} when used with a server created with a koa app` +
+test('when used with a server created with a koa app' +
      'requestListener should route non botmaster requests to koa app', (t) => {
   t.plan(2);
   const app = new Koa();

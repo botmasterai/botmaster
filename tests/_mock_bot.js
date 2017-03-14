@@ -143,8 +143,8 @@ class MockBot extends BaseBot {
     return this.sendRaw(message);
   }
 
-  // sendRaw and __sendMessage are really the same thing for basic socketio
-  // they both exist for compatibility reasons
+  // sendRaw and __sendMessage are really the same thing for this MockBot
+  // they both testing purposes anyways
   sendRaw(message, cb) {
     const timestamp = Math.floor(Date.now());
     const responseBody = {

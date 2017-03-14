@@ -6,9 +6,7 @@ import request from 'request-promise';
 import Botmaster from '../../lib';
 import MockBot from '../_mock_bot';
 
-const testTitleBase = 'Botmaster #removeBot';
-
-test(`${testTitleBase} works with a bot that doesn't require webhhooks`, (t) => {
+test('works with a bot that doesn\'t require webhhooks', (t) => {
   t.plan(2);
 
   return new Promise((resolve) => {
@@ -57,12 +55,12 @@ const arbitraryBotMacro = (t, botSettings) => {
   });
 };
 
-test(`${testTitleBase} works with an express bot`, arbitraryBotMacro, {
+test('works with an express bot', arbitraryBotMacro, {
   requiresWebhook: true,
   webhookEndpoint: 'express',
 });
 
-test(`${testTitleBase} works with a koa bot`, arbitraryBotMacro, {
+test('works with a koa bot', arbitraryBotMacro, {
   requiresWebhook: true,
   webhookEndpoint: 'koa',
 });
