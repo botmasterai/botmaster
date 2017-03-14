@@ -4,15 +4,10 @@
   "description": "Framework allowing developers to write bots that are agnostic with respect to the channel used by their users (messenger, telegram etc...)",
   "main": "./lib/index.js",
   "scripts": {
-    "s": "DEBUG=botmaster:botmaster nodemon --legacy-watch ./example_jd.js",
-    "example1": "nodemon ./examples/slack_example/app.js",
-    "example2": "nodemon ./examples/socket.io_example/app.js",
-    "example3": "nodemon ./examples/watson_conversation_example/app.js",
-    "start": "node ./example_jd.js",
-    "test": "export NODE_ENV=test DEBUG=botmaster:botmaster; nyc --reporter=lcov --reporter=html ava",
+    "test": "export NODE_ENV=test; nyc --reporter=lcov --reporter=html ava",
+    "test-debug": "export NODE_ENV=test DEBUG=botmaster:botmaster; nyc --reporter=lcov --reporter=html ava",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "postversion": "git push && git push --tags && rm -rf build/temp",
-    "tunnel": "( while true; do lt -p 3000 -s watsonchatdemo; done; )",
     "jsdoc": "jsdoc ./lib ./lib/bot_types"
   },
   "directories": {

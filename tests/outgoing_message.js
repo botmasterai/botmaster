@@ -1,6 +1,7 @@
 import test from 'ava';
 import { outgoingMessageFixtures, attachmentFixtures } from 'botmaster-test-fixtures';
 import { assign } from 'lodash';
+import MockBot from './_mock_bot';
 
 import OutgoingMessage from '../lib/outgoing_message';
 
@@ -14,15 +15,28 @@ const createBaseOutgoingMessage = () => {
   return new OutgoingMessage(outgoingMessage);
 };
 
-test('#constructor throws an error when initialised without argument', (t) => {
+test('Instantiating an OutgoingMessage object via a bot object works', (t) => {
   t.plan(1);
 
-  try {
-    const m = new OutgoingMessage();
-  } catch (err) {
-    t.is(err.message,
-      'OutgoingMessage constructor needs to be initialised with a message object');
-  }
+  const bot = new MockBot();
+  const botOutgoingMessage = bot.createOutgoingMessage({});
+
+  t.deepEqual(botOutgoingMessage, new OutgoingMessage());
+});
+
+test('Instantiating an OutgoingMessage object via a bot class works', (t) => {
+  t.plan(1);
+
+  const botOutgoingMessage = MockBot.createOutgoingMessage({});
+
+  t.deepEqual(botOutgoingMessage, new OutgoingMessage());
+});
+
+test('#constructor does not throw an error when initialized without argument', (t) => {
+  t.plan(1);
+
+  const m = new OutgoingMessage();
+  t.pass();
 });
 
 test('throws an error when argument passed is not an object', (t) => {
@@ -86,6 +100,37 @@ test('#__removePropery throws error when trying to remove property that doesn\'t
     t.is(err.message,
       'Can\'t remove arbitrary from outgoingMessage that doesn\'t have any arbitrary');
   }
+});
+
+test('#addRecipientId properly works', (t) => {
+  t.plan(1);
+
+  const outgoingMessage = new OutgoingMessage().addRecipientById('user_id');
+
+  t.deepEqual(outgoingMessage, createBaseOutgoingMessage());
+});
+
+test('#addRecipientPhone properly works', (t) => {
+  t.plan(1);
+
+  const outgoingMessage = new OutgoingMessage().addRecipientByPhoneNumber('phoneNumber');
+
+  const expectedMessage = {
+    recipient: {
+      phone_number: 'phoneNumber',
+    },
+  };
+
+  t.deepEqual(assign({}, outgoingMessage), expectedMessage);
+});
+
+test('#removeRecipient properly works', (t) => {
+  t.plan(1);
+
+  const outgoingMessage = createBaseOutgoingMessage();
+  outgoingMessage.removeRecipient();
+
+  t.deepEqual(outgoingMessage, new OutgoingMessage());
 });
 
 test('#addText properly works', (t) => {
@@ -314,6 +359,10 @@ test('chaining of all methods works', (t) => {
   t.plan(1);
 
   const outgoingMessage = createBaseOutgoingMessage()
+    .removeRecipient()
+    .addRecipientByPhoneNumber('phoneNumber')
+    .removeRecipient()
+    .addRecipientById('user_id')
     .addText('Hello')
     .removeText()
     .addAttachment({})

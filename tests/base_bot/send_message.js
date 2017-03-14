@@ -1,105 +1,41 @@
 import test from 'ava';
-import request from 'request-promise'; // just want to see if I can send an outgoingMessage
-import express from 'express';
-import expressBodyParser from 'body-parser';
+import { outgoingMessageFixtures, attachmentFixtures } from 'botmaster-test-fixtures';
+import { assign } from 'lodash';
 
+import OutgoingMessage from '../../lib/outgoing_message';
 
 import MockBot from '../_mock_bot';
 
-const testTitleBase = 'BaseBot';
-
-const createBaseOutgoingMessage = () => {
-  const outgoingMessage = {
-    recipient: {
-      id: 'user_id',
-    },
-  };
-
-  return new OutgoingMessage(outgoingMessage);
-};
-
-test.only(`${testTitleBase}'s #sendMessage' works`, (t) => {
+test.only('#sendMessage\' works using promise', (t) => {
   t.plan(3);
 
-  const app = express();
+  const bot = new MockBot();
 
-  app.use(expressBodyParser.json());
+  const message = outgoingMessageFixtures.audioMessage();
 
-  app.use('/', (req, res) => {
-    console.log(req.body);
-    console.log(typeof req.body);
+  return bot.sendMessage(message)
 
-    res.json({ message: 'all good' });
-  });
-
-  return new Promise((resolve) => {
-    app.listen(3000, () => {
-      // const bot = new MockBot();
-      const outgoingMessage = createBaseOutgoingMessage().addText('someText');
-
-      const options = {
-        uri: '/',
-        method: 'POST',
-        json: outgoingMessage,
-      };
-
-      request(options)
-
-      .then((body) => {
-        console.log(body);
-      });
-    });
+  .then((body) => {
+    // console.log(JSON.stringify(body, null, 2));
+    t.deepEqual(body.sentMessage, message, 'sentMessage is not same as message');
+    t.truthy(body.recipient_id);
+    t.truthy(body.message_id);
   });
 });
 
-//   describe('receiving messages', function() {
-//     // TODO, do this using mock_bot_class
-//   });
+test.only('#sendMessage\' works using callback', (t) => {
+  t.plan(3);
 
-//   describe('sending messages', function() {
-//     // Do this with mock_bot_class also
-//     this.retries(4);
-//     // botmaster.server stops listening onto port 3200 in the after hook
-//     // of 'sending message'
-//     const botmasterSettings = {
-//       botsSettings: baseBotsSettings,
-//       port: 3200
-//     };
-//     const botmaster = new Botmaster(botmasterSettings);
+  const bot = new MockBot();
 
-//     for (const bot of botmaster.bots) {
-//       // if (bot.type !== 'socketio') continue; // for now
-//       let recipientId = null;
-//       let socket;
+  const outgoingMessage = new OutgoingMessage(outgoingMessageFixtures.audioMessage());
 
-//       before(function(done) {
-//         if (bot.type === 'telegram') {
-//           recipientId = config.telegramUserId;
-//           done();
-//         } else if (bot.type === 'messenger') {
-//           recipientId = config.messengerUserId;
-//           done();
-//         } else if (bot.type === 'twitter') {
-//           recipientId = config.twitterUserId;
-//           done();
-//         } else if (bot.type === 'slack') {
-//           const jsonFileStoreDB = new JsonFileStore('slack_teams_info');
-//           const teamId = config.slackTeamInfo.team_id;
-//           const channel = config.slackTestInfo.channel;
-//           // write teamInfo data to file expected to be read
-//           jsonFileStoreDB.saveSync(teamId, config.slackTeamInfo);
-//           // extract recipientId from that data (and the one in config)
-//           recipientId = `${teamId}.${channel}`;
-//           done();
-//         } else if (bot.type === 'socketio') {
-//           socket = io('ws://localhost:3200');
-
-//           socket.on('connect', function() {
-//             recipientId = socket.id;
-//             done();
-//           });
-//         }
-//       });
+  return bot.sendMessage(outgoingMessage, (err, body) => {
+    t.deepEqual(body.sentMessage, outgoingMessage, 'sentMessage is not same as message');
+    t.truthy(body.recipient_id);
+    t.truthy(body.message_id);
+  });
+});
 
 //       describe(`to the ${bot.type} platform`, function() {
 
