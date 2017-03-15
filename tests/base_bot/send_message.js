@@ -37,6 +37,29 @@ const sendMessageMacro = (t, params) => {
   });
 };
 
+const sendMessageErrorMacro = (t, params) => {
+  t.plan(2);
+
+  return new Promise((resolve) => {
+    // always run both with and without callback
+    let cbPassCount = 0;
+    const cb = (err) => {
+      t.deepEqual(err.message, params.expectedErrorMessage,
+        'Error message is not same as expected is not same as message');
+
+      cbPassCount += 1;
+      if (cbPassCount === 2) {
+        resolve();
+      }
+    };
+
+    // test using promises
+    params.sendMessageMethod().catch(cb);
+    // and using standard callback function
+    params.sendMessageMethod(cb);
+  });
+};
+
 {
   const bot = new MockBot();
   const messageToSend = outgoingMessageFixtures.audioMessage();
@@ -96,68 +119,117 @@ const sendMessageMacro = (t, params) => {
   const bot = new MockBot();
 
   test('#sendAttachmentFromUrlTo works', sendMessageMacro, {
-    sendMessageMethod: bot.sendAttachmentFromUrlTo.bind(bot,
-      'audio', 'SOME_AUDIO_URL', 'user_id'),
+    sendMessageMethod: bot.sendAttachmentFromUrlTo.bind(
+      bot, 'audio', 'SOME_AUDIO_URL', 'user_id'),
     expectedSentMessage: outgoingMessageFixtures.audioMessage(),
   });
 }
 
 {
   const bot = new MockBot();
+  const buttonTitles = ['B1', 'B2'];
 
-  test('#sendDefaultButtonMessageTo works', sendMessageMacro, {
-    sendMessageMethod: bot.sendAttachmentFromUrlTo.bind(bot,
-      'audio', 'SOME_AUDIO_URL', 'user_id'),
-    expectedSentMessage: outgoingMessageFixtures.audioMessage(),
+  test('#sendDefaultButtonMessageTo throws error if textOrAttachment is not valid', sendMessageErrorMacro, {
+    sendMessageMethod: bot.sendDefaultButtonMessageTo.bind(
+      bot, buttonTitles, new MockBot(), 'user_id'),
+    expectedErrorMessage: 'third argument must be a "String", an attachment "Object" or absent',
   });
 }
 
-//         specify('using #sendDefaultButtonMessageTo with good arguments', function(done) {
-//           const buttons = ['option One', 'Option Two', 'Option Three', 'Option Four'];
+{
+  const bot = new MockBot();
+  const buttonTitles = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
 
-//           Promise.all([
-//             bot.sendDefaultButtonMessageTo(buttons, recipientId),
-//             bot.sendDefaultButtonMessageTo(buttons, recipientId, 'Don\'t select any of:')
-//           ])
-//           .then(function(bodies) {
-//             expect(bodies[0].message_id).to.not.equal(undefined);
-//             expect(bodies[0].recipient_id).to.not.equal(undefined);
-//             expect(bodies[1].message_id).to.not.equal(undefined);
-//             expect(bodies[1].recipient_id).to.not.equal(undefined);
-//             done();
-//           });
-//         });
+  test('#sendDefaultButtonMessageTo throws error if textOrAttachment is not valid', sendMessageErrorMacro, {
+    sendMessageMethod: bot.sendDefaultButtonMessageTo.bind(
+      bot, buttonTitles, undefined, 'user_id'),
+    expectedErrorMessage: 'buttonTitles must be of length 10 or less',
+  });
+}
 
-//         specify('using #sendDefaultButtonMessageTo with bad 3rd argument', function(done) {
-//           const buttons = ['option One', 'Option Two', 'Option Three', 'Option Four'];
+{
+  const bot = new MockBot();
+  const buttonTitles = ['B1', 'B2'];
 
-//           bot.sendDefaultButtonMessageTo(buttons, recipientId, bot)
+  const quickReplies = [
+    {
+      content_type: 'text',
+      title: 'B1',
+      payload: 'B1',
+    },
+    {
+      content_type: 'text',
+      title: 'B2',
+      payload: 'B2',
+    },
+  ];
 
-//           .catch((err) => {
-//             err.message.should.equal('ERROR: third argument must be a "String", an attachment "Object" or absent');
-//             done();
-//           });
-//         });
+  const expectedSentMessage = outgoingMessageFixtures.textOnlyQuickReplyMessage();
+  expectedSentMessage.message.quick_replies = quickReplies;
 
-//         specify('using #sendDefaultButtonMessageTo with bad 3rd argument callback', function(done) {
-//           const buttons = ['option One', 'Option Two', 'Option Three', 'Option Four'];
+  test('#sendDefaultButtonMessageTo works with falsy textOrAttachment', sendMessageMacro, {
+    expectedSentMessage,
+    sendMessageMethod: bot.sendDefaultButtonMessageTo.bind(
+      bot, buttonTitles, undefined, 'user_id'),
+  });
+}
 
-//           bot.sendDefaultButtonMessageTo(buttons, recipientId, bot, function(err) {
-//             err.message.should.equal('ERROR: third argument must be a "String", an attachment "Object" or absent');
-//             done();
-//           });
-//         });
+{
+  const bot = new MockBot();
+  const buttonTitles = ['B1', 'B2'];
 
-//         specify('using #sendDefaultButtonMessageTo with too many buttons', function(done) {
-//           const tooManyButtons = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
+  const quickReplies = [
+    {
+      content_type: 'text',
+      title: 'B1',
+      payload: 'B1',
+    },
+    {
+      content_type: 'text',
+      title: 'B2',
+      payload: 'B2',
+    },
+  ];
 
-//           bot.sendDefaultButtonMessageTo(tooManyButtons, recipientId)
+  const expectedSentMessage = outgoingMessageFixtures.textOnlyQuickReplyMessage();
+  expectedSentMessage.message.quick_replies = quickReplies;
+  expectedSentMessage.message.text = 'Click one of:';
 
-//           .catch(function(err) {
-//             err.message.should.equal('ERROR: buttonTitles must be of length 10 or less');
-//             done();
-//           });
-//         });
+  test('#sendDefaultButtonMessageTo works with text type textOrAttachment', sendMessageMacro, {
+    expectedSentMessage,
+    sendMessageMethod: bot.sendDefaultButtonMessageTo.bind(
+      bot, buttonTitles, 'Click one of:', 'user_id'),
+  });
+}
+
+{
+  const bot = new MockBot();
+  const buttonTitles = ['B1', 'B2'];
+
+  const quickReplies = [
+    {
+      content_type: 'text',
+      title: 'B1',
+      payload: 'B1',
+    },
+    {
+      content_type: 'text',
+      title: 'B2',
+      payload: 'B2',
+    },
+  ];
+
+  const expectedSentMessage = outgoingMessageFixtures.textOnlyQuickReplyMessage();
+  expectedSentMessage.message.quick_replies = quickReplies;
+  delete expectedSentMessage.message.text;
+  expectedSentMessage.message.attachment = attachmentFixtures.imageAttachment();
+
+  test.only('#sendDefaultButtonMessageTo works with object type textOrAttachment', sendMessageMacro, {
+    expectedSentMessage,
+    sendMessageMethod: bot.sendDefaultButtonMessageTo.bind(
+      bot, buttonTitles, attachmentFixtures.imageAttachment(), 'user_id'),
+  });
+}
 
 //         specify('using #sendIsTypingMessageTo', function(done) {
 

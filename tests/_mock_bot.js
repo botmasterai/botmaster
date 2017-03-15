@@ -33,13 +33,13 @@ class MockBot extends BaseBot {
         image: true,
         video: true,
         location: true,
-        postback: true,
         // can occur in FB messenger when user sends a message which only contains a URL
         // most platforms won't support that
         fallback: true,
       },
       echo: true,
       read: true,
+      postback: true,
     };
 
     this.sends = settings.sends || {
