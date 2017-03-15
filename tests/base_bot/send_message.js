@@ -405,7 +405,7 @@ const sendMessageErrorMacro = (t, params) => {
 {
   const bot = new MockBot();
 
-  test.only('#sendCascade throws error when used with no valid params', sendMessageErrorMacro, {
+  test('#sendCascade throws error when used with no valid params', sendMessageErrorMacro, {
     sendMessageMethod: bot.sendCascade.bind(bot, [{}]),
     expectedErrorMessage: 'No valid message options specified',
   });
@@ -430,7 +430,7 @@ const sendMessageErrorMacro = (t, params) => {
   const messageArray = [{ raw: rawMessage1 }, { raw: rawMessage2 }];
   const expectedSentMessages = [rawMessage1, rawMessage2];
 
-  test.only('#sendCascade works with raw messages', sendCascadeMessageMacro, {
+  test('#sendCascade works with raw messages', sendCascadeMessageMacro, {
     sendMessageMethod: bot.sendCascade.bind(bot, messageArray),
     expectedSentMessages,
   });
@@ -445,7 +445,21 @@ const sendMessageErrorMacro = (t, params) => {
   const messageArray = [{ message: message1 }, { message: message2 }];
   const expectedSentMessages = [message1, message2];
 
-  test.only('#sendCascade works with valid botmaster messages', sendCascadeMessageMacro, {
+  test('#sendCascade works with valid messages', sendCascadeMessageMacro, {
+    sendMessageMethod: bot.sendCascade.bind(bot, messageArray),
+    expectedSentMessages,
+  });
+}
+
+{
+  const bot = new MockBot();
+
+  const message1 = outgoingMessageFixtures.textOnlyQuickReplyMessage();
+
+  const messageArray = [{ message: message1 }];
+  const expectedSentMessages = [message1];
+
+  test('#sendCascade works with single valid messages', sendCascadeMessageMacro, {
     sendMessageMethod: bot.sendCascade.bind(bot, messageArray),
     expectedSentMessages,
   });
@@ -465,7 +479,7 @@ const sendMessageErrorMacro = (t, params) => {
   const messageArray = [{ raw: rawMessage1 }, { message: message2 }];
   const expectedSentMessages = [rawMessage1, message2];
 
-  test.only('#sendCascade works with valid outgoingMessages', sendCascadeMessageMacro, {
+  test('#sendCascade works with mixed raw and botmaster messages', sendCascadeMessageMacro, {
     sendMessageMethod: bot.sendCascade.bind(bot, messageArray),
     expectedSentMessages,
   });
@@ -483,7 +497,7 @@ const sendMessageErrorMacro = (t, params) => {
     secondExpectedMessage,
   ];
 
-  test.only('#sendTextCascadeTo works', sendCascadeMessageMacro, {
+  test('#sendTextCascadeTo works', sendCascadeMessageMacro, {
     sendMessageMethod: bot.sendTextCascadeTo.bind(bot, textArray, 'user_id'),
     expectedSentMessages,
   });
