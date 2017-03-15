@@ -15,7 +15,7 @@ const createBaseOutgoingMessage = () => {
   return new OutgoingMessage(outgoingMessage);
 };
 
-test('Instantiating an OutgoingMessage object via a bot object works', (t) => {
+test('Instantiating an OutgoingMessage object via a bot\'s createOutgoingMessage works', (t) => {
   t.plan(1);
 
   const bot = new MockBot();
@@ -24,12 +24,29 @@ test('Instantiating an OutgoingMessage object via a bot object works', (t) => {
   t.deepEqual(botOutgoingMessage, new OutgoingMessage());
 });
 
-test('Instantiating an OutgoingMessage object via a bot class works', (t) => {
+test('Instantiating an OutgoingMessage object via a bot class\'s createOutgoingMessage works', (t) => {
   t.plan(1);
 
   const botOutgoingMessage = MockBot.createOutgoingMessage({});
 
   t.deepEqual(botOutgoingMessage, new OutgoingMessage());
+});
+
+test('Instantiating an OutgoingMessage starter object via a bot\'s createOutgoingMessageFor works', (t) => {
+  t.plan(1);
+
+  const bot = new MockBot();
+  const botOutgoingMessage = bot.createOutgoingMessageFor('user_id');
+
+  t.deepEqual(botOutgoingMessage, createBaseOutgoingMessage());
+});
+
+test('Instantiating an OutgoingMessage starter object via a bot class\'s createOutgoingMessageFor works', (t) => {
+  t.plan(1);
+
+  const botOutgoingMessage = MockBot.createOutgoingMessageFor('user_id');
+
+  t.deepEqual(botOutgoingMessage, createBaseOutgoingMessage());
 });
 
 test('#constructor does not throw an error when initialized without argument', (t) => {
