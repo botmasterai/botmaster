@@ -217,28 +217,15 @@ test('#removeAttachment works', (t) => {
   t.deepEqual(outgoingMessage, expectedOutgoingMessage);
 });
 
-test('#addQuickReplies properly works without settings text', (t) => {
+test('#addQuickReplies works', (t) => {
   t.plan(1);
 
   const outgoingMessage = createBaseOutgoingMessage();
   const quickReplies = outgoingMessageFixtures.textOnlyQuickReplyMessage().message.quick_replies;
   outgoingMessage.addQuickReplies(quickReplies);
+  outgoingMessage.addText('Please select one of:');
 
   t.deepEqual(assign({}, outgoingMessage), outgoingMessageFixtures.textOnlyQuickReplyMessage());
-});
-
-test('#addQuickReplies properly works while settings text', (t) => {
-  t.plan(1);
-
-  const outgoingMessage = createBaseOutgoingMessage();
-  const quickReplies = outgoingMessageFixtures.textOnlyQuickReplyMessage().message.quick_replies;
-  const selectionText = 'Select one of the following:';
-  outgoingMessage.addQuickReplies(quickReplies, selectionText);
-
-  const expectedOutgoingMessage = outgoingMessageFixtures.textOnlyQuickReplyMessage();
-  expectedOutgoingMessage.message.text = selectionText;
-
-  t.deepEqual(assign({}, outgoingMessage), expectedOutgoingMessage);
 });
 
 test('#addPayloadLessQuickReplies throws error if not passed in array of strings', (t) => {
@@ -265,6 +252,7 @@ test('#addPayloadLessQuickReplies properly works when passed array of strings', 
 
   const outgoingMessage = createBaseOutgoingMessage();
   outgoingMessage.addPayloadLessQuickReplies(['B1', 'B2']);
+  outgoingMessage.addText('Please select one of:');
 
   const quickReplies = [
     {
@@ -290,6 +278,7 @@ test('#addLocationQuickReply properly works', (t) => {
 
   const outgoingMessage = createBaseOutgoingMessage();
   outgoingMessage.addLocationQuickReply();
+  outgoingMessage.addText('Please share your location:');
 
   t.deepEqual(assign({}, outgoingMessage), outgoingMessageFixtures.locationQuickReplyMessage());
 });

@@ -677,9 +677,9 @@ boom@2.x.x:
   dependencies:
     hoek "2.x.x"
 
-botmaster-test-fixtures@^2.0.4:
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/botmaster-test-fixtures/-/botmaster-test-fixtures-2.0.4.tgz#1c1644d34ff75ff044c7ddfac4ee8e6853fd1133"
+botmaster-test-fixtures@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/botmaster-test-fixtures/-/botmaster-test-fixtures-2.1.0.tgz#f368006a6ad3bb9bda02477486f0840d5ceb6518"
 
 boxen@^0.6.0:
   version "0.6.0"

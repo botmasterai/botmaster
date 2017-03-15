@@ -1,101 +1,116 @@
 import test from 'ava';
-import { outgoingMessageFixtures, attachmentFixtures } from 'botmaster-test-fixtures';
+import { outgoingMessageFixtures,
+         incomingUpdateFixtures,
+         attachmentFixtures } from 'botmaster-test-fixtures';
 import { assign } from 'lodash';
 
 import OutgoingMessage from '../../lib/outgoing_message';
-
 import MockBot from '../_mock_bot';
 
-test.only('#sendMessage\' works using promise', (t) => {
-  t.plan(3);
+const sendMessageMacro = (t, params) => {
+  t.plan(6);
 
+  return new Promise((resolve) => {
+    // always run both with and without callback
+    let cbPassCount = 0;
+    const cb = (err, body) => {
+      // This needs to be a promise based callback.
+      if (!body) {
+        body = err;
+      }
+
+      t.deepEqual(assign({}, body.sentMessage), params.expectedSentMessage,
+        'sentMessage is not same as message');
+      t.truthy(body.recipient_id);
+      t.truthy(body.message_id);
+
+      cbPassCount += 1;
+      if (cbPassCount === 2) {
+        resolve();
+      }
+    };
+
+    // test using promises
+    params.sendMessageMethod().then(cb);
+    // and using standard callback function
+    params.sendMessageMethod(cb);
+  });
+};
+
+{
+  const bot = new MockBot();
+  const messageToSend = outgoingMessageFixtures.audioMessage();
+
+  test('#sendMessage works', sendMessageMacro, {
+    sendMessageMethod: bot.sendMessage.bind(bot, messageToSend),
+    expectedSentMessage: outgoingMessageFixtures.audioMessage(),
+  });
+}
+
+{
+  const bot = new MockBot();
+  const subMessagePart = {
+    text: 'Hello World!',
+  };
+
+  test('#sendMessageTo works', sendMessageMacro, {
+    sendMessageMethod: bot.sendMessageTo.bind(bot, subMessagePart, 'user_id'),
+    expectedSentMessage: outgoingMessageFixtures.textMessage(),
+  });
+}
+
+{
   const bot = new MockBot();
 
-  const message = outgoingMessageFixtures.audioMessage();
-
-  return bot.sendMessage(message)
-
-  .then((body) => {
-    // console.log(JSON.stringify(body, null, 2));
-    t.deepEqual(body.sentMessage, message, 'sentMessage is not same as message');
-    t.truthy(body.recipient_id);
-    t.truthy(body.message_id);
+  test('#sendTextMessageTo works', sendMessageMacro, {
+    sendMessageMethod: bot.sendTextMessageTo.bind(bot, 'Hello World!', 'user_id'),
+    expectedSentMessage: outgoingMessageFixtures.textMessage(),
   });
-});
+}
 
-test.only('#sendMessage\' works using callback', (t) => {
-  t.plan(3);
-
+{
   const bot = new MockBot();
 
-  const outgoingMessage = new OutgoingMessage(outgoingMessageFixtures.audioMessage());
+  const updateToReplyTo = incomingUpdateFixtures.textUpdate();
+  // patching bot just to see if that works too with callbacks
+  const patchedBot = bot.__createBotPatchedWithUpdate(updateToReplyTo);
 
-  return bot.sendMessage(outgoingMessage, (err, body) => {
-    t.deepEqual(body.sentMessage, outgoingMessage, 'sentMessage is not same as message');
-    t.truthy(body.recipient_id);
-    t.truthy(body.message_id);
+  test('#reply works', sendMessageMacro, {
+    sendMessageMethod: patchedBot.reply.bind(patchedBot, updateToReplyTo, 'Hello World!'),
+    expectedSentMessage: outgoingMessageFixtures.textMessage(),
   });
-});
+}
 
-//       describe(`to the ${bot.type} platform`, function() {
+{
+  const bot = new MockBot();
 
-//         specify('using #sendMessage', function(done) {
-//           const message = {
-//             recipient: {
-//               id: recipientId
-//             },
-//             message: {
-//               text: 'Party & bullshit'
-//             }
-//           };
+  const attachment = attachmentFixtures.audioAttachment();
 
-//           bot.sendMessage(message)
+  test('#sendAttachmentTo works', sendMessageMacro, {
+    sendMessageMethod: bot.sendAttachmentTo.bind(bot, attachment, 'user_id'),
+    expectedSentMessage: outgoingMessageFixtures.audioMessage(),
+  });
+}
 
-//           .then(function(body) {
-//             expect(body.message_id).to.not.equal(undefined);
-//             expect(body.recipient_id).to.not.equal(undefined);
-//             done();
-//           });
-//         });
+{
+  const bot = new MockBot();
 
-//         specify('using #sendMessageTo', function(done) {
-//           const message = {
-//             text: 'Party & bullshit'
-//           };
+  test('#sendAttachmentFromUrlTo works', sendMessageMacro, {
+    sendMessageMethod: bot.sendAttachmentFromUrlTo.bind(bot,
+      'audio', 'SOME_AUDIO_URL', 'user_id'),
+    expectedSentMessage: outgoingMessageFixtures.audioMessage(),
+  });
+}
 
-//           bot.sendMessageTo(message, recipientId)
+{
+  const bot = new MockBot();
 
-//           .then(function(body) {
-//             expect(body.message_id).to.not.equal(undefined);
-//             expect(body.recipient_id).to.not.equal(undefined);
-//             done();
-//           });
-//         });
-
-//         specify('using #sendTextMessageTo with callback (cb)', function(done) {
-//           // using callback here
-//           bot.sendTextMessageTo('Party & bullshit', recipientId, function(err, body) {
-//             expect(body.message_id).to.not.equal(undefined);
-//             expect(body.recipient_id).to.not.equal(undefined);
-//             done();
-//           });
-//         });
-
-//         specify('using #reply', function(done) {
-
-//           // that's all that's needed for this test
-//           const update = {};
-//           update.sender = {};
-//           update.sender.id = recipientId;
-
-//           bot.reply(update, 'replying to update')
-
-//           .then(function(body) {
-//             expect(body.message_id).to.not.equal(undefined);
-//             expect(body.recipient_id).to.not.equal(undefined);
-//             done();
-//           });
-//         });
+  test('#sendDefaultButtonMessageTo works', sendMessageMacro, {
+    sendMessageMethod: bot.sendAttachmentFromUrlTo.bind(bot,
+      'audio', 'SOME_AUDIO_URL', 'user_id'),
+    expectedSentMessage: outgoingMessageFixtures.audioMessage(),
+  });
+}
 
 //         specify('using #sendDefaultButtonMessageTo with good arguments', function(done) {
 //           const buttons = ['option One', 'Option Two', 'Option Three', 'Option Four'];
@@ -141,18 +156,6 @@ test.only('#sendMessage\' works using callback', (t) => {
 //           .catch(function(err) {
 //             err.message.should.equal('ERROR: buttonTitles must be of length 10 or less');
 //             done();
-//           });
-//         });
-
-//         specify('using #sendAttachmentFromURLTo', function() {
-//           this.timeout(3000);
-//           const url = 'https://raw.githubusercontent.com/ttezel/twit/master/tests/img/bigbird.jpg';
-
-//           return bot.sendAttachmentFromURLTo('image', url, recipientId)
-
-//           .then(function(body) {
-//             expect(body.message_id).to.not.equal(undefined);
-//             expect(body.recipient_id).to.not.equal(undefined);
 //           });
 //         });
 
