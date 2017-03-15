@@ -45,7 +45,7 @@ const sendMessageErrorMacro = (t, params) => {
     let cbPassCount = 0;
     const cb = (err) => {
       t.deepEqual(err.message, params.expectedErrorMessage,
-        'Error message is not same as expected is not same as message');
+        'Error message is not same as expected');
 
       cbPassCount += 1;
       if (cbPassCount === 2) {
@@ -54,7 +54,12 @@ const sendMessageErrorMacro = (t, params) => {
     };
 
     // test using promises
-    params.sendMessageMethod().catch(cb);
+    params.sendMessageMethod()
+    .then(() => {
+      t.false(true, 'Error should have been returned, but didn\'t get any');
+      resolve();
+    })
+    .catch(cb);
     // and using standard callback function
     params.sendMessageMethod(cb);
   });
@@ -83,11 +88,39 @@ const sendMessageErrorMacro = (t, params) => {
 }
 
 {
+  const bot = new MockBot({
+    sends: {
+      text: false,
+    },
+  });
+
+  test('#sendTextMessageTo throws error if bot class does not support text', sendMessageErrorMacro, {
+    sendMessageMethod: bot.sendTextMessageTo.bind(bot, 'Hello World!', 'user_id'),
+    expectedErrorMessage: 'Bots of type mock can\'t send messages with text',
+  });
+}
+
+{
   const bot = new MockBot();
 
   test('#sendTextMessageTo works', sendMessageMacro, {
     sendMessageMethod: bot.sendTextMessageTo.bind(bot, 'Hello World!', 'user_id'),
     expectedSentMessage: outgoingMessageFixtures.textMessage(),
+  });
+}
+
+{
+  const bot = new MockBot({
+    sends: {
+      text: false,
+    },
+  });
+
+  const updateToReplyTo = incomingUpdateFixtures.textUpdate();
+
+  test('#reply throws error if bot class does not support text', sendMessageErrorMacro, {
+    sendMessageMethod: bot.sendTextMessageTo.bind(bot, updateToReplyTo, 'Hello World!'),
+    expectedErrorMessage: 'Bots of type mock can\'t send messages with text',
   });
 }
 
@@ -105,6 +138,21 @@ const sendMessageErrorMacro = (t, params) => {
 }
 
 {
+  const bot = new MockBot({
+    sends: {
+      attachment: false,
+    },
+  });
+
+  const attachment = attachmentFixtures.audioAttachment();
+
+  test('#sendAttachmentTo throws error if bot class does not support attachment', sendMessageErrorMacro, {
+    sendMessageMethod: bot.sendAttachmentTo.bind(bot, attachment, 'user_id'),
+    expectedErrorMessage: 'Bots of type mock can\'t send messages with attachment',
+  });
+}
+
+{
   const bot = new MockBot();
 
   const attachment = attachmentFixtures.audioAttachment();
@@ -116,12 +164,70 @@ const sendMessageErrorMacro = (t, params) => {
 }
 
 {
+  const bot = new MockBot({
+    sends: {
+      attachment: false,
+    },
+  });
+
+  test('#sendAttachmentFromUrlTo throws error if bot class does not support attachment', sendMessageErrorMacro, {
+    sendMessageMethod: bot.sendAttachmentFromUrlTo.bind(
+      bot, 'audio', 'SOME_AUDIO_URL', 'user_id'),
+    expectedErrorMessage: 'Bots of type mock can\'t send messages with attachment',
+  });
+}
+
+{
   const bot = new MockBot();
 
   test('#sendAttachmentFromUrlTo works', sendMessageMacro, {
     sendMessageMethod: bot.sendAttachmentFromUrlTo.bind(
       bot, 'audio', 'SOME_AUDIO_URL', 'user_id'),
     expectedSentMessage: outgoingMessageFixtures.audioMessage(),
+  });
+}
+
+{
+  const bot = new MockBot({
+    sends: {
+      quickReply: false,
+    },
+  });
+
+  test('#sendDefaultButtonMessageTo throws error if bot class does not support quickReply', sendMessageErrorMacro, {
+    sendMessageMethod: bot.sendDefaultButtonMessageTo.bind(
+      bot, [], undefined, 'user_id'),
+    expectedErrorMessage: 'Bots of type mock can\'t send messages with quick replies',
+  });
+}
+
+{
+  const bot = new MockBot({
+    sends: {
+      text: false,
+      quickReply: true,
+    },
+  });
+
+  test('#sendDefaultButtonMessageTo throws error if bot class does not support text and text is set', sendMessageErrorMacro, {
+    sendMessageMethod: bot.sendDefaultButtonMessageTo.bind(
+      bot, [], 'Click on one of', 'user_id'),
+    expectedErrorMessage: 'Bots of type mock can\'t send messages with text',
+  });
+}
+
+{
+  const bot = new MockBot({
+    sends: {
+      attachment: false,
+      quickReply: true,
+    },
+  });
+
+  test('#sendDefaultButtonMessageTo throws error if bot class does not support attachment and attachment is set', sendMessageErrorMacro, {
+    sendMessageMethod: bot.sendDefaultButtonMessageTo.bind(
+      bot, [], attachmentFixtures.imageAttachment(), 'user_id'),
+    expectedErrorMessage: 'Bots of type mock can\'t send messages with attachment',
   });
 }
 
@@ -224,29 +330,35 @@ const sendMessageErrorMacro = (t, params) => {
   delete expectedSentMessage.message.text;
   expectedSentMessage.message.attachment = attachmentFixtures.imageAttachment();
 
-  test.only('#sendDefaultButtonMessageTo works with object type textOrAttachment', sendMessageMacro, {
+  test('#sendDefaultButtonMessageTo works with object type textOrAttachment', sendMessageMacro, {
     expectedSentMessage,
     sendMessageMethod: bot.sendDefaultButtonMessageTo.bind(
       bot, buttonTitles, attachmentFixtures.imageAttachment(), 'user_id'),
   });
 }
 
-//         specify('using #sendIsTypingMessageTo', function(done) {
+{
+  const bot = new MockBot({
+    sends: {
+      text: false,
+    },
+  });
 
-//           bot.sendIsTypingMessageTo(recipientId, function(err, body) {
-//             expect(body.recipient_id).to.equal(recipientId);
-//             done();
-//           });
-//         });
+  test('#sendIsTypingMessageTo throws error if bot class does not support typing_on sender action', sendMessageErrorMacro, {
+    sendMessageMethod: bot.sendIsTypingMessageTo.bind(bot, 'user_id'),
+    expectedErrorMessage: 'Bots of type mock can\'t send messages with typing_on sender action',
+  });
+}
 
-//         // specify('using #sendRaw', function(done) {
-//         //   // if is here just for now
-//         //   if (bot.type === 'socketio') {
-//         //
-//         //   } else {
-//         //     done();
-//         //   }
-//         // });
+{
+  const bot = new MockBot();
+
+  test('#sendIsTypingMessageTo works', sendMessageMacro, {
+    sendMessageMethod: bot.sendIsTypingMessageTo.bind(bot, 'user_id'),
+    expectedSentMessage: outgoingMessageFixtures.typingOnMessage(),
+  });
+}
+
 
 //         // just execute those for socketio as all the underlying helper functionalities
 //         // have been tested above
