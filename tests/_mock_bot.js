@@ -1,6 +1,5 @@
 'use strict';
 
-const _cloneDeep = require('lodash').cloneDeep;
 const BaseBot = require('../lib/base_bot');
 const express = require('express');
 const expressBodyParser = require('body-parser');

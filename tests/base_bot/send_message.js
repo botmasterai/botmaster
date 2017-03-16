@@ -4,7 +4,6 @@ import { outgoingMessageFixtures,
          attachmentFixtures } from 'botmaster-test-fixtures';
 import { assign } from 'lodash';
 
-import OutgoingMessage from '../../lib/outgoing_message';
 import MockBot from '../_mock_bot';
 
 const sendMessageMacro = (t, params) => {
@@ -108,6 +107,8 @@ const sendMessageErrorMacro = (t, params) => {
   });
 };
 
+
+// All tests are isolated in own scopes in order to be properly setup
 {
   const bot = new MockBot();
   const messageToSend = outgoingMessageFixtures.audioMessage();

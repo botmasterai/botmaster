@@ -2,8 +2,8 @@ import test from 'ava';
 
 import MockBot from '../_mock_bot';
 
-const errorTestTitleBase = 'should throw an error when controler is called';
-const successTestTitleBase = 'should not throw an error when controler is called';
+const errorTestTitleBase = 'should throw an error when controller is called';
+const successTestTitleBase = 'should not throw an error when controller is called';
 
 test(`${errorTestTitleBase} with a string`, (t) => {
   t.plan(1);
@@ -39,7 +39,7 @@ test(`${errorTestTitleBase} with misnamed credentials`, (t) => {
     credentials: {
       token: 'something',
       pass: 'something else',
-    }
+    },
   };
 
   try {
@@ -58,7 +58,7 @@ test(`${successTestTitleBase} with correctly named credentials`, (t) => {
     credentials: {
       token: 'something',
       password: 'something else',
-    }
+    },
   };
   const bot = new MockBot(botSettings);
   t.pass();
