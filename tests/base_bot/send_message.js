@@ -16,6 +16,10 @@ const sendMessageMacro = (t, params) => {
       // This needs to be a promise based callback.
       if (!body) {
         body = err;
+        if (body instanceof Error) {
+          t.false(true, err.message);
+          resolve();
+        }
       }
 
       t.deepEqual(assign({}, body.sentMessage), params.expectedSentMessage,
@@ -50,6 +54,10 @@ const sendCascadeMessageMacro = (t, params) => {
       // This needs to be a promise based callback.
       if (!bodies) {
         bodies = err;
+        if (bodies instanceof Error) {
+          t.false(true, err.message);
+          resolve();
+        }
       }
 
       for (let i = 0; i < bodies.length; i += 1) {
