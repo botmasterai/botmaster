@@ -21,7 +21,7 @@ botmaster.on('update', (bot, update) => {
   bot.reply(update, 'yo back')
 });
 
-botmaster.on('server running', (message) => {
+botmaster.on('listening', (message) => {
   console.log(message);
 });
 

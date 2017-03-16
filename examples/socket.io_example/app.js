@@ -24,7 +24,7 @@ botmaster.use('outgoing', (bot, message, next) => {
   next();
 })
 
-botmaster.on('server running', (message) => {
+botmaster.on('listening', (message) => {
   console.log(message);
 });
 

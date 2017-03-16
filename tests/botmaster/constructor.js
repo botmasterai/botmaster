@@ -22,7 +22,7 @@ test('shouldn\'t throw any error if settings aren\'t specified', (t) => {
   return new Promise((resolve) => {
     const botmaster = new Botmaster();
 
-    botmaster.on('server running', () => {
+    botmaster.on('listening', () => {
       t.is(botmaster.server.address().port, 3000);
       botmaster.server.close(() => {
         t.pass();
@@ -79,7 +79,7 @@ test('should correctly set port when passed in settings', (t) => {
     };
     const botmaster = new Botmaster(settings);
 
-    botmaster.on('server running', () => {
+    botmaster.on('listening', () => {
       t.is(botmaster.server.address().port, 5000);
       botmaster.server.close(resolve);
     });
@@ -109,7 +109,7 @@ test('when used with default botmaster server,' +
   return new Promise((resolve) => {
     const botmaster = new Botmaster();
 
-    botmaster.on('server running', () => {
+    botmaster.on('listening', () => {
       const options = {
         uri: 'http://localhost:3000/someRoute',
         json: true,

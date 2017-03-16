@@ -68,7 +68,7 @@ botmaster.on('update', (bot, update) => {
 
 botmaster.use('outgoing', watsonConversationStorageMiddleware.updateSession);
 
-botmaster.on('server running', (message) => {
+botmaster.on('listening', (message) => {
   console.log(message);
 });
 

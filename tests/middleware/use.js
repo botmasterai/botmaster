@@ -2,91 +2,102 @@ import test from 'ava';
 import { outgoingMessageFixtures,
          incomingUpdateFixtures,
          attachmentFixtures } from 'botmaster-test-fixtures';
-import { assign } from 'lodash';
 
-import OutgoingMessage from '../lib/outgoing_message';
-import MockBot from './_mock_bot';
+import Botmaster from '../../lib';
+import MockBot from '../_mock_bot';
 
-// 'use strict';
+test('throws an error if key is not incoming or outgoing', (t) => {
+  t.plan(1);
 
-// const expect = require('chai').expect;
-// const assert = require('chai').assert;
-// require('chai').should();
-// const _ = require('lodash');
-// const Botmaster = require('../lib');
-// const config = require('./config.js');
+  const bot = new MockBot();
+  try {
+    bot.use({
+      something: 'something',
+    });
+  } catch (err) {
+    t.is(err.message,
+      'invalid middleware type. Type should be either \'incoming\' or \'outgoing\'',
+      'Error message is not the same as expected');
+  }
+});
 
-// describe('Middleware', function() {
+test('throws an error if middlewareCallback is not defined', (t) => {
+  t.plan(1);
 
+  const bot = new MockBot();
+  try {
+    bot.use({
+      incoming: 'something',
+    });
+  } catch (err) {
+    t.is(err.message,
+      'middlewareCallback can\'t be of type undefined. It needs to be a function',
+      'Error message is not the same as expected');
+  }
+});
 
-//   let botmaster = null;
-//   beforeEach(function(done) {
-//     const telegramSettings = {
-//       credentials: config.telegramCredentials,
-//       webhookEndpoint: '/webhook'
-//     };
+test('throws an error if middlewareCallback is not a function', (t) => {
+  t.plan(1);
 
-//     const messengerSettings = {
-//       credentials: config.messengerCredentials,
-//       webhookEndpoint: '/webhook'
-//     };
+  const bot = new MockBot();
+  try {
+    bot.use({
+      incoming: {
+        cb: 'not a function',
+      },
+    });
+  } catch (err) {
+    t.is(err.message,
+      'middlewareCallback can\'t be of type string. It needs to be a function',
+      'Error message is not the same as expected');
+  }
+});
 
-//     const twitterSettings = {
-//       credentials: config.twitterCredentials
-//     };
+test('throws an error if options is not an object', (t) => {
+  t.plan(1);
 
-//     const slackSettings = {
-//       credentials: config.slackCredentials,
-//       webhookEndpoint: '/webhook',
-//       storeTeamInfoInFile: true,
-//     };
+  const bot = new MockBot();
+  try {
+    bot.use({
+      incoming: {
+        cb: __ => __, // this is just a function returning it's passed value
+        options: 'something',
+      },
+    });
+  } catch (err) {
+    t.is(err.message,
+      'options can\'t be of type string. It needs to be an object',
+      'Error message is not the same as expected');
+  }
+});
 
-//     const botsSettings = [{ telegram: telegramSettings },
-//                           { messenger: messengerSettings },
-//                           { twitter: twitterSettings },
-//                           { slack: slackSettings }];
+// test.only('throws an error if options is not an object', (t) => {
+//   t.plan(1);
 
-//     const botmasterSettings = {
-//       botsSettings,
-//     };
-//     botmaster = new Botmaster(botmasterSettings);
-
-//     botmaster.on('server running', () => { done(); });
-//   });
-
-//   describe('Incoming middleware', function() {
-//     it('should throw an error if the first argument is not a valid string', function() {
-//       expect(() => botmaster.use('typo', function(bot, update, next) {
-//         next();
-//       })).to.throw('ERROR: invalid middleware type. Type should be either \'incoming\' or \'outgoing\'');
-
-//       expect(() => botmaster.use(function(bot, update, next) {
-//         next();
-//       })).to.throw('ERROR: invalid middleware type. Type should be either \'incoming\' or \'outgoing\'');
+//   const bot = new MockBot();
+//   try {
+//     bot.use({
+//       incoming: {
+//         cb: __ => __, // this is just a function returning it's passed value
+//       },
+//       outgoing: {
+//         cb: __ => __,
+//       },
 //     });
+//   } catch (err) {
+//     t.is(err.message,
+//       'use should be called with only one of incoming or outgoing. Use useWrapped instead',
+//       'Error message is not the same as expected');
+//   }
+// });
 
-//     it('should throw an error if the first argument is a string but there is no callback defined', function() {
-//       expect(function() {
-//         botmaster.use('incoming');
-//       }).to.throw('ERROR: middlewareCallback needs to be defined');
-//     });
+// test.only('calls the incoming middleware function specified if all is setup correctly', (t) => {
+//   return new Promise((resolve) => {
+//     const botmaster = new Botmaster();
 
-//     it('should throw an error if the second argument exists and it isn\'t an object', function() {
-//       expect(() => botmaster.use('incoming', 'some string', function(bot, update, next) {
-//         next();
-//       })).to.throw('ERROR: invalid options. Options should be passed as an object');
-//     });
-
-//     it('should throw an error if it is passed more than 3 arguments', function() {
-//       expect(() => botmaster.use('incoming', {}, 'too much', function(bot, update, next) {
-//         next();
-//       })).to.throw('ERROR: too many arguments. 2-3 expected');
-//     });
-
-//     it('should throw an error if the last argument is not a function', function() {
-//       expect(() => botmaster.use('incoming', {})).
-//              to.throw('ERROR: invalid callback. Callback should be a function');
-//     });
+//     botmaster.on('')
+//   })
+// });
 
 //     specify('Botmaster should call a middleware function that was setup', function(done) {
 //       // incomming middleware

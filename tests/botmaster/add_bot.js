@@ -12,7 +12,7 @@ test('works with a bot that doesn\'t require webhhooks', (t) => {
   return new Promise((resolve) => {
     const botmaster = new Botmaster();
 
-    botmaster.on('server running', () => {
+    botmaster.on('listening', () => {
       const bot = new MockBot();
 
       botmaster.addBot(bot);
@@ -29,7 +29,7 @@ const arbitraryBotMacro = (t, botSettings) => {
   return new Promise((resolve) => {
     const botmaster = new Botmaster();
 
-    botmaster.on('server running', () => {
+    botmaster.on('listening', () => {
       const bot = new MockBot(botSettings);
 
       botmaster.addBot(bot);
