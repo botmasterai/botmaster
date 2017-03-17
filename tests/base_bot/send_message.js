@@ -131,6 +131,16 @@ const sendMessageErrorMacro = (t, params) => {
   const bot = new MockBot();
   const messageToSend = outgoingMessageFixtures.audioMessage();
 
+  test('#sendRaw works', sendMessageMacro, {
+    sendMessageMethod: bot.sendRaw.bind(bot, messageToSend),
+    expectedSentMessage: outgoingMessageFixtures.audioMessage(),
+  });
+}
+
+{
+  const bot = new MockBot();
+  const messageToSend = outgoingMessageFixtures.audioMessage();
+
   test('#sendMessage works with sendOptions', sendMessageMacro, {
     sendMessageMethod: bot.sendMessage.bind(bot, messageToSend, { ignoreMiddleware: true }),
     expectedSentMessage: outgoingMessageFixtures.audioMessage(),

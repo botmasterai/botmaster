@@ -467,7 +467,7 @@ test('Making extensive use of options sets up correct incoming middleware', (t) 
 });
 
 test('Errors in outgoing middleware are emitted correctly', (t) => {
-  t.plan(1);
+  t.plan(2);
 
   return new Promise((resolve) => {
     const botmaster = new Botmaster();
@@ -488,7 +488,12 @@ test('Errors in outgoing middleware are emitted correctly', (t) => {
         t.is(err.message,
             '"message.blop is not a function". In outgoing middleware',
             'Error message did not match');
-        botmaster.server.close(resolve);
+        botmaster.bots[0].sendMessage({ text: 'Change this' }, (err2) => {
+          t.is(err2.message,
+              '"message.blop is not a function". In outgoing middleware',
+              'Error message did not match');
+          botmaster.server.close(resolve);
+        });
       });
     });
   });

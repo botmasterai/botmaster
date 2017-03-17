@@ -8,6 +8,26 @@ import { outgoingMessageFixtures,
 import Botmaster from '../../lib';
 import MockBot from '../_mock_bot';
 
+test('throws an error if called with falsy params', (t) => {
+  t.plan(2);
+
+  const bot = new MockBot();
+  try {
+    bot.useWrapped();
+  } catch (err) {
+    t.is(err.message,
+      'Can\'t add middleware without params',
+      'Error message is not the same as expected');
+  }
+  try {
+    bot.useWrapped('');
+  } catch (err) {
+    t.is(err.message,
+      'Can\'t add middleware without params',
+      'Error message is not the same as expected');
+  }
+});
+
 test('throws an error if params is missing either is not incoming or outgoing', (t) => {
   t.plan(2);
 
@@ -32,12 +52,92 @@ test('throws an error if params is missing either is not incoming or outgoing', 
   }
 });
 
-test('sets up the wrapped middleware that then gets hit in the order expected of them.', (t) => {
-  t.plan(2);
+test('results in error being emitted if error occurs in incoming of wrapped', (t) => {
+  t.plan(1);
 
   return new Promise((resolve) => {
     const botmaster = new Botmaster();
     botmaster.addBot(new MockBot());
+
+    botmaster.useWrapped({
+      incoming: {
+        cb: (bot, update, next) => {
+          update.blop();
+          next();
+        },
+      },
+      outgoing: {
+        cb: (bot, update, message, next) => {
+          t.fail();
+          next();
+        },
+      },
+    });
+
+    botmaster.on('error', (bot, err) => {
+      t.is(err.message,
+        '""update.blop is not a function". In incoming wrapped middleware". This is most probably on your end.',
+        'Error message is not same as expected');
+      botmaster.server.close(resolve);
+    });
+
+    botmaster.on('listening', () => {
+      const bot = botmaster.bots[0];
+      bot.__emitUpdate(incomingUpdateFixtures.textUpdate());
+    });
+  });
+});
+
+test('results in error being thrown if error occurs in outgoing of wrapped', (t) => {
+  t.plan(1);
+
+  return new Promise((resolve) => {
+    const botmaster = new Botmaster();
+    botmaster.addBot(new MockBot());
+
+    botmaster.useWrapped({
+      incoming: {
+        cb: (bot, update, next) => {
+          t.fail();
+          next();
+        },
+      },
+      outgoing: {
+        cb: (bot, update, message, next) => {
+          message.blop();
+          next();
+        },
+      },
+    });
+
+    botmaster.on('error', (bot, err) => {
+      t.is(err.message,
+        '""update.blop is not a function". In incoming wrapped middleware". This is most probably on your end.',
+        'Error message is not same as expected');
+      botmaster.server.close(resolve);
+    });
+
+    botmaster.on('listening', async () => {
+      const bot = botmaster.bots[0];
+      try {
+        await bot.sendMessage(outgoingMessageFixtures.textMessage());
+      } catch (err) {
+        console.log(err.message);
+        t.is(err.message,
+          '"message.blop is not a function". In outgoing wrapped middleware',
+          'Error message is not same as expected');
+        botmaster.server.close(resolve);
+      }
+
+    });
+  });
+});
+
+test('sets up the wrapped middleware that then gets hit in the order expected of them even if addBot declared after', (t) => {
+  t.plan(2);
+
+  return new Promise((resolve) => {
+    const botmaster = new Botmaster();
 
     botmaster.useWrapped({
       incoming: {
@@ -90,6 +190,8 @@ test('sets up the wrapped middleware that then gets hit in the order expected of
         },
       },
     });
+
+    botmaster.addBot(new MockBot());
 
     botmaster.on('listening', async () => {
       const bot = botmaster.bots[0];

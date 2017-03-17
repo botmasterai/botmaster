@@ -102,6 +102,16 @@ test('should throw and error when server and port passed in settings', (t) => {
   }
 });
 
+test('should throw and error when settings is an object and neither port nor settings is passed', (t) => {
+  t.plan(1);
+
+  try {
+    const botmaster = new Botmaster({});
+  } catch (e) {
+    t.is(e.message.indexOf('If passing through settings,') > -1, true, 'Error message not same as expected');
+  }
+});
+
 test('when used with default botmaster server,' +
      'requestListener should return 404s to unfound routes', (t) => {
   t.plan(1);
