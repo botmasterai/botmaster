@@ -8,7 +8,8 @@
     "test-debug": "export NODE_ENV=test DEBUG=botmaster:*; nyc --reporter=lcov --reporter=html ava",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "postversion": "git push && git push --tags && rm -rf build/temp",
-    "jsdoc": "jsdoc ./lib ./lib/bot_types"
+    "jsdoc": "jsdoc ./lib ./lib/bot_types",
+    "report": "nyc report"
   },
   "directories": {
     "tests": "test"
@@ -25,6 +26,11 @@
     "failFast": false,
     "tap": false,
     "powerAssert": false
+  },
+  "nyc": {
+    "exclude": [
+      "tests"
+    ]
   },
   "repository": {
     "type": "git",
