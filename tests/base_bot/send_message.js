@@ -104,14 +104,26 @@ const sendMessageErrorMacro = (t, params) => {
     };
 
     // test using promises
-    params.sendMessageMethod()
-    .then(() => {
-      t.false(true, 'Error should have been returned, but didn\'t get any');
-      resolve();
-    })
-    .catch(cb);
-    // and using standard callback function
-    params.sendMessageMethod(cb);
+    try {
+      params.sendMessageMethod()
+      .then(() => {
+        t.false(true, 'Error should have been returned, but didn\'t get any');
+        resolve();
+      })
+      .catch(cb);
+      // and using standard callback function
+      params.sendMessageMethod(cb);
+    } catch (err) {
+      // this occurs when sendMessageMethod can't even process
+      // i.e. error shouldn't be dealt with. Code definitely has error and should be changed
+      cb(err);
+      // need to try again with cb in this case as it's not managed in first catch block
+      try {
+        params.sendMessageMethod(cb);
+      } catch (err2) {
+        cb(err2);
+      }
+    }
   });
 };
 
@@ -124,6 +136,50 @@ const sendMessageErrorMacro = (t, params) => {
   test('#sendMessage works', sendMessageMacro, {
     sendMessageMethod: bot.sendMessage.bind(bot, messageToSend),
     expectedSentMessage: outgoingMessageFixtures.audioMessage(),
+  });
+}
+
+{
+  const bot = new MockBot();
+
+  // patching bot just to see if that works too with callbacks
+  const patchedBot = bot.__createBotPatchedWithUpdate({});
+  const messageToSend = outgoingMessageFixtures.audioMessage();
+
+  test('#sendMessage throws error when sendOptions is not of valid type on a patched bot', sendMessageErrorMacro, {
+    sendMessageMethod: patchedBot.sendMessage.bind(patchedBot, messageToSend, 'Should not be valid'),
+    expectedErrorMessage: 'sendOptions should be of type object, not string',
+  });
+}
+
+{
+  const bot = new MockBot();
+
+  const messageToSend = outgoingMessageFixtures.audioMessage();
+
+  test('#sendMessage throws error when sendOptions is not of valid type on a non patched bot', sendMessageErrorMacro, {
+    sendMessageMethod: bot.sendMessage.bind(bot, messageToSend, 'Should not be valid'),
+    expectedErrorMessage: 'Last optional argument to sendMessage type function should be' +
+                          ' of type object if using promises or function if using callbacks',
+  });
+}
+
+{
+  const bot = new MockBot();
+
+  const patchedBot = bot.__createBotPatchedWithUpdate({});
+  const messageToSend = outgoingMessageFixtures.audioMessage();
+
+  test('#sendMessage throws error when cb is not of valid type on a non patched bot', sendMessageErrorMacro, {
+    sendMessageMethod: bot.sendMessage.bind(bot, messageToSend, {}, 'should throw error'),
+    expectedErrorMessage: 'Callback must be of type function when using' +
+                          ' sendMessage type functions. Remove last argument to use promises instead',
+  });
+
+  test('#sendMessage throws error when cb is not of valid type on a patched bot', sendMessageErrorMacro, {
+    sendMessageMethod: patchedBot.sendMessage.bind(patchedBot, messageToSend, {}, 'should throw error'),
+    expectedErrorMessage: 'Callback must be of type function when using' +
+                          ' sendMessage type functions. Remove last argument to use promises instead',
   });
 }
 

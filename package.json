@@ -28,6 +28,11 @@
     "powerAssert": false
   },
   "nyc": {
+    "check-coverage": true,
+    "lines":99,
+    "statements": 99,
+    "functions": 99,
+    "branches": 99,
     "exclude": [
       "tests"
     ]
