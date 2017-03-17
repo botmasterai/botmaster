@@ -1,4 +1,5 @@
 import test from 'ava';
+import request from 'request-promise';
 import { outgoingMessageFixtures,
          incomingUpdateFixtures,
          attachmentFixtures } from 'botmaster-test-fixtures';
@@ -71,163 +72,348 @@ test('throws an error if options is not an object', (t) => {
   }
 });
 
-// test.only('throws an error if options is not an object', (t) => {
-//   t.plan(1);
+test('throws an error if options is not an object', (t) => {
+  t.plan(1);
 
-//   const bot = new MockBot();
-//   try {
-//     bot.use({
-//       incoming: {
-//         cb: __ => __, // this is just a function returning it's passed value
-//       },
-//       outgoing: {
-//         cb: __ => __,
-//       },
-//     });
-//   } catch (err) {
-//     t.is(err.message,
-//       'use should be called with only one of incoming or outgoing. Use useWrapped instead',
-//       'Error message is not the same as expected');
-//   }
-// });
+  const bot = new MockBot();
+  try {
+    bot.use({
+      incoming: {
+        cb: __ => __, // this is just a function returning it's passed value
+      },
+      outgoing: {
+        cb: __ => __,
+      },
+    });
+  } catch (err) {
+    t.is(err.message,
+      '"use" should be called with only one of incoming or outgoing. Use useWrapped instead',
+      'Error message is not the same as expected');
+  }
+});
 
-// test.only('calls the incoming middleware function specified if all is setup correctly', (t) => {
-//   return new Promise((resolve) => {
-//     const botmaster = new Botmaster();
+test('throws an error if options contains both botTypesToInclude and botTypesToExclude', (t) => {
+  t.plan(1);
 
-//     botmaster.on('')
-//   })
-// });
+  const bot = new MockBot();
+  try {
+    bot.use({
+      incoming: {
+        cb: __ => __, // this is just a function returning it's passed value
+        options: {
+          botTypesToExclude: 'a',
+          botTypesToInclude: 'b',
+        },
+      },
+    });
+  } catch (err) {
+    t.is(err.message,
+      'Please use only one of botTypesToInclude and botTypesToExclude');
+  }
+});
 
-//     specify('Botmaster should call a middleware function that was setup', function(done) {
-//       // incomming middleware
-//       botmaster.use('incoming', function(bot, update, next) {
-//         update.session = 'disASession';
-//         return next();
-//       });
+test('Errors in incoming middleware are emitted correctly', (t) => {
+  t.plan(1);
 
-//       botmaster.once('update', function(bot, update){
-//         expect(update.session).to.equal('disASession');
-//         done();
-//       });
+  return new Promise((resolve) => {
+    const botmaster = new Botmaster();
+    botmaster.addBot(new MockBot({
+      requiresWebhook: true,
+      webhookEndpoint: 'webhook',
+      type: 'express',
+    }));
 
-//       const bot = botmaster.getBots('telegram')[0];
+    botmaster.use({
+      incoming: {
+        cb: (bot, update, next) => {
+          update.blop();
+          next();
+        },
+      },
+    });
 
-//       // middleware is called right before being actually emitted, =>
-//       // in __emitUpdate;
-//       const incomingUpdateCopy = _.cloneDeep(incomingUpdate);
-//       bot.__emitUpdate(incomingUpdateCopy);
+    botmaster.on('error', (bot, err) => {
+      t.is(err.message,
+           '"update.blop is not a function". In incoming middleware',
+           'Error message did not match');
+      botmaster.server.close(resolve);
+    });
 
-//     });
+    botmaster.on('listening', () => {
+      const updateToSend = { text: 'Change this' };
+      const requestOptions = {
+        method: 'POST',
+        uri: 'http://localhost:3000/express/webhook',
+        json: updateToSend,
+      };
 
-//     specify('Botmaster should call the middleware function before emitting the update', function(done) {
-//       let touched = false;
-//       botmaster.use('incoming', function(bot, update, next) {
-//         touched = true;
-//         return next();
-//       });
+      request(requestOptions);
+    });
+  });
+});
 
-//       botmaster.once('update', function(){
-//         expect(touched).to.equal(true);
-//         done();
-//       });
+test('calls the incoming middleware function specified if all is setup correctly without calling any outgoing middleware', (t) => {
+  t.plan(1);
 
-//       const bot = botmaster.getBots('telegram')[0];
+  return new Promise((resolve) => {
+    const botmaster = new Botmaster();
+    botmaster.addBot(new MockBot({
+      requiresWebhook: true,
+      webhookEndpoint: 'webhook',
+      type: 'express',
+    }));
 
-//       bot.__emitUpdate(incomingUpdate);
-//     });
+    botmaster.use({
+      incoming: {
+        cb: (bot, update, next) => {
+          update.message.text = 'Hello World!';
+          next();
+        },
+      },
+    });
 
-//     specify('Botmaster should call the middleware functions in order of declaration', function(done) {
-//       let callOrder = [];
-//       botmaster.use('incoming', function(bot, update, next) {
-//         update.session = 'disASession';
-//         callOrder.push('first');
-//         return next();
-//       });
+    botmaster.use({
+      outgoing: {
+        cb: (bot, update, next) => {
+          t.fail('outgoing middleware should not be called');
+          next();
+        },
+      },
+    });
 
-//       botmaster.use('incoming', function(bot, update, next) {
-//         update.session.should.equal('disASession');
-//         callOrder.push('second');
-//         return next();
-//       });
+    botmaster.on('update', (bot, update) => {
+      t.is(update.message.text, 'Hello World!', 'update object did not match');
+      botmaster.server.close(resolve);
+    });
 
-//       botmaster.once('update', function(){
-//         expect(callOrder[0]).to.equal('first');
-//         expect(callOrder[1]).to.equal('second');
-//         done();
-//       });
+    botmaster.on('listening', () => {
+      const updateToSend = { text: 'Change this' };
+      const requestOptions = {
+        method: 'POST',
+        uri: 'http://localhost:3000/express/webhook',
+        json: updateToSend,
+      };
 
-//       const bot = botmaster.getBots('telegram')[0];
+      request(requestOptions);
+    });
+  });
+});
 
-//       const incomingUpdateCopy = _.cloneDeep(incomingUpdate);
-//       bot.__emitUpdate(incomingUpdateCopy);
-//     });
+test('calls the incoming middleware function specified if all is setup correctly and use is specified before addBot', (t) => {
+  t.plan(1);
 
-//     specify('Botmaster should call the middleware functions on a specific bot type only if specified', function(done) {
-//       botmaster.use('incoming', { type: 'messenger' }, function(bot, update, next) {
-//         expect(bot.type).to.equal('messenger');
-//         done();
-//       });
+  return new Promise((resolve) => {
+    const botmaster = new Botmaster();
 
-//       const bots = botmaster.bots;
+    botmaster.use({
+      incoming: {
+        cb: (bot, update, next) => {
+          update.message.text = 'Hello World!';
+          next();
+        },
+      },
+    });
 
-//       for (const bot of bots) {
-//         bot.__emitUpdate(incomingUpdate);
-//       }
-//     });
+    botmaster.addBot(new MockBot({
+      requiresWebhook: true,
+      webhookEndpoint: 'webhook',
+      type: 'express',
+    }));
 
-//     specify('Error in incoming middleware is emitted on incoming message', function(done) {
-//       // outgoing middleware
-//       botmaster.use('incoming', function(bot, message, next) {
-//         message.blob(); // doesn't exist, should throw
-//         return next();
-//       });
+    botmaster.on('update', (bot, update) => {
+      t.is(update.message.text, 'Hello World!', 'update object did not match');
+      botmaster.server.close(resolve);
+    });
 
-//       botmaster.once('error', function(bot, err) {
-//         expect(err.message).to.equal('"message.blob is not a function". In incoming middleware');
-//         done();
-//       });
+    botmaster.on('listening', () => {
+      const updateToSend = { text: 'Change this' };
+      const requestOptions = {
+        method: 'POST',
+        uri: 'http://localhost:3000/express/webhook',
+        json: updateToSend,
+      };
 
-//       const bot = botmaster.getBots('messenger')[0];
+      request(requestOptions);
+    });
+  });
+});
 
-//       bot.__emitUpdate(incomingUpdate);
-//     });
+test('calls the incoming middleware should work in standalone using __emitUpdate', (t) => {
+  t.plan(1);
 
-//     specify('Botmaster should call the middleware functions on multiple specific bot types only if specified', function(done) {
-//       let visitedCount = 0;
-//       botmaster.use('incoming', { type: 'messenger telegram' }, function(bot, update, next) {
-//         assert(bot.type === 'messenger' || bot.type === 'telegram');
-//         ++visitedCount;
-//         if (visitedCount === 1) {
-//           return next();
-//         }
-//         done();
-//       });
+  return new Promise((resolve) => {
+    const bot = new MockBot({
+      requiresWebhook: true,
+      webhookEndpoint: 'webhook',
+      type: 'express',
+    });
 
-//       const bots = botmaster.bots;
+    bot.use({
+      incoming: {
+        cb: (bot, update, next) => {
+          update.text = 'Hello World!';
+          next();
+        },
+      },
+    });
 
-//       for (const bot of bots) {
-//         bot.__emitUpdate(incomingUpdate);
-//       }
-//     });
+    bot.on('update', (update) => {
+      t.is(update.text, 'Hello World!', 'update object did not match');
+      resolve();
+    });
 
-//     specify('Botmaster should not call outgoing middleware', function(done) {
-//       botmaster.use('outgoing', function(bot, update, next) {
-//         // something wrong as this should not happen
-//         assert(1 === 2);
-//         next();
-//       });
+    bot.__emitUpdate({ text: 'Change this' });
+  });
+});
 
-//       const bot = botmaster.bots[0];
 
-//       botmaster.once('update', function() {
-//         // if here, it means it didn't go into hook. => all good
-//         done();
-//       });
+test('calls the incoming middleware should occur in order of declaration', (t) => {
+  t.plan(1);
 
-//       bot.__emitUpdate(incomingUpdate);
-//     });
-//   });
+  return new Promise((resolve) => {
+    const bot = new MockBot({
+      requiresWebhook: true,
+      webhookEndpoint: 'webhook',
+      type: 'express',
+    });
+
+    bot.use({
+      incoming: {
+        cb: (bot, update, next) => {
+          update.text = 'Hello World!';
+          next();
+        },
+      },
+    });
+
+    bot.use({
+      incoming: {
+        cb: (bot, update, next) => {
+          update.text += ' And others';
+          next();
+        },
+      },
+    });
+
+    bot.on('update', (update) => {
+      t.is(update.text, 'Hello World! And others', 'update object did not match');
+      resolve();
+    });
+
+    bot.__emitUpdate({ text: 'Change this' });
+  });
+});
+
+test('Making extensive use of options works', (t) => {
+  t.plan(3);
+
+  return new Promise((resolve) => {
+    const botmaster = new Botmaster();
+    botmaster.addBot(new MockBot({
+      type: 'dontIncludeMe',
+      receives: {
+        text: true,
+        echo: true,
+      },
+      sends: {
+        text: true,
+        quickReply: true,
+      },
+    }));
+    botmaster.addBot(new MockBot({
+      type: 'includeMe',
+      receives: {
+        echo: true,
+      },
+      sends: {
+        text: true,
+        quickReply: true,
+      },
+    }));
+    botmaster.addBot(new MockBot({
+      type: 'excludeMe',
+      receives: {
+        text: true,
+        echo: true,
+      },
+      sends: {
+        text: true,
+      },
+    }));
+
+    botmaster.use({
+      incoming: {
+        cb: (bot, update, next) => {
+          update.number += 1;
+          next();
+        },
+        options: {
+          botTypesToInclude: 'includeMe',
+        },
+      },
+    });
+
+    botmaster.use({
+      incoming: {
+        cb: (bot, update, next) => {
+          update.number += 10;
+          next();
+        },
+        options: {
+          botTypesToExclude: 'excludeMe',
+        },
+      },
+    });
+
+    botmaster.use({
+      incoming: {
+        cb: (bot, update, next) => {
+          update.number += 100;
+          next();
+        },
+        options: {
+          botReceives: 'text',
+        },
+      },
+    });
+
+    botmaster.use({
+      incoming: {
+        cb: (bot, update, next) => {
+          update.number += 1000;
+          next();
+        },
+        options: {
+          botSends: 'quickReply',
+        },
+      },
+    });
+
+    let passes = 0;
+    botmaster.on('update', (bot, update) => {
+      passes += 1;
+      if (bot.type === 'includeMe') {
+        t.is(update.number, 1011, 'update object did not match for includeMe');
+      } else if (bot.type === 'excludeMe') {
+        t.is(update.number, 100, 'update object did not match for excludeMe');
+      } else if (bot.type === 'dontIncludeMe') {
+        t.is(update.number, 1110, 'update object did not match for dontIncludeMe')
+      }
+
+      if (passes === 3) {
+        botmaster.server.close(resolve);
+      }
+    });
+
+    botmaster.on('listening', () => {
+      // inside of here just to make sure I don't close a server
+      // that is not listening yet
+      for (const bot of botmaster.bots) {
+        bot.__emitUpdate({ number: 0 });
+      }
+    });
+  });
+});
 
 //   describe('Outgoing Middleware', function() {
 //     this.retries(4);

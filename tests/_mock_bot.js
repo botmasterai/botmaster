@@ -39,6 +39,7 @@ class MockBot extends BaseBot {
       echo: true,
       read: true,
       postback: true,
+      quickReply: true,
     };
 
     this.sends = settings.sends || {
