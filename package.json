@@ -4,8 +4,8 @@
   "description": "Framework allowing developers to write bots that are agnostic with respect to the channel used by their users (messenger, telegram etc...)",
   "main": "./lib/index.js",
   "scripts": {
-    "test": "export NODE_ENV=test; nyc --reporter=lcov --reporter=html ava",
-    "test-debug": "export NODE_ENV=test DEBUG=botmaster:*; nyc --reporter=lcov --reporter=html ava",
+    "test": "export NODE_ENV=test; nyc --reporter=lcov --reporter=html ava; nyc report",
+    "test-debug": "export NODE_ENV=test DEBUG=botmaster:*; nyc --reporter=lcov --reporter=html ava; nyc report",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "postversion": "git push && git push --tags && rm -rf build/temp",
     "jsdoc": "jsdoc ./lib ./lib/bot_types",
