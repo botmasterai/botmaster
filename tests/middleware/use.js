@@ -390,6 +390,7 @@ test('Making extensive use of options sets up correct incoming middleware', (t) 
       sends: {
         text: true,
       },
+      retrievesUserInfo: true,
     }));
 
     botmaster.use({
@@ -440,15 +441,27 @@ test('Making extensive use of options sets up correct incoming middleware', (t) 
       },
     });
 
+    botmaster.use({
+      incoming: {
+        cb: (bot, update, next) => {
+          update.number += 10000;
+          next();
+        },
+        options: {
+          botRetrievesUserInfo: true,
+        },
+      },
+    });
+
     let passes = 0;
     botmaster.on('update', (bot, update) => {
       passes += 1;
-      if (bot.type === 'includeMe') {
-        t.is(update.number, 1011, 'update object did not match for includeMe');
+      if (bot.type === 'dontIncludeMe') {
+        t.is(update.number, 1110, 'update object did not match for includeMe');
+      } else if (bot.type === 'includeMe') {
+        t.is(update.number, 1011, 'update object did not match for excludeMe');
       } else if (bot.type === 'excludeMe') {
-        t.is(update.number, 100, 'update object did not match for excludeMe');
-      } else if (bot.type === 'dontIncludeMe') {
-        t.is(update.number, 1110, 'update object did not match for dontIncludeMe')
+        t.is(update.number, 100, 'update object did not match for dontIncludeMe');
       }
 
       if (passes === 3) {
