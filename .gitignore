@@ -26,3 +26,4 @@ jsconfig.json
 .vscode
 coverage
 .nyc_output
+jsdoc

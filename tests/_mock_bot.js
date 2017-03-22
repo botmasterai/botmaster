@@ -147,20 +147,14 @@ class MockBot extends BaseBot {
 
   // sendRaw and __sendMessage are really the same thing for this MockBot
   // they both testing purposes anyways
-  __sendRaw(message, cb) {
+  __sendRaw(message) {
     const timestamp = Math.floor(Date.now());
     const responseBody = {
       recipient_id: message.recipient.id,
       message_id: `${this.id}.${message.recipient.id}.${String(timestamp)}`,
     };
 
-    if (cb) {
-      return cb(null, responseBody);
-    }
-
-    return new Promise((resolve) => {
-      resolve(responseBody);
-    });
+    return Promise.resolve(responseBody);
   }
 
   __getUserInfo(userId) {
