@@ -549,7 +549,7 @@ test('sets up the outgoing middleware in order of declaration. Then calls them w
     botmaster.on('listening', () => {
       botmaster.bots[0].sendMessage(outgoingMessageFixtures.textMessage())
       .then((body) => {
-        t.is(body.sentMessage.message.text, 'Goodbye Worlds!', 'sent message did not match');
+        t.is(body.sentOutgoingMessage.message.text, 'Goodbye Worlds!', 'sent message did not match');
         botmaster.server.close(resolve);
       })
       .catch((err) => {
@@ -599,13 +599,13 @@ test('sets up the outgoing middleware in order of declaration and skips if speci
 
     try {
       const body1 = await bot.sendTextMessageTo('Change this', 'user_id');
-      t.is(body1.sentMessage.message.text, 'Hello World!');
+      t.is(body1.sentOutgoingMessage.message.text, 'Hello World!');
 
       const body2 = await bot.sendTextMessageTo('Change this again', 'user_id');
-      t.is(body2.sentMessage.message.text, 'Hello World!');
+      t.is(body2.sentOutgoingMessage.message.text, 'Hello World!');
 
       const body3 = await bot.sendTextMessageTo('Change this again 2', 'user_id');
-      t.is(body3.sentMessage.message.text, 'Hello World!');
+      t.is(body3.sentOutgoingMessage.message.text, 'Hello World!');
 
       resolve();
     } catch (err) {
@@ -649,8 +649,10 @@ test('sets up the outgoing middleware which is ignored if specified so in sendOp
         const bodies = await bot.sendTextCascadeTo(
           ['message1', 'message2'], 'user_id', { ignoreMiddleware: true });
 
-        t.is(bodies[0].sentMessage.message.text, 'message1', 'sentMessage was not as expected')
-        t.is(bodies[1].sentMessage.message.text, 'message2', 'sentMessage was not as expected')
+        t.is(bodies[0].sentOutgoingMessage.message.text, 'message1',
+          'sentOutgoingMessage was not as expected');
+        t.is(bodies[1].sentOutgoingMessage.message.text, 'message2',
+          'sentOutgoingMessage was not as expected');
 
         botmaster.server.close(resolve);
       } catch (err) {
@@ -713,7 +715,7 @@ test('sets up the outgoing middleware which is aware of update when sending mess
       incoming: {
         cb: async (bot, update, next) => {
           const body = await bot.reply(update, 'Hello World!');
-          t.is(body.sentMessage.message.text, 'Hello World!');
+          t.is(body.sentOutgoingMessage.message.text, 'Hello World!');
           botmaster.server.close(resolve);
         },
       },
@@ -756,7 +758,7 @@ test('sets up the outgoing middleware which is aware of update when sending mess
 
     botmaster.on('update', async (bot, update) => {
       const body = await bot.reply(update, 'Hello World!');
-      t.is(body.sentMessage.message.text, 'Hello World!');
+      t.is(body.sentOutgoingMessage.message.text, 'Hello World!');
       botmaster.server.close(resolve);
     });
 

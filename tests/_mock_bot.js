@@ -4,6 +4,8 @@ const BaseBot = require('../lib/base_bot');
 const express = require('express');
 const expressBodyParser = require('body-parser');
 const Koa = require('koa');
+const assign = require('lodash').assign;
+const get = require('lodash').get;
 
 class MockBot extends BaseBot {
 
@@ -84,7 +86,7 @@ class MockBot extends BaseBot {
     app.use(expressBodyParser.json());
 
     app.post('*', (req, res) => {
-      const update = this.__formatUpdate(req.body);
+      const update = this.__formatRawUpdate(req.body);
       this.__emitUpdate(update);
 
       res.sendStatus(200);
@@ -103,7 +105,7 @@ class MockBot extends BaseBot {
 
       ctx.req.on('end', () => {
         const body = JSON.parse(bodyString);
-        const update = this.__formatUpdate(body);
+        const update = this.__formatRawUpdate(body);
         this.__emitUpdate(update);
       });
 
@@ -112,20 +114,21 @@ class MockBot extends BaseBot {
   }
 
 
-  __formatUpdate(rawUpdate, botmasterUserId) {
+  __formatRawUpdate(rawUpdate) {
     const timestamp = Math.floor(Date.now());
+    const recipientId = get('recipient.id', rawUpdate, 'update_id');
 
     const update = {
       raw: rawUpdate,
       sender: {
-        id: botmasterUserId,
+        id: recipientId,
       },
       recipient: {
         id: this.id,
       },
       timestamp,
       message: {
-        mid: `${this.id}.${botmasterUserId}.${String(timestamp)}.`,
+        mid: `${this.id}.${recipientId}.${String(timestamp)}.`,
         seq: null,
       },
     };
@@ -141,20 +144,27 @@ class MockBot extends BaseBot {
     return update;
   }
 
-  __sendMessage(message, sendOptions) {
-    return this.__sendRaw(message);
+  // doesn't actually do anything in mock_bot
+  __formatOutgoingMessage(outgoingMessage) {
+    const rawMessage = assign({}, outgoingMessage);
+    return Promise.resolve(rawMessage);
   }
 
-  // sendRaw and __sendMessage are really the same thing for this MockBot
-  // they both testing purposes anyways
-  __sendRaw(message) {
-    const timestamp = Math.floor(Date.now());
+  __sendMessage(rawMessage) {
     const responseBody = {
-      recipient_id: message.recipient.id,
-      message_id: `${this.id}.${message.recipient.id}.${String(timestamp)}`,
+      nonStandard: 'responseBody',
     };
 
     return Promise.resolve(responseBody);
+  }
+
+  __createStandardBodyResponseComponents(sentOutgoingMessage, sentRawMessage, raw) {
+    const timestamp = Math.floor(Date.now());
+
+    return Promise.resolve({
+      recipient_id: sentRawMessage.recipient.id,
+      message_id: `${this.id}.${sentRawMessage.recipient.id}.${String(timestamp)}`,
+    });
   }
 
   __getUserInfo(userId) {

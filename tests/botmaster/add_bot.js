@@ -49,6 +49,10 @@ const arbitraryBotMacro = (t, botSettings) => {
         t.deepEqual(update.raw, updateToSend);
         botmaster.server.close(resolve);
       });
+
+      botmaster.on('error', (err) => {
+        botmaster.server.close(resolve);
+      });
     });
   });
 };

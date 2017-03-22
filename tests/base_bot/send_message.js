@@ -7,7 +7,7 @@ import { assign } from 'lodash';
 import MockBot from '../_mock_bot';
 
 const sendMessageMacro = (t, params) => {
-  t.plan(6);
+  t.plan(10);
 
   return new Promise((resolve) => {
     // always run both with and without callback
@@ -22,10 +22,50 @@ const sendMessageMacro = (t, params) => {
         }
       }
 
-      t.deepEqual(assign({}, body.sentMessage), params.expectedSentMessage,
-        'sentMessage is not same as message');
-      t.truthy(body.recipient_id);
-      t.truthy(body.message_id);
+      t.deepEqual(assign({}, body.sentOutgoingMessage), params.expectedSentMessage,
+        'sentOutgoingMessage is not same as message');
+      t.deepEqual(body.sentRawMessage, params.expectedSentMessage,
+        'sentRawMessage is not same as expected');
+      t.deepEqual(body.raw, { nonStandard: 'responseBody' },
+        'raw is not same as expected raw body response');
+      t.truthy(body.recipient_id, 'recipient_id not present');
+      t.truthy(body.message_id, 'message_id not present');
+
+      cbPassCount += 1;
+      if (cbPassCount === 2) {
+        resolve();
+      }
+    };
+
+    // test using promises
+    params.sendMessageMethod().then(cb)
+    .catch((err) => {
+      t.false(true, err.message);
+      resolve();
+    });
+    // and using standard callback function
+    params.sendMessageMethod(cb);
+  });
+};
+
+const sendRawMessageMacro = (t, params) => {
+  t.plan(2);
+
+  return new Promise((resolve) => {
+    // always run both with and without callback
+    let cbPassCount = 0;
+    const cb = (err, body) => {
+      // This needs to be a promise based callback.
+      if (!body) {
+        body = err;
+        if (body instanceof Error) {
+          t.false(true, err.message);
+          resolve();
+        }
+      }
+
+      t.deepEqual(body, { nonStandard: 'responseBody' },
+        'body is not same as expected raw body response');
 
       cbPassCount += 1;
       if (cbPassCount === 2) {
@@ -45,7 +85,7 @@ const sendMessageMacro = (t, params) => {
 };
 
 const sendCascadeMessageMacro = (t, params) => {
-  t.plan(params.expectedSentMessages.length * 6);
+  t.plan(params.planFor);
 
   return new Promise((resolve) => {
     // always run both with and without callback
@@ -62,12 +102,20 @@ const sendCascadeMessageMacro = (t, params) => {
 
       for (let i = 0; i < bodies.length; i += 1) {
         const body = bodies[i];
-        const sentMessage = body.sentMessage;
-        const expectedSentMessage = params.expectedSentMessages[i];
-        t.deepEqual(assign({}, sentMessage), expectedSentMessage,
-          'sentMessage is not same as message');
-        t.truthy(body.recipient_id);
-        t.truthy(body.message_id);
+        if (body.raw) {
+          const expectedSentMessage = params.expectedSentMessages[i];
+          t.deepEqual(assign({}, body.sentOutgoingMessage), expectedSentMessage,
+            'sentOutgoingMessage is not same as message');
+          t.deepEqual(body.sentRawMessage, expectedSentMessage,
+            'sentRawMessage is not same as expected');
+          t.deepEqual(body.raw, { nonStandard: 'responseBody' },
+            'raw is not same as expected raw body response');
+          t.truthy(body.recipient_id, 'recipient_id not present');
+          t.truthy(body.message_id, 'message_id not present');
+        } else {
+          t.deepEqual(body, { nonStandard: 'responseBody' },
+            'body is not same as expected raw body response');
+        }
       }
 
       cbPassCount += 1;
@@ -187,8 +235,8 @@ const sendMessageErrorMacro = (t, params) => {
   const bot = new MockBot();
   const messageToSend = outgoingMessageFixtures.audioMessage();
 
-  test('#sendRaw works', sendMessageMacro, {
-    sendMessageMethod: bot.sendRaw.bind(bot, messageToSend),
+  test('#sendRawMessage works', sendRawMessageMacro, {
+    sendMessageMethod: bot.sendRawMessage.bind(bot, messageToSend),
     expectedSentMessage: outgoingMessageFixtures.audioMessage(),
   });
 }
@@ -517,6 +565,7 @@ const sendMessageErrorMacro = (t, params) => {
 
   test('#sendCascade works with raw messages', sendCascadeMessageMacro, {
     sendMessageMethod: bot.sendCascade.bind(bot, messageArray),
+    planFor: 4, // num assertions to plan for
     expectedSentMessages,
   });
 }
@@ -532,6 +581,7 @@ const sendMessageErrorMacro = (t, params) => {
 
   test('#sendCascade works with valid messages', sendCascadeMessageMacro, {
     sendMessageMethod: bot.sendCascade.bind(bot, messageArray),
+    planFor: 20,
     expectedSentMessages,
   });
 }
@@ -546,6 +596,7 @@ const sendMessageErrorMacro = (t, params) => {
 
   test('#sendCascade works with single valid messages', sendCascadeMessageMacro, {
     sendMessageMethod: bot.sendCascade.bind(bot, messageArray),
+    planFor: 10,
     expectedSentMessages,
   });
 }
@@ -566,6 +617,7 @@ const sendMessageErrorMacro = (t, params) => {
 
   test('#sendCascade works with mixed raw and botmaster messages', sendCascadeMessageMacro, {
     sendMessageMethod: bot.sendCascade.bind(bot, messageArray),
+    planFor: 12,
     expectedSentMessages,
   });
 }
@@ -584,6 +636,7 @@ const sendMessageErrorMacro = (t, params) => {
 
   test('#sendTextCascadeTo works', sendCascadeMessageMacro, {
     sendMessageMethod: bot.sendTextCascadeTo.bind(bot, textArray, 'user_id'),
+    planFor: 20,
     expectedSentMessages,
   });
 }

@@ -23,7 +23,7 @@
     "match": [],
     "serial": true,
     "verbose": true,
-    "failFast": false,
+    "failFast": true,
     "tap": false,
     "powerAssert": false
   },

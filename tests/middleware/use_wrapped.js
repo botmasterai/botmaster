@@ -128,7 +128,6 @@ test('results in error being thrown if error occurs in outgoing of wrapped', (t)
           'Error message is not same as expected');
         botmaster.server.close(resolve);
       }
-
     });
   });
 });
@@ -152,20 +151,18 @@ test('sets up the wrapped middleware that then gets hit in the order expected of
           next();
         },
       },
-    });
-
-    botmaster.use({
+    })
+    .use({
       incoming: {
         cb: async (bot, update, next) => {
           update.message.text += '!';
           const body = await bot.reply(update, 'Goodbye World!');
-          t.is(body.sentMessage.message.text, 'We\'re done!', 'message object not as expected after going through outgoing middleware');
+          t.is(body.sentOutgoingMessage.message.text, 'We\'re done!', 'message object not as expected after going through outgoing middleware');
           botmaster.server.close(resolve);
         },
       },
-    });
-
-    botmaster.use({
+    })
+    .use({
       outgoing: {
         cb: (bot, update, message, next) => {
           t.is(update.message.text, 'Hello World!', 'update object not as expected at start of outgoing');
@@ -174,9 +171,8 @@ test('sets up the wrapped middleware that then gets hit in the order expected of
         },
 
       },
-    });
-
-    botmaster.useWrapped({
+    })
+    .useWrapped({
       incoming: {
         cb: (bot, update, next) => {
           update.message.text = 'Hello';
@@ -189,11 +185,10 @@ test('sets up the wrapped middleware that then gets hit in the order expected of
           next();
         },
       },
-    });
+    })
+    .addBot(new MockBot())
 
-    botmaster.addBot(new MockBot());
-
-    botmaster.on('listening', async () => {
+    .on('listening', async () => {
       const bot = botmaster.bots[0];
       bot.__emitUpdate(incomingUpdateFixtures.textUpdate());
     });
@@ -236,7 +231,7 @@ test('sets up the wrapped middleware pairwise only. Even if one of the middlewar
       incoming: {
         cb: async (bot, update, next) => {
           const body = await bot.sendTextMessageTo('Goodbye');
-          t.is(body.sentMessage.message.text, 'Goodbye', 'message not as expected');
+          t.is(body.sentOutgoingMessage.message.text, 'Goodbye', 'message not as expected');
           botmaster.server.close(resolve);
         },
       },
@@ -275,20 +270,18 @@ test('sets up the wrapped middleware that then gets skipped as expected when spe
           next();
         },
       },
-    });
-
-    botmaster.use({
+    })
+    .use({
       incoming: {
         cb: async (bot, update, next) => {
           update.message.text += '!';
           const body = await bot.reply(update, 'Goodbye World!');
-          t.is(body.sentMessage.message.text, 'We\'re done!', 'message object not as expected after going through outgoing middleware');
+          t.is(body.sentOutgoingMessage.message.text, 'We\'re done!', 'message object not as expected after going through outgoing middleware');
           botmaster.server.close(resolve);
         },
       },
-    });
-
-    botmaster.use({
+    })
+    .use({
       outgoing: {
         cb: (bot, update, message, next) => {
           t.is(update.message.text, 'Hi!', 'update object not as expected at start of outgoing');
@@ -296,18 +289,16 @@ test('sets up the wrapped middleware that then gets skipped as expected when spe
           next('skipNonWrappedOutgoingOnly');
         },
       },
-    });
-
-    botmaster.use({
+    })
+    .use({
       outgoing: {
         cb: (bot, update, message, next) => {
           t.fail('should not be hitting second normal outgoing middleware');
           botmaster.server.close(resolve);
         },
       },
-    });
-
-    botmaster.useWrapped({
+    })
+    .useWrapped({
       incoming: {
         cb: (bot, update, next) => {
           update.message.text = 'Hi';
@@ -364,7 +355,7 @@ test('sets up the wrapped middleware that then gets skipped as expected when spe
     botmaster.on('update', async (bot, update) => {
       update.message.text += '!';
       const body = await bot.reply(update, 'Goodbye World!');
-      t.is(body.sentMessage.message.text, 'done!', 'message object not as expected after going through outgoing middleware');
+      t.is(body.sentOutgoingMessage.message.text, 'done!', 'message object not as expected after going through outgoing middleware');
       botmaster.server.close(resolve);
     });
 
