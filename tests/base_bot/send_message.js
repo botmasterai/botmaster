@@ -142,6 +142,9 @@ const sendMessageErrorMacro = (t, params) => {
     // always run both with and without callback
     let cbPassCount = 0;
     const cb = (err) => {
+      if (!err) {
+        t.false(true, 'Error should have been returned, but didn\'t get any');
+      }
       t.deepEqual(err.message, params.expectedErrorMessage,
         'Error message is not same as expected');
 
@@ -163,7 +166,9 @@ const sendMessageErrorMacro = (t, params) => {
       params.sendMessageMethod(cb);
     } catch (err) {
       // this occurs when sendMessageMethod can't even process
-      // i.e. error shouldn't be dealt with. Code definitely has error and should be changed
+      // i.e. error shouldn't be dealt with dynamically in code. try catch block
+      // should be used to identify the error, then removed once the developer
+      // understands how to use the method (in terms of sendOptions and cb).
       cb(err);
       // need to try again with cb in this case as it's not managed in first catch block
       try {
@@ -350,6 +355,23 @@ const sendMessageErrorMacro = (t, params) => {
     sendMessageMethod: bot.sendAttachmentFromUrlTo.bind(
       bot, 'audio', 'SOME_AUDIO_URL', 'user_id'),
     expectedErrorMessage: 'Bots of type mock can\'t send messages with attachment',
+  });
+}
+
+{
+  const bot = new MockBot({
+    sends: {
+      attachment: {
+        audio: false,
+        image: true,
+      },
+    },
+  });
+
+  test('#sendAttachmentFromUrlTo throws error if bot class does not support attachment of specific type', sendMessageErrorMacro, {
+    sendMessageMethod: bot.sendAttachmentFromUrlTo.bind(
+      bot, 'audio', 'SOME_AUDIO_URL', 'user_id'),
+    expectedErrorMessage: 'Bots of type mock can\'t send messages with audio attachment',
   });
 }
 
