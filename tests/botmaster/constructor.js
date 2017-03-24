@@ -41,7 +41,9 @@ test('should throw any error if settings.botsSetting are specified', (t) => {
   try {
     const botmaster = new Botmaster(settings);
   } catch (e) {
-    t.is(e.message.indexOf('TwoPointXError') > -1, true);
+    t.is(e.message.indexOf(
+      'Starting botmaster with botsSettings is no longer supported') > -1,
+      true, e.message);
   }
 });
 
@@ -54,7 +56,9 @@ test('should throw any error if settings.app are specified', (t) => {
   try {
     const botmaster = new Botmaster(settings);
   } catch (e) {
-    t.is(e.message.indexOf('TwoPointXError') > -1, true);
+    t.is(e.message.indexOf(
+      'Starting botmaster with app is no longer') > -1, true,
+      e.message);
   }
 });
 

@@ -2,8 +2,7 @@ import test from 'ava';
 import request from 'request-promise';
 import { assign } from 'lodash';
 import { outgoingMessageFixtures,
-         incomingUpdateFixtures,
-         attachmentFixtures } from 'botmaster-test-fixtures';
+         incomingUpdateFixtures } from 'botmaster-test-fixtures';
 
 import Botmaster from '../../lib';
 import MockBot from '../_mock_bot';
@@ -480,7 +479,7 @@ test('Making extensive use of options sets up correct incoming middleware', (t) 
 });
 
 test('Errors in outgoing middleware are emitted correctly', (t) => {
-  t.plan(2);
+  t.plan(1);
 
   return new Promise((resolve) => {
     const botmaster = new Botmaster();
@@ -501,12 +500,7 @@ test('Errors in outgoing middleware are emitted correctly', (t) => {
         t.is(err.message,
             '"message.blop is not a function". In outgoing middleware',
             'Error message did not match');
-        botmaster.bots[0].sendMessage({ text: 'Change this' }, (err2) => {
-          t.is(err2.message,
-              '"message.blop is not a function". In outgoing middleware',
-              'Error message did not match');
-          botmaster.server.close(resolve);
-        });
+        botmaster.server.close(resolve);
       });
     });
   });
@@ -664,7 +658,7 @@ test('sets up the outgoing middleware which is ignored if specified so in sendOp
 });
 
 test('sets up the outgoing middleware which is aware of update when manually set using sendOptions. or __createBotPatchedWithUpdate', (t) => {
-  t.plan(7);
+  t.plan(4);
 
   return new Promise((resolve) => {
     const botmaster = new Botmaster();
@@ -688,14 +682,11 @@ test('sets up the outgoing middleware which is aware of update when manually set
         await bot.sendMessage(
           outgoingMessageFixtures.textMessage(), { __update: mockUpdate });
 
+        // with a patchedBot
         const patchedBot = bot.__createBotPatchedWithUpdate(mockUpdate);
-
         await patchedBot.sendMessage(outgoingMessageFixtures.textMessage());
 
-        patchedBot.sendMessage(outgoingMessageFixtures.textMessage(), (err, body) => {
-          t.pass();
-          botmaster.server.close(resolve);
-        });
+        botmaster.server.close(resolve);
       } catch (err) {
         t.fail(err.message);
         botmaster.server.close(resolve);

@@ -6,178 +6,64 @@ import { assign } from 'lodash';
 
 import MockBot from '../_mock_bot';
 
-const sendMessageMacro = (t, params) => {
-  t.plan(10);
+const sendMessageMacro = async (t, params) => {
+  t.plan(5);
+  // test using promises
+  const body = await params.sendMessageMethod();
 
-  return new Promise((resolve) => {
-    // always run both with and without callback
-    let cbPassCount = 0;
-    const cb = (err, body) => {
-      // This needs to be a promise based callback.
-      if (!body) {
-        body = err;
-        if (body instanceof Error) {
-          t.false(true, err.message);
-          resolve();
-        }
-      }
+  t.deepEqual(assign({}, body.sentOutgoingMessage), params.expectedSentMessage,
+    'sentOutgoingMessage is not same as message');
+  t.deepEqual(body.sentRawMessage, params.expectedSentMessage,
+    'sentRawMessage is not same as expected');
+  t.deepEqual(body.raw, { nonStandard: 'responseBody' },
+    'raw is not same as expected raw body response');
+  t.truthy(body.recipient_id, 'recipient_id not present');
+  t.truthy(body.message_id, 'message_id not present');
+};
 
-      t.deepEqual(assign({}, body.sentOutgoingMessage), params.expectedSentMessage,
+const sendRawMessageMacro = async (t, params) => {
+  t.plan(1);
+
+  const body = await params.sendMessageMethod();
+
+  t.deepEqual(body, { nonStandard: 'responseBody' },
+    'body is not same as expected raw body response');
+};
+
+const sendCascadeMessageMacro = async (t, params) => {
+  t.plan(params.planFor);
+
+  const bodies = await params.sendMessageMethod();
+
+  for (let i = 0; i < bodies.length; i += 1) {
+    const body = bodies[i];
+    if (body.raw) {
+      const expectedSentMessage = params.expectedSentMessages[i];
+      t.deepEqual(assign({}, body.sentOutgoingMessage), expectedSentMessage,
         'sentOutgoingMessage is not same as message');
-      t.deepEqual(body.sentRawMessage, params.expectedSentMessage,
+      t.deepEqual(body.sentRawMessage, expectedSentMessage,
         'sentRawMessage is not same as expected');
       t.deepEqual(body.raw, { nonStandard: 'responseBody' },
         'raw is not same as expected raw body response');
       t.truthy(body.recipient_id, 'recipient_id not present');
       t.truthy(body.message_id, 'message_id not present');
-
-      cbPassCount += 1;
-      if (cbPassCount === 2) {
-        resolve();
-      }
-    };
-
-    // test using promises
-    params.sendMessageMethod().then(cb)
-    .catch((err) => {
-      t.false(true, err.message);
-      resolve();
-    });
-    // and using standard callback function
-    params.sendMessageMethod(cb);
-  });
-};
-
-const sendRawMessageMacro = (t, params) => {
-  t.plan(2);
-
-  return new Promise((resolve) => {
-    // always run both with and without callback
-    let cbPassCount = 0;
-    const cb = (err, body) => {
-      // This needs to be a promise based callback.
-      if (!body) {
-        body = err;
-        if (body instanceof Error) {
-          t.false(true, err.message);
-          resolve();
-        }
-      }
-
+    } else {
       t.deepEqual(body, { nonStandard: 'responseBody' },
         'body is not same as expected raw body response');
-
-      cbPassCount += 1;
-      if (cbPassCount === 2) {
-        resolve();
-      }
-    };
-
-    // test using promises
-    params.sendMessageMethod().then(cb)
-    .catch((err) => {
-      t.false(true, err.message);
-      resolve();
-    });
-    // and using standard callback function
-    params.sendMessageMethod(cb);
-  });
-};
-
-const sendCascadeMessageMacro = (t, params) => {
-  t.plan(params.planFor);
-
-  return new Promise((resolve) => {
-    // always run both with and without callback
-    let cbPassCount = 0;
-    const cb = (err, bodies) => {
-      // This needs to be a promise based callback.
-      if (!bodies) {
-        bodies = err;
-        if (bodies instanceof Error) {
-          t.false(true, err.message);
-          resolve();
-        }
-      }
-
-      for (let i = 0; i < bodies.length; i += 1) {
-        const body = bodies[i];
-        if (body.raw) {
-          const expectedSentMessage = params.expectedSentMessages[i];
-          t.deepEqual(assign({}, body.sentOutgoingMessage), expectedSentMessage,
-            'sentOutgoingMessage is not same as message');
-          t.deepEqual(body.sentRawMessage, expectedSentMessage,
-            'sentRawMessage is not same as expected');
-          t.deepEqual(body.raw, { nonStandard: 'responseBody' },
-            'raw is not same as expected raw body response');
-          t.truthy(body.recipient_id, 'recipient_id not present');
-          t.truthy(body.message_id, 'message_id not present');
-        } else {
-          t.deepEqual(body, { nonStandard: 'responseBody' },
-            'body is not same as expected raw body response');
-        }
-      }
-
-      cbPassCount += 1;
-      if (cbPassCount === 2) {
-        resolve();
-      }
-    };
-
-    // test using promises
-    params.sendMessageMethod().then(cb)
-    .catch((err) => {
-      t.false(true, err.message);
-      resolve();
-    });
-    // and using standard callback function
-    params.sendMessageMethod(cb);
-  });
-};
-
-const sendMessageErrorMacro = (t, params) => {
-  t.plan(2);
-
-  return new Promise((resolve) => {
-    // always run both with and without callback
-    let cbPassCount = 0;
-    const cb = (err) => {
-      if (!err) {
-        t.false(true, 'Error should have been returned, but didn\'t get any');
-      }
-      t.deepEqual(err.message, params.expectedErrorMessage,
-        'Error message is not same as expected');
-
-      cbPassCount += 1;
-      if (cbPassCount === 2) {
-        resolve();
-      }
-    };
-
-    // test using promises
-    try {
-      params.sendMessageMethod()
-      .then(() => {
-        t.false(true, 'Error should have been returned, but didn\'t get any');
-        resolve();
-      })
-      .catch(cb);
-      // and using standard callback function
-      params.sendMessageMethod(cb);
-    } catch (err) {
-      // this occurs when sendMessageMethod can't even process
-      // i.e. error shouldn't be dealt with dynamically in code. try catch block
-      // should be used to identify the error, then removed once the developer
-      // understands how to use the method (in terms of sendOptions and cb).
-      cb(err);
-      // need to try again with cb in this case as it's not managed in first catch block
-      try {
-        params.sendMessageMethod(cb);
-      } catch (err2) {
-        cb(err2);
-      }
     }
-  });
+  }
+};
+
+const sendMessageErrorMacro = async (t, params) => {
+  t.plan(1);
+
+  try {
+    await params.sendMessageMethod();
+    t.false(true, 'Error should have been returned, but didn\'t get any');
+  } catch (err) {
+    t.deepEqual(err.message, params.expectedErrorMessage,
+      'Error message is not same as expected');
+  }
 };
 
 
@@ -201,7 +87,7 @@ const sendMessageErrorMacro = (t, params) => {
 
   test('#sendMessage throws error when sendOptions is not of valid type on a patched bot', sendMessageErrorMacro, {
     sendMessageMethod: patchedBot.sendMessage.bind(patchedBot, messageToSend, 'Should not be valid'),
-    expectedErrorMessage: 'sendOptions should be of type object, not string',
+    expectedErrorMessage: 'sendOptions must be of type object. Got string instead',
   });
 }
 
@@ -212,8 +98,7 @@ const sendMessageErrorMacro = (t, params) => {
 
   test('#sendMessage throws error when sendOptions is not of valid type on a non patched bot', sendMessageErrorMacro, {
     sendMessageMethod: bot.sendMessage.bind(bot, messageToSend, 'Should not be valid'),
-    expectedErrorMessage: 'Last optional argument to sendMessage type function should be' +
-                          ' of type object if using promises or function if using callbacks',
+    expectedErrorMessage: 'sendOptions must be of type object. Got string instead',
   });
 }
 
@@ -223,16 +108,24 @@ const sendMessageErrorMacro = (t, params) => {
   const patchedBot = bot.__createBotPatchedWithUpdate({});
   const messageToSend = outgoingMessageFixtures.audioMessage();
 
-  test('#sendMessage throws error when cb is not of valid type on a non patched bot', sendMessageErrorMacro, {
-    sendMessageMethod: bot.sendMessage.bind(bot, messageToSend, {}, 'should throw error'),
-    expectedErrorMessage: 'Callback must be of type function when using' +
-                          ' sendMessage type functions. Remove last argument to use promises instead',
+  test('#sendMessage throws error when tried to use with callback', sendMessageErrorMacro, {
+    sendMessageMethod: bot.sendMessage.bind(bot, messageToSend, () => {}),
+    expectedErrorMessage: 'Using botmaster sendMessage type methods ' +
+      'with callback functions is no longer supported in botmaster 3. ' +
+      'See the latest documentation ' +
+      'at http://botmasterai.com to see the preferred syntax. ' +
+      'Alternatively, you can downgrade botmaster to 2.x.x by doing: ' +
+      '"npm install --save botmaster@2.x.x" or "yarn add botmaster@2.x.x"',
   });
 
   test('#sendMessage throws error when cb is not of valid type on a patched bot', sendMessageErrorMacro, {
-    sendMessageMethod: patchedBot.sendMessage.bind(patchedBot, messageToSend, {}, 'should throw error'),
-    expectedErrorMessage: 'Callback must be of type function when using' +
-                          ' sendMessage type functions. Remove last argument to use promises instead',
+    sendMessageMethod: patchedBot.sendMessage.bind(patchedBot, messageToSend, () => {}),
+    expectedErrorMessage: 'Using botmaster sendMessage type methods ' +
+      'with callback functions is no longer supported in botmaster 3. ' +
+      'See the latest documentation ' +
+      'at http://botmasterai.com to see the preferred syntax. ' +
+      'Alternatively, you can downgrade botmaster to 2.x.x by doing: ' +
+      '"npm install --save botmaster@2.x.x" or "yarn add botmaster@2.x.x"',
   });
 }
 
@@ -400,6 +293,17 @@ const sendMessageErrorMacro = (t, params) => {
 }
 
 {
+  const bot = new MockBot();
+  const buttonTitles = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
+
+  test('#sendDefaultButtonMessageTo throws error if button count is larger than 10', sendMessageErrorMacro, {
+    sendMessageMethod: bot.sendDefaultButtonMessageTo.bind(
+      bot, buttonTitles, undefined, 'user_id'),
+    expectedErrorMessage: 'buttonTitles must be of length 10 or less',
+  });
+}
+
+{
   const bot = new MockBot({
     sends: {
       text: false,
@@ -430,6 +334,23 @@ const sendMessageErrorMacro = (t, params) => {
 }
 
 {
+  const bot = new MockBot({
+    sends: {
+      attachment: {
+        image: false,
+      },
+      quickReply: true,
+    },
+  });
+
+  test('#sendDefaultButtonMessageTo throws error if bot class does not support image attachment and image attachment is set', sendMessageErrorMacro, {
+    sendMessageMethod: bot.sendDefaultButtonMessageTo.bind(
+      bot, [], attachmentFixtures.imageAttachment(), 'user_id'),
+    expectedErrorMessage: 'Bots of type mock can\'t send messages with image attachment',
+  });
+}
+
+{
   const bot = new MockBot();
   const buttonTitles = ['B1', 'B2'];
 
@@ -437,17 +358,6 @@ const sendMessageErrorMacro = (t, params) => {
     sendMessageMethod: bot.sendDefaultButtonMessageTo.bind(
       bot, buttonTitles, new MockBot(), 'user_id'),
     expectedErrorMessage: 'third argument must be a "String", an attachment "Object" or absent',
-  });
-}
-
-{
-  const bot = new MockBot();
-  const buttonTitles = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
-
-  test('#sendDefaultButtonMessageTo throws error if textOrAttachment is not valid', sendMessageErrorMacro, {
-    sendMessageMethod: bot.sendDefaultButtonMessageTo.bind(
-      bot, buttonTitles, undefined, 'user_id'),
-    expectedErrorMessage: 'buttonTitles must be of length 10 or less',
   });
 }
 
@@ -583,12 +493,10 @@ const sendMessageErrorMacro = (t, params) => {
   };
 
   const messageArray = [{ raw: rawMessage1 }, { raw: rawMessage2 }];
-  const expectedSentMessages = [rawMessage1, rawMessage2];
 
   test('#sendCascade works with raw messages', sendCascadeMessageMacro, {
     sendMessageMethod: bot.sendCascade.bind(bot, messageArray),
-    planFor: 4, // num assertions to plan for
-    expectedSentMessages,
+    planFor: 2, // num assertions to plan for
   });
 }
 
@@ -603,7 +511,7 @@ const sendMessageErrorMacro = (t, params) => {
 
   test('#sendCascade works with valid messages', sendCascadeMessageMacro, {
     sendMessageMethod: bot.sendCascade.bind(bot, messageArray),
-    planFor: 20,
+    planFor: 10,
     expectedSentMessages,
   });
 }
@@ -618,7 +526,7 @@ const sendMessageErrorMacro = (t, params) => {
 
   test('#sendCascade works with single valid messages', sendCascadeMessageMacro, {
     sendMessageMethod: bot.sendCascade.bind(bot, messageArray),
-    planFor: 10,
+    planFor: 5,
     expectedSentMessages,
   });
 }
@@ -639,7 +547,7 @@ const sendMessageErrorMacro = (t, params) => {
 
   test('#sendCascade works with mixed raw and botmaster messages', sendCascadeMessageMacro, {
     sendMessageMethod: bot.sendCascade.bind(bot, messageArray),
-    planFor: 12,
+    planFor: 6,
     expectedSentMessages,
   });
 }
@@ -658,7 +566,7 @@ const sendMessageErrorMacro = (t, params) => {
 
   test('#sendTextCascadeTo works', sendCascadeMessageMacro, {
     sendMessageMethod: bot.sendTextCascadeTo.bind(bot, textArray, 'user_id'),
-    planFor: 20,
+    planFor: 10,
     expectedSentMessages,
   });
 }
