@@ -7,7 +7,7 @@ import { outgoingMessageFixtures,
 import Botmaster from '../../lib';
 import MockBot from '../_mock_bot';
 
-test('throws an error if key is not incoming or outgoing', (t) => {
+test.only('throws an error if key is not incoming or outgoing', (t) => {
   t.plan(1);
 
   const bot = new MockBot();
@@ -22,7 +22,7 @@ test('throws an error if key is not incoming or outgoing', (t) => {
   }
 });
 
-test('throws an error if middlewareCallback is not defined', (t) => {
+test('throws an error if controller is not defined', (t) => {
   t.plan(1);
 
   const bot = new MockBot();
