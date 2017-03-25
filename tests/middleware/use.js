@@ -7,13 +7,38 @@ import { outgoingMessageFixtures,
 import Botmaster from '../../lib';
 import MockBot from '../_mock_bot';
 
-test.only('throws an error if key is not incoming or outgoing', (t) => {
+test.beforeEach((t) => {
+  return new Promise((resolve) => {
+    t.context.botmaster = new Botmaster();
+    t.context.bot = new MockBot({
+      requiresWebhook: true,
+      webhookEndpoint: 'webhook',
+      type: 'express',
+    });
+    t.context.botmaster.addBot(t.context.bot);
+    t.context.baseRequestOptions = {
+      method: 'POST',
+      uri: 'http://localhost:3000/express/webhook',
+      body: {},
+      json: true,
+      resolveWithFullResponse: true,
+    };
+    t.context.botmaster.on('listening', resolve);
+  });
+});
+
+test.afterEach((t) => {
+  return new Promise((resolve) => {
+    t.context.botmaster.server.close(resolve);
+  });
+});
+
+test('throws an error if type is not incoming or outgoing', (t) => {
   t.plan(1);
 
-  const bot = new MockBot();
   try {
-    bot.use({
-      something: 'something',
+    t.context.botmaster.use({
+      type: 'something',
     });
   } catch (err) {
     t.is(err.message,
@@ -25,130 +50,54 @@ test.only('throws an error if key is not incoming or outgoing', (t) => {
 test('throws an error if controller is not defined', (t) => {
   t.plan(1);
 
-  const bot = new MockBot();
   try {
-    bot.use({
-      incoming: 'something',
+    t.context.botmaster.use({
+      type: 'incoming',
     });
   } catch (err) {
     t.is(err.message,
-      'middlewareCallback can\'t be of type undefined. It needs to be a function',
+      'middleware controller can\'t be of type undefined. It needs to be a function',
       'Error message is not the same as expected');
   }
 });
 
-test('throws an error if middlewareCallback is not a function', (t) => {
+test.only('throws an error if middlewareCallback is not a function', (t) => {
   t.plan(1);
 
-  const bot = new MockBot();
   try {
-    bot.use({
-      incoming: {
-        cb: 'not a function',
-      },
+    t.context.botmaster.use({
+      type: 'incoming',
+      controller: 'not valid',
     });
   } catch (err) {
     t.is(err.message,
-      'middlewareCallback can\'t be of type string. It needs to be a function',
+      'middleware controller can\'t be of type string. It needs to be a function',
       'Error message is not the same as expected');
   }
 });
 
-test('throws an error if options is not an object', (t) => {
-  t.plan(1);
-
-  const bot = new MockBot();
-  try {
-    bot.use({
-      incoming: {
-        cb: __ => __, // this is just a function returning it's passed value
-        options: 'something',
-      },
-    });
-  } catch (err) {
-    t.is(err.message,
-      'options can\'t be of type string. It needs to be an object',
-      'Error message is not the same as expected');
-  }
-});
-
-test('throws an error if both incoming and outgoing are specified in params', (t) => {
-  t.plan(1);
-
-  const bot = new MockBot();
-  try {
-    bot.use({
-      incoming: {
-        cb: __ => __, // this is just a function returning it's passed value
-      },
-      outgoing: {
-        cb: __ => __,
-      },
-    });
-  } catch (err) {
-    t.is(err.message,
-      '"use" should be called with only one of incoming or outgoing. Use useWrapped instead',
-      'Error message is not the same as expected');
-  }
-});
-
-test('throws an error if options contains both botTypesToInclude and botTypesToExclude', (t) => {
-  t.plan(1);
-
-  const bot = new MockBot();
-  try {
-    bot.use({
-      incoming: {
-        cb: __ => __, // this is just a function returning it's passed value
-        options: {
-          botTypesToExclude: 'a',
-          botTypesToInclude: 'b',
-        },
-      },
-    });
-  } catch (err) {
-    t.is(err.message,
-      'Please use only one of botTypesToInclude and botTypesToExclude');
-  }
-});
-
-test('Errors in incoming middleware are emitted correctly', (t) => {
+test.only('Errors in incoming middleware are emitted correctly', (t) => {
   t.plan(1);
 
   return new Promise((resolve) => {
-    const botmaster = new Botmaster();
-    botmaster.addBot(new MockBot({
-      requiresWebhook: true,
-      webhookEndpoint: 'webhook',
-      type: 'express',
-    }));
+    const botmaster = t.context.botmaster;
 
     botmaster.use({
-      incoming: {
-        cb: (bot, update, next) => {
-          update.blop();
-          next();
-        },
+      type: 'incoming',
+      controller: (bot, update) => {
+        update.blop();
       },
     });
 
     botmaster.on('error', (bot, err) => {
       t.is(err.message,
-           '"update.blop is not a function". In incoming middleware',
-           'Error message did not match');
-      botmaster.server.close(resolve);
+        '"update.blop is not a function". This is most probably on your end.',
+        'Error message did not match');
+      resolve();
     });
 
-    botmaster.on('listening', () => {
-      const updateToSend = { text: 'Change this' };
-      const requestOptions = {
-        method: 'POST',
-        uri: 'http://localhost:3000/express/webhook',
-        json: updateToSend,
-      };
-
-      request(requestOptions);
-    });
+    t.context.baseRequestOptions.body = { text: 'Change this' };
+    request(t.context.baseRequestOptions);
   });
 });
 
@@ -226,14 +175,8 @@ test('sets up the incoming middleware function specified if all is setup correct
     });
 
     botmaster.on('listening', () => {
-      const updateToSend = { text: 'Change this' };
-      const requestOptions = {
-        method: 'POST',
-        uri: 'http://localhost:3000/express/webhook',
-        json: updateToSend,
-      };
-
-      request(requestOptions);
+      t.context.baseRequestOptions.body = { text: 'Change this' };
+      request(t.context.baseRequestOptions.body);
     });
   });
 });
