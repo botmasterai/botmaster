@@ -61,7 +61,7 @@ test('throws an error if controller is not defined', (t) => {
   }
 });
 
-test.only('throws an error if middlewareCallback is not a function', (t) => {
+test('throws an error if middlewareCallback is not a function', (t) => {
   t.plan(1);
 
   try {
@@ -76,7 +76,7 @@ test.only('throws an error if middlewareCallback is not a function', (t) => {
   }
 });
 
-test.only('Errors in incoming middleware are emitted correctly', (t) => {
+test('Errors in incoming middleware are emitted correctly', (t) => {
   t.plan(1);
 
   return new Promise((resolve) => {
@@ -84,8 +84,9 @@ test.only('Errors in incoming middleware are emitted correctly', (t) => {
 
     botmaster.use({
       type: 'incoming',
-      controller: (bot, update) => {
+      controller: (bot, update, next) => {
         update.blop();
+        next();
       },
     });
 
@@ -105,46 +106,33 @@ test('sets up the incoming middleware function specified if good params passed. 
   t.plan(1);
 
   return new Promise((resolve) => {
-    const botmaster = new Botmaster();
-    botmaster.addBot(new MockBot({
-      requiresWebhook: true,
-      webhookEndpoint: 'webhook',
-      type: 'express',
-    }));
+    const botmaster = t.context.botmaster;
 
     botmaster.use({
-      incoming: {
-        cb: (bot, update, next) => {
-          update.message.text = 'Hello World!';
-          next();
-        },
+      type: 'incoming',
+      controller: (bot, update, next) => {
+        update.message.text = 'Hello World!';
+        next();
       },
     });
 
     botmaster.use({
-      outgoing: {
-        cb: (bot, update, next) => {
-          t.fail('outgoing middleware should not be called');
-          next();
-        },
+      type: 'outgoing',
+      controller: () => {
+        t.fail('outgoing middleware should not be called');
       },
     });
 
-    botmaster.on('update', (bot, update) => {
-      t.is(update.message.text, 'Hello World!', 'update object did not match');
-      botmaster.server.close(resolve);
+    botmaster.use({
+      type: 'incoming',
+      controller: (bot, update) => {
+        t.is(update.message.text, 'Hello World!', 'update object did not match');
+        resolve();
+      },
     });
 
-    botmaster.on('listening', () => {
-      const updateToSend = { text: 'Change this' };
-      const requestOptions = {
-        method: 'POST',
-        uri: 'http://localhost:3000/express/webhook',
-        json: updateToSend,
-      };
-
-      request(requestOptions);
-    });
+    t.context.baseRequestOptions.body = { text: 'Change this' };
+    request(t.context.baseRequestOptions);
   });
 });
 
@@ -152,152 +140,123 @@ test('sets up the incoming middleware function specified if all is setup correct
   t.plan(1);
 
   return new Promise((resolve) => {
-    const botmaster = new Botmaster();
+    const botmaster = t.context.botmaster;
 
     botmaster.use({
-      incoming: {
-        cb: (bot, update, next) => {
-          update.message.text = 'Hello World!';
-          next();
-        },
+      type: 'incoming',
+      controller: (bot, update, next) => {
+        update.message.text = 'Hello World!';
+        next();
       },
     });
 
-    botmaster.addBot(new MockBot({
-      requiresWebhook: true,
-      webhookEndpoint: 'webhook',
-      type: 'express',
-    }));
+    // easiest way to "add" bot after a use
+    botmaster.removeBot(t.context.bot);
+    botmaster.addBot(t.context.bot);
 
-    botmaster.on('update', (bot, update) => {
-      t.is(update.message.text, 'Hello World!', 'update object did not match');
-      botmaster.server.close(resolve);
+    botmaster.use({
+      type: 'incoming',
+      controller: (bot, update) => {
+        t.is(update.message.text, 'Hello World!', 'update object did not match');
+        resolve();
+      },
     });
 
-    botmaster.on('listening', () => {
-      t.context.baseRequestOptions.body = { text: 'Change this' };
-      request(t.context.baseRequestOptions.body);
-    });
+    t.context.baseRequestOptions.body = { text: 'Change this' };
+    request(t.context.baseRequestOptions);
   });
 });
 
-test('sets up the incoming middleware in standalone using and calls them using __emitUpdate', (t) => {
+test('sets up the incoming middleware in standalone and calls them using __emitUpdate', (t) => {
   t.plan(1);
 
   return new Promise((resolve) => {
-    const bot = new MockBot({
-      requiresWebhook: true,
-      webhookEndpoint: 'webhook',
-      type: 'express',
-    });
-
-    bot.use({
-      incoming: {
-        cb: (bot, update, next) => {
-          update.text = 'Hello World!';
-          next();
-        },
+    t.context.botmaster.use({
+      type: 'incoming',
+      controller: (bot, update, next) => {
+        update.text = 'Hello World!';
+        next();
       },
     });
 
-    bot.on('update', (update) => {
-      t.is(update.text, 'Hello World!', 'update object did not match');
-      resolve();
+    t.context.botmaster.use({
+      type: 'incoming',
+      controller: (bot, update) => {
+        t.is(update.text, 'Hello World!', 'update object did not match');
+        resolve();
+      },
     });
 
-    bot.__emitUpdate({ text: 'Change this' });
+    t.context.bot.__emitUpdate({ text: 'Change this' });
   });
 });
 
 
-test('sets up the incoming middleware in order of declaration', (t) => {
+test.only('sets up the incoming middleware in order of declaration', (t) => {
   t.plan(1);
 
   return new Promise((resolve) => {
-    const bot = new MockBot({
-      requiresWebhook: true,
-      webhookEndpoint: 'webhook',
-      type: 'express',
-    });
-
-    bot.use({
-      incoming: {
-        cb: (bot, update, next) => {
-          update.text = 'Hello World!';
-          next();
-        },
+    t.context.botmaster.use({
+      type: 'incoming',
+      controller: async (bot, update, next) => {
+        update.text = 'Hello World!';
+        next();
       },
     });
 
-    bot.use({
-      incoming: {
-        cb: (bot, update, next) => {
-          update.text += ' And others';
-          next();
-        },
+    t.context.botmaster.use({
+      type: 'incoming',
+      controller: (bot, update, next) => {
+        update.text += ' And others';
+        next();
       },
     });
 
-    bot.on('update', (update) => {
-      t.is(update.text, 'Hello World! And others', 'update object did not match');
-      resolve();
+    t.context.botmaster.use({
+      type: 'incoming',
+      controller: (bot, update) => {
+        t.is(update.text, 'Hello World! And others', 'update object did not match');
+        resolve();
+      },
     });
 
-    bot.__emitUpdate({ text: 'Change this' });
+    t.context.bot.__emitUpdate({ text: 'Change this' });
   });
 });
 
-test('sets up the incoming middleware in order of declaration and skips if specified so', (t) => {
-  t.plan(2);
+test.only('using skip in incoming middleware works as expected', (t) => {
+  t.plan(1);
 
   return new Promise((resolve) => {
-    const bot = new MockBot({
-      requiresWebhook: true,
-      webhookEndpoint: 'webhook',
-      type: 'express',
-    });
-
-    let pass = 1;
-    bot.use({
-      incoming: {
-        cb: (bot, update, next) => {
-          update.text = 'Hello World!';
-          if (pass === 1) {
-            pass += 1;
-            return next('skip');
-          }
-
-          return next('skipAllIncoming');
-        },
+    t.context.botmaster.use({
+      type: 'incoming',
+      controller: (bot, update, next) => {
+        next('skip');
       },
     });
 
-    bot.use({
-      incoming: {
-        cb: (bot, update, next) => {
-          t.fail('Should have been skipped');
-          next();
-        },
+    t.context.botmaster.use({
+      type: 'incoming',
+      controller: () => {
+        t.fail('this should not get hit');
       },
     });
 
-    bot.on('update', (update) => {
-      t.is(update.text, 'Hello World!', 'update object did not match');
+    // I'm guessing this should take less time if the second middleware were to
+    // get hit
+    setTimeout(() => {
+      t.pass();
       resolve();
-    });
+    }, 50);
 
-    bot.on('error', (err) => {
-      t.fail(err.message);
-      resolve();
-    });
 
-    bot.__emitUpdate({ text: 'Change this' });
-    bot.__emitUpdate({ text: 'Change this' });
+    t.context.bot.__emitUpdate({ text: 'Change this' });
   });
 });
 
 
-test('Making extensive use of options sets up correct incoming middleware', (t) => {
+test.only('echo, read and delivery are not included by default', (t) => {
+  // TODO, update botmaster-test-fictures first
   t.plan(3);
 
   return new Promise((resolve) => {
