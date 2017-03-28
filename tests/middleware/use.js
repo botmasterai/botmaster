@@ -33,6 +33,18 @@ test.afterEach((t) => {
   });
 });
 
+test('throws an error middleware is not an object', (t) => {
+  t.plan(1);
+
+  try {
+    t.context.botmaster.use('something');
+  } catch (err) {
+    t.is(err.message,
+      'middleware should be an object. Not string',
+      'Error message is not the same as expected');
+  }
+});
+
 test('throws an error if type is not incoming or outgoing', (t) => {
   t.plan(1);
 
@@ -151,7 +163,70 @@ test('using async function', incomingMiddlewareErrorMacro,
     update.blop();
   });
 
-test('Throws error if next is used within returned promise', (t) => {
+test('Error is emitted if error is thrown by user and does not inherit from Error', (t) => {
+  t.plan(1);
+
+  return new Promise((resolve) => {
+    const botmaster = t.context.botmaster;
+
+    botmaster.use({
+      controller: async () => {
+        const err = 'not expected';
+        throw err;
+      },
+      type: 'incoming',
+    });
+
+    botmaster.use({
+      type: 'incoming',
+      controller: () => {
+        t.fail('this middleware should not get hit');
+        resolve();
+      },
+    });
+
+    botmaster.on('error', (bot, err) => {
+      t.is(err,
+        'not expected',
+        'Error message did not match');
+      resolve();
+    });
+
+    request(t.context.baseRequestOptions);
+  });
+});
+
+test('Error is emitted if error is thrown by user and is falsy', (t) => {
+  t.plan(1);
+
+  return new Promise((resolve) => {
+    const botmaster = t.context.botmaster;
+
+    botmaster.use({
+      controller: () => Promise.reject(),
+      type: 'incoming',
+    });
+
+    botmaster.use({
+      type: 'incoming',
+      controller: () => {
+        t.fail('this middleware should not get hit');
+        resolve();
+      },
+    });
+
+    botmaster.on('error', (bot, err) => {
+      t.is(err,
+        'empty error object',
+        'Error message did not match');
+      resolve();
+    });
+
+    request(t.context.baseRequestOptions);
+  });
+});
+
+test('Emits error if next is used within returned promise', (t) => {
   t.plan(1);
 
   return new Promise((resolve) => {

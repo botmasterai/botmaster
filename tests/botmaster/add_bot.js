@@ -45,12 +45,15 @@ const arbitraryBotMacro = (t, botSettings) => {
 
       request(requestOptions);
 
-      botmaster.on('update', (onUpdateBot, update) => {
-        t.deepEqual(update.raw, updateToSend);
-        botmaster.server.close(resolve);
+      botmaster.use({
+        type: 'incoming',
+        controller: (onUpdateBot, update) => {
+          t.deepEqual(update.raw, updateToSend);
+          botmaster.server.close(resolve);
+        },
       });
 
-      botmaster.on('error', (err) => {
+      botmaster.on('error', () => {
         botmaster.server.close(resolve);
       });
     });
@@ -135,26 +138,29 @@ test('works with an express server AND both an express and a koa bot', (t) => {
 
       // catch update events
       let receivedUpdatesCount = 0;
-      botmaster.on('update', (onUpdateBot, update) => {
-        receivedUpdatesCount += 1;
-        if (update.raw.text.indexOf('Koa') > -1) {
-          t.deepEqual(update.raw, updateToSendToKoaBot);
-        } else if (update.raw.text.indexOf('express') > -1) {
-          t.deepEqual(update.raw, updateToSendToExpressBot);
-        }
-        if (receivedUpdatesCount === 2) {
-          const appRequestOptions = {
-            uri: 'http://localhost:3000/someRoute',
-            json: true,
-          };
-          request.get(appRequestOptions)
+      botmaster.use({
+        type: 'incoming',
+        controller: ('update', (onUpdateBot, update) => {
+          receivedUpdatesCount += 1;
+          if (update.raw.text.indexOf('Koa') > -1) {
+            t.deepEqual(update.raw, updateToSendToKoaBot);
+          } else if (update.raw.text.indexOf('express') > -1) {
+            t.deepEqual(update.raw, updateToSendToExpressBot);
+          }
+          if (receivedUpdatesCount === 2) {
+            const appRequestOptions = {
+              uri: 'http://localhost:3000/someRoute',
+              json: true,
+            };
+            request.get(appRequestOptions)
 
-          .then((body) => {
-            t.deepEqual(appResponse, body);
-            t.is(botmaster.server, myServer);
-            botmaster.server.close(resolve);
-          });
-        }
+            .then((body) => {
+              t.deepEqual(appResponse, body);
+              t.is(botmaster.server, myServer);
+              botmaster.server.close(resolve);
+            });
+          }
+        }),
       });
       // ////////////////////////////
     });
