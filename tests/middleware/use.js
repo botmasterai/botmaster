@@ -76,17 +76,22 @@ test('throws an error if middlewareCallback is not a function', (t) => {
   }
 });
 
-test('Errors in incoming middleware are emitted correctly', (t) => {
+const incomingMiddlewareErrorMacro = (t, controller) => {
   t.plan(1);
 
   return new Promise((resolve) => {
     const botmaster = t.context.botmaster;
 
     botmaster.use({
+      controller,
       type: 'incoming',
-      controller: (bot, update, next) => {
-        update.blop();
-        next();
+    });
+
+    botmaster.use({
+      type: 'incoming',
+      controller: () => {
+        t.fail('this middleware should not get hit');
+        resolve();
       },
     });
 
@@ -97,12 +102,56 @@ test('Errors in incoming middleware are emitted correctly', (t) => {
       resolve();
     });
 
-    t.context.baseRequestOptions.body = { text: 'Change this' };
     request(t.context.baseRequestOptions);
   });
-});
+};
 
-test('sets up the incoming middleware function specified if good params passed. Does not call any outgoing middleware when going through', (t) => {
+incomingMiddlewareErrorMacro.title = customTitlePart =>
+  `Errors in incoming middleware are emitted correctly ${customTitlePart}`;
+
+test('in synchronous middleware', incomingMiddlewareErrorMacro,
+  (bot, update) => {
+    update.blop();
+  });
+
+test('using next', incomingMiddlewareErrorMacro,
+  (bot, update, next) => {
+    process.nextTick(() => {
+      try {
+        update.blop();
+      } catch (err) {
+        next(err);
+      }
+    });
+  });
+
+test('using promises', incomingMiddlewareErrorMacro,
+  (bot, update) => {
+    return new Promise((resolve, reject) => {
+      process.nextTick(() => {
+        try {
+          update.blop();
+        } catch (err) {
+          reject(err);
+        }
+      });
+    });
+  });
+
+test('using async function', incomingMiddlewareErrorMacro,
+  async (bot, update) => {
+    // just a function that returns a promise
+    const somePromise = () => new Promise((resolve) => {
+      process.nextTick(() => {
+        resolve();
+      });
+    });
+
+    await somePromise();
+    update.blop();
+  });
+
+test('Throws error if next is used within returned promise', (t) => {
   t.plan(1);
 
   return new Promise((resolve) => {
@@ -110,9 +159,42 @@ test('sets up the incoming middleware function specified if good params passed. 
 
     botmaster.use({
       type: 'incoming',
-      controller: (bot, update, next) => {
+      controller: async (bot, update, next) => {
+        next('skip');
+      },
+    });
+
+    botmaster.use({
+      type: 'incoming',
+      controller: () => {
+        t.fail('this middleware should not get hit');
+        resolve();
+      },
+    });
+
+    botmaster.on('error', (bot, err) => {
+      t.is(err.message,
+        '"next can\'t be called if middleware returns a promise/is an async ' +
+        'function". This is most probably on your end.',
+        'Error message did not match');
+      resolve();
+    });
+
+    request(t.context.baseRequestOptions);
+  });
+});
+
+test('sets up the incoming middleware function specified if good params' +
+' passed. Does not call any outgoing middleware when going through', (t) => {
+  t.plan(1);
+
+  return new Promise((resolve) => {
+    const botmaster = t.context.botmaster;
+
+    botmaster.use({
+      type: 'incoming',
+      controller: async (bot, update) => {
         update.message.text = 'Hello World!';
-        next();
       },
     });
 
@@ -131,43 +213,12 @@ test('sets up the incoming middleware function specified if good params passed. 
       },
     });
 
-    t.context.baseRequestOptions.body = { text: 'Change this' };
     request(t.context.baseRequestOptions);
   });
 });
 
-test('sets up the incoming middleware function specified if all is setup correctly and use is specified before addBot', (t) => {
-  t.plan(1);
 
-  return new Promise((resolve) => {
-    const botmaster = t.context.botmaster;
-
-    botmaster.use({
-      type: 'incoming',
-      controller: (bot, update, next) => {
-        update.message.text = 'Hello World!';
-        next();
-      },
-    });
-
-    // easiest way to "add" bot after a use
-    botmaster.removeBot(t.context.bot);
-    botmaster.addBot(t.context.bot);
-
-    botmaster.use({
-      type: 'incoming',
-      controller: (bot, update) => {
-        t.is(update.message.text, 'Hello World!', 'update object did not match');
-        resolve();
-      },
-    });
-
-    t.context.baseRequestOptions.body = { text: 'Change this' };
-    request(t.context.baseRequestOptions);
-  });
-});
-
-test('sets up the incoming middleware in standalone and calls them using __emitUpdate', (t) => {
+test('sets up the incoming middleware and calls them using __emitUpdate', (t) => {
   t.plan(1);
 
   return new Promise((resolve) => {
@@ -187,28 +238,35 @@ test('sets up the incoming middleware in standalone and calls them using __emitU
       },
     });
 
-    t.context.bot.__emitUpdate({ text: 'Change this' });
+    t.context.bot.__emitUpdate({});
   });
 });
 
 
-test.only('sets up the incoming middleware in order of declaration', (t) => {
+test('sets up the incoming middleware in order of declaration', (t) => {
   t.plan(1);
 
   return new Promise((resolve) => {
     t.context.botmaster.use({
       type: 'incoming',
-      controller: async (bot, update, next) => {
-        update.text = 'Hello World!';
+      controller: (bot, update, next) => {
+        update.text = 'Hello ';
         next();
       },
     });
 
     t.context.botmaster.use({
       type: 'incoming',
-      controller: (bot, update, next) => {
+      controller: (bot, update) => {
+        update.text += 'World!';
+        return Promise.resolve();
+      },
+    });
+
+    t.context.botmaster.use({
+      type: 'incoming',
+      controller: async (bot, update) => {
         update.text += ' And others';
-        next();
       },
     });
 
@@ -220,380 +278,384 @@ test.only('sets up the incoming middleware in order of declaration', (t) => {
       },
     });
 
-    t.context.bot.__emitUpdate({ text: 'Change this' });
+    t.context.bot.__emitUpdate({});
   });
 });
 
-test.only('using skip in incoming middleware works as expected', (t) => {
+const incomingMiddlewareChainBreakerMacro = (t, controller) => {
   t.plan(1);
 
-  return new Promise((resolve) => {
+  return new Promise(async (resolve) => {
     t.context.botmaster.use({
       type: 'incoming',
-      controller: (bot, update, next) => {
-        next('skip');
-      },
+      controller,
     });
 
     t.context.botmaster.use({
       type: 'incoming',
       controller: () => {
-        t.fail('this should not get hit');
+        t.fail('this middleware should not get hit');
+        resolve();
       },
     });
 
-    // I'm guessing this should take less time if the second middleware were to
-    // get hit
-    setTimeout(() => {
+    const val = await t.context.bot.__emitUpdate({});
+    if (val) {
+      t.is(val, 'cancelled');
+    } else {
       t.pass();
+    }
+    resolve();
+  });
+};
+
+incomingMiddlewareChainBreakerMacro.title = customTitlePart =>
+  `using middleware chain breakers in incoming middleware works as expected ${customTitlePart}`;
+
+test('using next skip', incomingMiddlewareChainBreakerMacro, (bot, update, next) => {
+  next('skip');
+});
+
+test('using promise skip', incomingMiddlewareChainBreakerMacro,
+  () => Promise.resolve('skip'));
+
+test('using async skip', incomingMiddlewareChainBreakerMacro,
+  async () => 'skip');
+
+test('using next cancel', incomingMiddlewareChainBreakerMacro, (bot, update, next) => {
+  next('cancel');
+});
+
+test('using promise cancel', incomingMiddlewareChainBreakerMacro,
+  () => Promise.resolve('cancel'));
+
+test('using async cancel', incomingMiddlewareChainBreakerMacro,
+  async () => 'cancel');
+
+
+test('echo, read and delivery are not included by default', (t) => {
+  t.plan(3);
+
+  return new Promise((resolve) => {
+    t.context.botmaster.use({
+      type: 'incoming',
+      controller: () => {
+        t.fail('this middleware should never get hit in this test');
+        resolve();
+      },
+    });
+
+    let hitMiddlewareCount = 0;
+    const resolveWhenNeeded = () => {
+      hitMiddlewareCount += 1;
+      if (hitMiddlewareCount === 3) {
+        resolve();
+      }
+    };
+
+    t.context.botmaster.use({
+      type: 'incoming',
+      includeEcho: true,
+      controller: (bot, update, next) => {
+        t.truthy(update.message.is_echo, 'message is not an echo');
+        resolveWhenNeeded();
+        next();
+      },
+    });
+
+    t.context.botmaster.use({
+      type: 'incoming',
+      includeDelivery: true,
+      controller: (bot, update) => {
+        t.truthy(update.delivery, 'message is not a delivery confirmation');
+        resolveWhenNeeded();
+        return Promise.resolve();
+      },
+    });
+
+    t.context.botmaster.use({
+      type: 'incoming',
+      includeRead: true,
+      controller: async (bot, update) => {
+        t.truthy(update.read, 'message is not a read confirmation');
+        resolveWhenNeeded();
+      },
+    });
+
+    t.context.bot.__emitUpdate(incomingUpdateFixtures.echoUpdate());
+    t.context.bot.__emitUpdate(incomingUpdateFixtures.messageReadUpdate());
+    t.context.bot.__emitUpdate(incomingUpdateFixtures.messageDeliveredUpdate());
+  });
+});
+
+const outgoingMiddlewareErrorMacro = (t, controller) => {
+  t.plan(1);
+
+  return new Promise((resolve) => {
+    const botmaster = t.context.botmaster;
+
+    botmaster.use({
+      controller,
+      type: 'outgoing',
+    });
+
+    botmaster.use({
+      type: 'outgoing',
+      controller: () => {
+        t.fail('this middleware should not get hit');
+        resolve();
+      },
+    });
+
+    botmaster.bots[0].sendMessage({})
+    .catch((err) => {
+      t.is(err.message,
+          'message.blop is not a function',
+          'Error message did not match');
       resolve();
-    }, 50);
-
-
-    t.context.bot.__emitUpdate({ text: 'Change this' });
+    });
   });
-});
+};
 
+outgoingMiddlewareErrorMacro.title = customTitlePart =>
+  `Errors in outgoing middleware are thrown correctly ${customTitlePart}`;
 
-test.only('echo, read and delivery are not included by default', (t) => {
-  // TODO, update botmaster-test-fictures first
-  t.plan(3);
+test('in synchronous middleware', outgoingMiddlewareErrorMacro,
+  (bot, update, message) => {
+    message.blop();
+  });
 
-  return new Promise((resolve) => {
-    const botmaster = new Botmaster();
-    botmaster.addBot(new MockBot({
-      type: 'dontIncludeMe',
-      receives: {
-        text: true,
-        echo: true,
-      },
-      sends: {
-        text: true,
-        quickReply: true,
-      },
-    }));
-    botmaster.addBot(new MockBot({
-      type: 'includeMe',
-      receives: {
-        echo: true,
-      },
-      sends: {
-        text: true,
-        quickReply: true,
-      },
-    }));
-    botmaster.addBot(new MockBot({
-      type: 'excludeMe',
-      receives: {
-        text: true,
-        echo: true,
-      },
-      sends: {
-        text: true,
-      },
-      retrievesUserInfo: true,
-    }));
-
-    botmaster.use({
-      incoming: {
-        cb: (bot, update, next) => {
-          update.number += 1;
-          next();
-        },
-        options: {
-          botTypesToInclude: 'includeMe',
-        },
-      },
-    });
-
-    botmaster.use({
-      incoming: {
-        cb: (bot, update, next) => {
-          update.number += 10;
-          next();
-        },
-        options: {
-          botTypesToExclude: 'excludeMe',
-        },
-      },
-    });
-
-    botmaster.use({
-      incoming: {
-        cb: (bot, update, next) => {
-          update.number += 100;
-          next();
-        },
-        options: {
-          botReceives: 'text',
-        },
-      },
-    });
-
-    botmaster.use({
-      incoming: {
-        cb: (bot, update, next) => {
-          update.number += 1000;
-          next();
-        },
-        options: {
-          botSends: 'quickReply',
-        },
-      },
-    });
-
-    botmaster.use({
-      incoming: {
-        cb: (bot, update, next) => {
-          update.number += 10000;
-          next();
-        },
-        options: {
-          botRetrievesUserInfo: true,
-        },
-      },
-    });
-
-    let passes = 0;
-    botmaster.on('update', (bot, update) => {
-      passes += 1;
-      if (bot.type === 'dontIncludeMe') {
-        t.is(update.number, 1110, 'update object did not match for includeMe');
-      } else if (bot.type === 'includeMe') {
-        t.is(update.number, 1011, 'update object did not match for excludeMe');
-      } else if (bot.type === 'excludeMe') {
-        t.is(update.number, 100, 'update object did not match for dontIncludeMe');
-      }
-
-      if (passes === 3) {
-        botmaster.server.close(resolve);
-      }
-    });
-
-    botmaster.on('listening', () => {
-      // inside of here just to make sure I don't close a server
-      // that is not listening yet
-      for (const bot of botmaster.bots) {
-        bot.__emitUpdate({ number: 0 });
+test('using next', outgoingMiddlewareErrorMacro,
+  (bot, update, message, next) => {
+    process.nextTick(() => {
+      try {
+        message.blop();
+      } catch (err) {
+        next(err);
       }
     });
   });
-});
 
-test('Errors in outgoing middleware are emitted correctly', (t) => {
-  t.plan(1);
-
-  return new Promise((resolve) => {
-    const botmaster = new Botmaster();
-    botmaster.addBot(new MockBot());
-
-    botmaster.use({
-      outgoing: {
-        cb: (bot, message, next) => {
+test('using promises', outgoingMiddlewareErrorMacro,
+  (bot, update, message) => {
+    return new Promise((resolve, reject) => {
+      process.nextTick(() => {
+        try {
           message.blop();
-          next();
-        },
-      },
-    });
-
-    botmaster.on('listening', () => {
-      botmaster.bots[0].sendMessage({ text: 'Change this' })
-      .catch((err) => {
-        t.is(err.message,
-            '"message.blop is not a function". In outgoing middleware',
-            'Error message did not match');
-        botmaster.server.close(resolve);
+        } catch (err) {
+          reject(err);
+        }
       });
     });
   });
-});
 
-test('sets up the outgoing middleware in order of declaration. Then calls them when prompted without calling incoming middleware', (t) => {
+test('using async function', outgoingMiddlewareErrorMacro,
+  async (bot, update, message) => {
+    // just a function that returns a promise
+    const somePromise = () => new Promise((resolve) => {
+      process.nextTick(() => {
+        resolve();
+      });
+    });
+
+    await somePromise();
+    message.blop();
+  });
+
+test('sets up the outgoing middleware in order of declaration. ' +
+  'Then calls them when prompted without calling incoming middleware', (t) => {
   t.plan(1);
 
   return new Promise((resolve) => {
-    const botmaster = new Botmaster();
-    botmaster.addBot(new MockBot());
+    const botmaster = t.context.botmaster;
 
     botmaster.use({
-      incoming: {
-        cb: (bot, update, next) => {
-          t.fail('Called incoming middleware, although should not');
-          next();
-        },
+      type: 'incoming',
+      controller: (bot, update, next) => {
+        t.fail('Called incoming middleware, although should not');
+        next();
       },
     });
 
     botmaster.use({
-      outgoing: {
-        cb: (bot, message, next) => {
-          message.removeText();
-          next();
-        },
+      type: 'outgoing',
+      controller: async (bot, update, message) => {
+        message.removeText();
       },
     });
 
     botmaster.use({
-      outgoing: {
-        cb: (bot, update, message, next) => {
-          message.addText('Goodbye Worlds!');
-          next();
-        },
+      type: 'outgoing',
+      controller: (bot, update, message, next) => {
+        message.addText('Goodbye Worlds!');
+        next();
       },
     });
 
-    botmaster.on('listening', () => {
-      botmaster.bots[0].sendMessage(outgoingMessageFixtures.textMessage())
-      .then((body) => {
-        t.is(body.sentOutgoingMessage.message.text, 'Goodbye Worlds!', 'sent message did not match');
-        botmaster.server.close(resolve);
-      })
-      .catch((err) => {
-        t.fail(err.message);
-        botmaster.server.close(resolve);
-      });
-    });
-  });
-});
-
-test('sets up the outgoing middleware in order of declaration and skips if specified so', (t) => {
-  t.plan(3);
-
-  return new Promise(async (resolve) => {
-    const bot = new MockBot();
-
-    let pass = 1;
-    bot.use({
-      outgoing: {
-        cb: (bot, update, message, next) => {
-          message.message.text = 'Hello World!';
-          if (pass === 1) {
-            pass += 1;
-            return next('skip');
-          } else if (pass === 2) {
-            return next('skipAllOutgoing');
-          }
-
-          return next('skipNonWrappedOutgoingOnly');
-        },
-      },
-    });
-
-    bot.use({
-      outgoing: {
-        cb: (bot, update, message, next) => {
-          t.fail('Should have been skipped');
-          next();
-        },
-      },
-    });
-
-    bot.on('error', (err) => {
+    botmaster.bots[0].sendMessage(outgoingMessageFixtures.textMessage())
+    .then((body) => {
+      t.is(body.sentOutgoingMessage.message.text, 'Goodbye Worlds!', 'sent message did not match');
+      resolve();
+    })
+    .catch((err) => {
       t.fail(err.message);
       resolve();
     });
+  });
+});
 
+const skipOutgoingMiddlewareMacro = (t, controller) => {
+  t.plan(2);
+
+  return new Promise(async (resolve) => {
+    t.context.botmaster.use({
+      type: 'outgoing',
+      controller: (bot, update, message, next) => {
+        t.pass();
+        return controller(bot, update, message, next);
+      },
+    });
+
+    t.context.botmaster.use({
+      type: 'outgoing',
+      controller: () => {
+        t.fail('this middleware should not get hit');
+        resolve();
+      },
+    });
+
+    const body = await t.context.bot.sendMessage(
+      outgoingMessageFixtures.textMessage());
+    t.deepEqual(body.sentRawMessage, outgoingMessageFixtures.textMessage());
+    resolve();
+  });
+};
+
+skipOutgoingMiddlewareMacro.title = customTitlePart =>
+  `using middleware skip in outgoing middleware works as expected ${customTitlePart}`;
+
+test('using next skip', skipOutgoingMiddlewareMacro, (bot, update, message, next) => {
+  next('skip');
+});
+
+test('using promise skip', skipOutgoingMiddlewareMacro,
+  () => Promise.resolve('skip'));
+
+test('using async skip', skipOutgoingMiddlewareMacro,
+  async () => 'skip');
+
+
+const cancelOutgoingMiddlewareMacro = async (t, controller) => {
+  t.plan(2);
+
+  return new Promise(async (resolve) => {
+    t.context.botmaster.use({
+      type: 'outgoing',
+      controller: (bot, update, message, next) => {
+        t.pass();
+        return controller(bot, update, message, next);
+      },
+    });
+
+    t.context.botmaster.use({
+      type: 'outgoing',
+      controller: () => {
+        t.fail('this middleware should not get hit');
+        resolve();
+      },
+    });
+
+    const body = await t.context.bot.sendMessage(
+      outgoingMessageFixtures.textMessage());
+    t.is(body, 'cancelled');
+    resolve();
+  });
+};
+
+cancelOutgoingMiddlewareMacro.title = customTitlePart =>
+  `using middleware cancel in outgoing middleware works as expected ${customTitlePart}`;
+
+test('using next cancel', cancelOutgoingMiddlewareMacro, (bot, update, message, next) => {
+  next('cancel');
+});
+
+test('using promise cancel', cancelOutgoingMiddlewareMacro,
+  () => Promise.resolve('cancel'));
+
+test('using async cancel', cancelOutgoingMiddlewareMacro,
+  async () => 'cancel');
+
+test('sets up the outgoing middleware which is ignored if specified so in sendOptions.', (t) => {
+  t.plan(2);
+
+  return new Promise(async (resolve) => {
+    t.context.botmaster.use({
+      type: 'outgoing',
+      controller: () => {
+        t.fail('this middleware should not get hit');
+        resolve();
+      },
+    });
+
+    const bot = t.context.bot;
     try {
-      const body1 = await bot.sendTextMessageTo('Change this', 'user_id');
-      t.is(body1.sentOutgoingMessage.message.text, 'Hello World!');
+      await bot.sendMessage(
+        outgoingMessageFixtures.textMessage(), { ignoreMiddleware: true });
+      await bot.reply(
+        incomingUpdateFixtures.textUpdate(), 'wadup?', { ignoreMiddleware: true });
+      await bot.sendAttachmentFromUrlTo(
+        'image', 'some_link', 'user_id', { ignoreMiddleware: true });
+      await bot.sendDefaultButtonMessageTo(
+        ['b1', 'b2'], undefined, 'user_id', { ignoreMiddleware: true });
+      await bot.sendIsTypingMessageTo(
+        'user_id', { ignoreMiddleware: true });
+      const bodies = await bot.sendTextCascadeTo(
+        ['message1', 'message2'], 'user_id', { ignoreMiddleware: true });
 
-      const body2 = await bot.sendTextMessageTo('Change this again', 'user_id');
-      t.is(body2.sentOutgoingMessage.message.text, 'Hello World!');
-
-      const body3 = await bot.sendTextMessageTo('Change this again 2', 'user_id');
-      t.is(body3.sentOutgoingMessage.message.text, 'Hello World!');
+      t.is(bodies[0].sentOutgoingMessage.message.text, 'message1',
+        'sentOutgoingMessage was not as expected');
+      t.is(bodies[1].sentOutgoingMessage.message.text, 'message2',
+        'sentOutgoingMessage was not as expected');
 
       resolve();
     } catch (err) {
       t.fail(err.message);
       resolve();
     }
-
-    bot.sendTextMessageTo('Change this', 'user_id');
-  });
-});
-
-test('sets up the outgoing middleware which is ignored if specified so in sendOptions.', (t) => {
-  t.plan(2);
-
-  return new Promise((resolve) => {
-    const botmaster = new Botmaster();
-    botmaster.addBot(new MockBot());
-
-    botmaster.use({
-      outgoing: {
-        cb: (bot, message, next) => {
-          t.fail('outgoing middleware should not be called');
-          next();
-        },
-      },
-    });
-
-    botmaster.on('listening', async () => {
-      const bot = botmaster.bots[0];
-      try {
-        await bot.sendMessage(
-          outgoingMessageFixtures.textMessage(), { ignoreMiddleware: true });
-        await bot.reply(
-          incomingUpdateFixtures.textUpdate(), 'wadup?', { ignoreMiddleware: true });
-        await bot.sendAttachmentFromUrlTo(
-          'image', 'some_link', 'user_id', { ignoreMiddleware: true });
-        await bot.sendDefaultButtonMessageTo(
-          ['b1', 'b2'], undefined, 'user_id', { ignoreMiddleware: true });
-        await bot.sendIsTypingMessageTo(
-          'user_id', { ignoreMiddleware: true });
-        const bodies = await bot.sendTextCascadeTo(
-          ['message1', 'message2'], 'user_id', { ignoreMiddleware: true });
-
-        t.is(bodies[0].sentOutgoingMessage.message.text, 'message1',
-          'sentOutgoingMessage was not as expected');
-        t.is(bodies[1].sentOutgoingMessage.message.text, 'message2',
-          'sentOutgoingMessage was not as expected');
-
-        botmaster.server.close(resolve);
-      } catch (err) {
-        t.fail(err.message);
-        botmaster.server.close(resolve);
-      }
-    });
   });
 });
 
 test('sets up the outgoing middleware which is aware of update when manually set using sendOptions. or __createBotPatchedWithUpdate', (t) => {
   t.plan(4);
 
-  return new Promise((resolve) => {
-    const botmaster = new Botmaster();
-    botmaster.addBot(new MockBot());
+  return new Promise(async (resolve) => {
+    const botmaster = t.context.botmaster;
 
     const mockUpdate = { id: 1 };
-
     botmaster.use({
-      outgoing: {
-        cb: (bot, update, message, next) => {
-          t.is(update, mockUpdate, 'associated update is not the same');
-          t.deepEqual(assign({}, message), outgoingMessageFixtures.textMessage(), 'Message is not the same');
-          next();
-        },
+      type: 'outgoing',
+      controller: (bot, update, message, next) => {
+        t.is(update, mockUpdate, 'associated update is not the same');
+        t.deepEqual(assign({}, message), outgoingMessageFixtures.textMessage(),
+          'Message is not the same');
+        next();
       },
     });
 
-    botmaster.on('listening', async () => {
-      const bot = botmaster.bots[0];
-      try {
-        await bot.sendMessage(
-          outgoingMessageFixtures.textMessage(), { __update: mockUpdate });
+    const bot = botmaster.bots[0];
+    try {
+      await bot.sendMessage(
+        outgoingMessageFixtures.textMessage(), { __update: mockUpdate });
 
-        // with a patchedBot
-        const patchedBot = bot.__createBotPatchedWithUpdate(mockUpdate);
-        await patchedBot.sendMessage(outgoingMessageFixtures.textMessage());
+      // with a patchedBot
+      const patchedBot = bot.__createBotPatchedWithUpdate(mockUpdate);
+      await patchedBot.sendMessage(outgoingMessageFixtures.textMessage());
 
-        botmaster.server.close(resolve);
-      } catch (err) {
-        t.fail(err.message);
-        botmaster.server.close(resolve);
-      }
-    });
+      botmaster.server.close(resolve);
+    } catch (err) {
+      t.fail(err.message);
+      botmaster.server.close(resolve);
+    }
   });
 });
 
@@ -601,108 +663,71 @@ test('sets up the outgoing middleware which is aware of update when sending mess
   t.plan(3);
 
   return new Promise((resolve) => {
-    const botmaster = new Botmaster();
-    botmaster.addBot(new MockBot());
+    const botmaster = t.context.botmaster;
 
     botmaster.use({
-      incoming: {
-        cb: async (bot, update, next) => {
-          const body = await bot.reply(update, 'Hello World!');
-          t.is(body.sentOutgoingMessage.message.text, 'Hello World!');
-          botmaster.server.close(resolve);
-        },
+      type: 'incoming',
+      controller: async (bot, update) => {
+        const body = await bot.reply(update, 'Hello World!');
+        t.is(body.sentOutgoingMessage.message.text, 'Hello World!');
+        resolve();
       },
     });
 
     botmaster.use({
-      outgoing: {
-        cb: (bot, update, message, next) => {
-          t.deepEqual(assign({}, update), incomingUpdateFixtures.textUpdate(), 'associated update is not the same');
-          t.deepEqual(assign({}, message), outgoingMessageFixtures.textMessage(), 'Message is not the same');
-          next();
-        },
-
+      type: 'outgoing',
+      controller: (bot, update, message, next) => {
+        t.deepEqual(assign({}, update), incomingUpdateFixtures.textUpdate(), 'associated update is not the same');
+        t.deepEqual(assign({}, message), outgoingMessageFixtures.textMessage(), 'Message is not the same');
+        next();
       },
     });
 
-    botmaster.on('listening', async () => {
-      const bot = botmaster.bots[0];
-      bot.__emitUpdate(incomingUpdateFixtures.textUpdate());
-    });
-  });
-});
-
-test('sets up the outgoing middleware which is aware of update when sending message from on update handler', (t) => {
-  t.plan(3);
-
-  return new Promise((resolve) => {
-    const botmaster = new Botmaster();
-    botmaster.addBot(new MockBot());
-
-    botmaster.use({
-      outgoing: {
-        cb: (bot, update, message, next) => {
-          t.deepEqual(assign({}, update), incomingUpdateFixtures.textUpdate(), 'associated update is not the same');
-          t.deepEqual(assign({}, message), outgoingMessageFixtures.textMessage(), 'Message is not the same');
-          next();
-        },
-      },
-    });
-
-    botmaster.on('update', async (bot, update) => {
-      const body = await bot.reply(update, 'Hello World!');
-      t.is(body.sentOutgoingMessage.message.text, 'Hello World!');
-      botmaster.server.close(resolve);
-    });
-
-    botmaster.on('listening', async () => {
-      const bot = botmaster.bots[0];
-      bot.__emitUpdate(incomingUpdateFixtures.textUpdate());
-    });
+    const bot = botmaster.bots[0];
+    bot.__emitUpdate(incomingUpdateFixtures.textUpdate());
   });
 });
 
 test('sets up the outgoing middleware which is aware of update on the second pass when sending a message in outgoing middleware', (t) => {
-  t.plan(6);
+  t.plan(8);
 
   return new Promise((resolve) => {
-    const botmaster = new Botmaster();
-    botmaster.addBot(new MockBot());
+    const botmaster = t.context.botmaster;
 
     const receivedUpdate = incomingUpdateFixtures.textUpdate();
 
     let pass = 1;
     botmaster.use({
-      outgoing: {
-        cb: (bot, update, message, next) => {
-          if (pass === 1) {
-            t.is(message.message.text, 'Hello World!', 'message text is not as expected on first pass');
-            t.is(update.newProp, 1, 'newProp is not the expected value on first pass');
-            t.is(update, receivedUpdate, 'Reference to update is not the same');
-            update.newProp = 2;
-            pass += 1;
+      type: 'outgoing',
+      controller: async (bot, update, message) => {
+        if (pass === 1) {
+          t.is(message.message.text, 'Hello World!', 'message text is not as expected on first pass');
+          t.is(update.newProp, 1, 'newProp is not the expected value on first pass');
+          t.is(update, receivedUpdate, 'Reference to update is not the same');
+          update.newProp = 2;
+          pass += 1;
 
-            bot.reply(update, 'Goodbye World!');
-          } else if (pass === 2) {
-            t.is(message.message.text, 'Goodbye World!', 'message text is not as expected on second pass');
-            t.is(update.newProp, 2, 'newProp is not the expected value on second pass');
-            t.is(update, receivedUpdate, 'Reference to update is not the same');
-            botmaster.server.close(resolve);
-          }
-          next();
-        },
+          const body = await bot.reply(update, 'Goodbye World!');
+          t.is(body.sentRawMessage.message.text, 'Goodbye World!');
+        } else if (pass === 2) {
+          t.is(message.message.text, 'Goodbye World!', 'message text is not as expected on second pass');
+          t.is(update.newProp, 2, 'newProp is not the expected value on second pass');
+          t.is(update, receivedUpdate, 'Reference to update is not the same');
+          resolve();
+        }
       },
     });
 
-    botmaster.on('update', (bot, update) => {
-      update.newProp = 1;
-      bot.reply(update, 'Hello World!');
+    botmaster.use({
+      type: 'incoming',
+      controller: async (bot, update) => {
+        update.newProp = 1;
+        const body = await bot.reply(update, 'Hello World!');
+        t.is(body.sentRawMessage.message.text, 'Hello World!');
+      },
     });
 
-    botmaster.on('listening', async () => {
-      const bot = botmaster.bots[0];
-      bot.__emitUpdate(receivedUpdate);
-    });
+    t.context.bot.__emitUpdate(receivedUpdate);
   });
 });
 

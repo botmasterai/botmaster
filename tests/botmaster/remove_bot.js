@@ -33,7 +33,7 @@ const arbitraryBotMacro = (t, botSettings) => {
       const bot = new MockBot(botSettings);
 
       botmaster.addBot(bot);
-      botmaster.removeBot(bot)
+      botmaster.removeBot(bot);
       t.is(Object.keys(botmaster.__serverRequestListeners).length, 0);
       t.is(botmaster.bots.length, 0);
 

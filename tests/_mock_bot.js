@@ -6,6 +6,7 @@ const expressBodyParser = require('body-parser');
 const Koa = require('koa');
 const assign = require('lodash').assign;
 const get = require('lodash').get;
+const merge = require('lodash').merge;
 
 class MockBot extends BaseBot {
 
@@ -133,13 +134,7 @@ class MockBot extends BaseBot {
       },
     };
 
-    if (rawUpdate.text) {
-      update.message.text = rawUpdate.text;
-    }
-
-    if (rawUpdate.attachments) {
-      update.message.attachments = rawUpdate.attachments;
-    }
+    merge(update, rawUpdate);
 
     return update;
   }
