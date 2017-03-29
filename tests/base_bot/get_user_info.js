@@ -19,7 +19,7 @@ test('works when bot type supports retrieving the info', async (t) => {
   t.plan(1);
 
   const bot = new MockBot({
-    retrievableUserInfo: true,
+    retrievesUserInfo: true,
   });
 
   const userInfo = await bot.getUserInfo('user_id');

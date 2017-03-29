@@ -41,6 +41,7 @@ class MockBot extends BaseBot {
       },
       echo: true,
       read: true,
+      delivery: true,
       postback: true,
       quickReply: true,
     };
@@ -62,7 +63,7 @@ class MockBot extends BaseBot {
       },
     };
 
-    this.retrievableUserInfo = settings.retrievableUserInfo || false;
+    this.retrievesUserInfo = settings.retrievesUserInfo || false;
     this.id = settings.id || 'mockId';
 
     this.__applySettings(settings);
