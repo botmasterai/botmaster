@@ -106,7 +106,7 @@ test('should throw and error when server and port passed in settings', (t) => {
   }
 });
 
-test('should throw and error when settings is an object and neither port nor settings is passed', (t) => {
+test('should throw and error when settings is an object and neither port nor server is passed', (t) => {
   t.plan(1);
 
   try {
