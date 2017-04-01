@@ -8,11 +8,11 @@
     "test-debug": "export NODE_ENV=test DEBUG=botmaster:*; nyc --reporter=lcov --reporter=html ava",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "postversion": "git push && git push --tags && rm -rf build/temp",
-    "jsdoc": "jsdoc -r -d jsdoc ./lib",
-    "report": "nyc report"
-  },
-  "directories": {
-    "tests": "test"
+    "report": "nyc report",
+    "botmaster-docs": "documentation build lib/botmaster.js -f md > api_reference/botmaster.md",
+    "base-bot-docs": "documentation build lib/base_bot.js -f md > api_reference/base_bot.md",
+    "outgoing-message-docs": "documentation build lib/outgoing_message.js -f md > api_reference/outgoing_message.md",
+    "docs": "yarn botmaster-docs; yarn base-bot-docs; yarn outgoing-message-docs"
   },
   "ava": {
     "files": [
@@ -75,7 +75,6 @@
     "eslint-plugin-jsx-a11y": "^4.0.0",
     "eslint-plugin-react": "^6.10.0",
     "express": "^4.15.2",
-    "jsdoc": "^3.4.2",
     "koa": "^2.0.1",
     "nyc": "^10.1.2",
     "request-promise": "^4.1.1"
