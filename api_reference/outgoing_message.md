@@ -2,25 +2,30 @@
 
 ### Table of Contents
 
--   [addRecipientById](#addrecipientbyid)
--   [addRecipientByPhoneNumber](#addrecipientbyphonenumber)
--   [removeRecipient](#removerecipient)
--   [addText](#addtext)
--   [removeText](#removetext)
--   [addAttachment](#addattachment)
--   [addAttachmentFromUrl](#addattachmentfromurl)
--   [removeAttachment](#removeattachment)
--   [addQuickReplies](#addquickreplies)
--   [addPayloadLessQuickReplies](#addpayloadlessquickreplies)
--   [addLocationQuickReply](#addlocationquickreply)
--   [removeQuickReplies](#removequickreplies)
--   [addSenderAction](#addsenderaction)
--   [addTypingOnSenderAction](#addtypingonsenderaction)
--   [addTypingOffSenderAction](#addtypingoffsenderaction)
--   [addMarkSeenSenderAction](#addmarkseensenderaction)
--   [removeSenderAction](#removesenderaction)
+-   [OutgoingMessage](#outgoingmessage)
+    -   [addRecipientById](#addrecipientbyid)
+    -   [addRecipientByPhoneNumber](#addrecipientbyphonenumber)
+    -   [removeRecipient](#removerecipient)
+    -   [addText](#addtext)
+    -   [removeText](#removetext)
+    -   [addAttachment](#addattachment)
+    -   [addAttachmentFromUrl](#addattachmentfromurl)
+    -   [removeAttachment](#removeattachment)
+    -   [addQuickReplies](#addquickreplies)
+    -   [addPayloadLessQuickReplies](#addpayloadlessquickreplies)
+    -   [addLocationQuickReply](#addlocationquickreply)
+    -   [removeQuickReplies](#removequickreplies)
+    -   [addSenderAction](#addsenderaction)
+    -   [addTypingOnSenderAction](#addtypingonsenderaction)
+    -   [addTypingOffSenderAction](#addtypingoffsenderaction)
+    -   [addMarkSeenSenderAction](#addmarkseensenderaction)
+    -   [removeSenderAction](#removesenderaction)
 
-## addRecipientById
+## OutgoingMessage
+
+This class will help you compose sendable message objects.
+
+### addRecipientById
 
 Adds recipient.id param to the OutgoingMessage object. This is most
 likely what you will want to do to add a recipient. Alternatively, you Can
@@ -33,7 +38,7 @@ supports that.
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## addRecipientByPhoneNumber
+### addRecipientByPhoneNumber
 
 Adds recipient.phone_number param to the OutgoingMessage object.
 You might prefer to add a recipient by id rather. This is achieved via
@@ -45,14 +50,14 @@ addRecipientById
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## removeRecipient
+### removeRecipient
 
 removes the recipient param from the OutgoingMessage object.
 This will remove the object wether it was set with a phone number or an id
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## addText
+### addText
 
 Adds message.text to the OutgoingMessage
 
@@ -62,13 +67,13 @@ Adds message.text to the OutgoingMessage
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## removeText
+### removeText
 
 Removes the message.text param from the OutgoingMessage object.
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## addAttachment
+### addAttachment
 
 Adds message.attachment to the OutgoingMessage. If you want to add
 an attachment simply from a type and a url, have a look at:
@@ -81,7 +86,7 @@ addAttachmentFromUrl
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## addAttachmentFromUrl
+### addAttachmentFromUrl
 
 Adds message.attachment from a type and url without requiring you to
 provide the whole attachment object. If you want to add an attachment using
@@ -94,13 +99,13 @@ a full object, use addAttachment.
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## removeAttachment
+### removeAttachment
 
 Removes message.attachment param from the OutgoingMessage object.
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## addQuickReplies
+### addQuickReplies
 
 Adds message.quick_replies to the OutgoinMessage object. Use
 addPayloadLessQuickReplies if you just want to add quick replies from an
@@ -113,7 +118,7 @@ array of titles
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## addPayloadLessQuickReplies
+### addPayloadLessQuickReplies
 
 Adds message.quick_replies to the OutgoinMessage object from a simple array
 of quick replies titles.Use addQuickReplies if want to add quick replies
@@ -126,7 +131,7 @@ from an quick reply objects
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## addLocationQuickReply
+### addLocationQuickReply
 
 Adds a content_type: location message.quick_replies to the OutgoingMessage.
 Use this if the platform the bot class you are using is based on supports
@@ -134,13 +139,13 @@ asking for the location to its users.
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## removeQuickReplies
+### removeQuickReplies
 
 Removes message.quick_replies param from the OutgoingMessage object.
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## addSenderAction
+### addSenderAction
 
 Adds an arbitrary sender_action to the OutgoinMessage
 
@@ -151,25 +156,25 @@ Adds an arbitrary sender_action to the OutgoinMessage
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## addTypingOnSenderAction
+### addTypingOnSenderAction
 
 Adds "typing_on" sender_action to the OutgoinMessage
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## addTypingOffSenderAction
+### addTypingOffSenderAction
 
 Adds "typing_off" sender_action to the OutgoinMessage
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## addMarkSeenSenderAction
+### addMarkSeenSenderAction
 
 Adds "mark_seen" sender_action to the OutgoinMessage
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## removeSenderAction
+### removeSenderAction
 
 Removes sender_action param from the OutgoingMessage object.
 

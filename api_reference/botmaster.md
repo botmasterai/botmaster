@@ -2,15 +2,22 @@
 
 ### Table of Contents
 
--   [constructor](#constructor)
--   [addBot](#addbot)
--   [getBot](#getbot)
--   [getBots](#getbots)
--   [removeBot](#removebot)
--   [use](#use)
--   [useWrapped](#usewrapped)
+-   [Botmaster](#botmaster)
+    -   [constructor](#constructor)
+    -   [addBot](#addbot)
+    -   [getBot](#getbot)
+    -   [getBots](#getbots)
+    -   [removeBot](#removebot)
+    -   [use](#use)
+    -   [useWrapped](#usewrapped)
 
-## constructor
+## Botmaster
+
+**Extends EventEmitter**
+
+The Botmaster class to rule them all
+
+### constructor
 
 sets up a botmaster object attached to the correct server if one is set
 as a parameter. If not, it creates its own http server
@@ -19,7 +26,7 @@ as a parameter. If not, it creates its own http server
 
 -   `settings` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
 
-## addBot
+### addBot
 
 Add an existing bot to this instance of Botmaster
 
@@ -28,9 +35,9 @@ Add an existing bot to this instance of Botmaster
 -   `bot` **BaseBot** the bot object to add to botmaster. Must be from
     a subclass of BaseBot
 
-Returns **Botmaster** returns the botmaster object for chaining
+Returns **[Botmaster](#botmaster)** returns the botmaster object for chaining
 
-## getBot
+### getBot
 
 Extract First bot of given type or provided id.
 
@@ -40,7 +47,7 @@ Extract First bot of given type or provided id.
 
 Returns **BaseBot** The bot found of a class that inherits of BaseBot
 
-## getBots
+### getBots
 
 Extract all bots of given type.
 
@@ -50,7 +57,7 @@ Extract all bots of given type.
 
 Returns **[Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)** Array of bots found
 
-## removeBot
+### removeBot
 
 Remove an existing bot from this instance of Botmaster
 
@@ -58,9 +65,9 @@ Remove an existing bot from this instance of Botmaster
 
 -   `bot` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
 
-Returns **Botmaster** returns the botmaster object for chaining
+Returns **[Botmaster](#botmaster)** returns the botmaster object for chaining
 
-## use
+### use
 
 Add middleware to this botmaster object
 This function is just sugar for `middleware.__use` in them
@@ -92,9 +99,9 @@ This function is just sugar for `middleware.__use` in them
 }
 ```
 
-Returns **Botmaster** returns the botmaster object so you can chain middleware
+Returns **[Botmaster](#botmaster)** returns the botmaster object so you can chain middleware
 
-## useWrapped
+### useWrapped
 
 Add wrapped middleware to this botmaster instance. Wrapped middleware
 places the incoming middleware at beginning of incoming stack and
@@ -106,4 +113,4 @@ This function is just sugar `middleware.useWrapped`.
 -   `incomingMiddleware` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
 -   `outgoingMiddleware` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** The middleware objects are as you'd expect them to be (see use)
 
-Returns **Botmaster** returns the botmaster object so you can chain middleware
+Returns **[Botmaster](#botmaster)** returns the botmaster object so you can chain middleware

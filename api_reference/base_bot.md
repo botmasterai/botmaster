@@ -2,45 +2,57 @@
 
 ### Table of Contents
 
--   [constructor](#constructor)
--   [sendMessage](#sendmessage)
--   [sendMessageTo](#sendmessageto)
--   [sendMessageTo](#sendmessageto-1)
--   [sendMessageTo](#sendmessageto-2)
--   [sendMessageTo](#sendmessageto-3)
--   [sendTextMessageTo](#sendtextmessageto)
--   [reply](#reply)
--   [sendAttachmentTo](#sendattachmentto)
--   [sendAttachmentFromUrlTo](#sendattachmentfromurlto)
--   [sendDefaultButtonMessageTo](#senddefaultbuttonmessageto)
--   [sendIsTypingMessageTo](#sendistypingmessageto)
--   [sendCascade](#sendcascade)
--   [sendTextCascadeTo](#sendtextcascadeto)
--   [sendRawMessage](#sendrawmessage)
--   [getUserInfo](#getuserinfo)
--   [createOutgoingMessage](#createoutgoingmessage)
--   [createOutgoingMessage](#createoutgoingmessage-1)
--   [createOutgoingMessage](#createoutgoingmessage-2)
--   [createOutgoingMessageFor](#createoutgoingmessagefor)
--   [addRecipientById](#addrecipientbyid)
--   [addRecipientByPhoneNumber](#addrecipientbyphonenumber)
--   [removeRecipient](#removerecipient)
--   [addText](#addtext)
--   [removeText](#removetext)
--   [addAttachment](#addattachment)
--   [addAttachmentFromUrl](#addattachmentfromurl)
--   [removeAttachment](#removeattachment)
--   [addQuickReplies](#addquickreplies)
--   [addPayloadLessQuickReplies](#addpayloadlessquickreplies)
--   [addLocationQuickReply](#addlocationquickreply)
--   [removeQuickReplies](#removequickreplies)
--   [addSenderAction](#addsenderaction)
--   [addTypingOnSenderAction](#addtypingonsenderaction)
--   [addTypingOffSenderAction](#addtypingoffsenderaction)
--   [addMarkSeenSenderAction](#addmarkseensenderaction)
--   [removeSenderAction](#removesenderaction)
+-   [BaseBot](#basebot)
+    -   [constructor](#constructor)
+    -   [sendMessage](#sendmessage)
+    -   [sendMessageTo](#sendmessageto)
+    -   [sendMessageTo](#sendmessageto-1)
+    -   [sendMessageTo](#sendmessageto-2)
+    -   [sendMessageTo](#sendmessageto-3)
+    -   [sendTextMessageTo](#sendtextmessageto)
+    -   [reply](#reply)
+    -   [sendAttachmentTo](#sendattachmentto)
+    -   [sendAttachmentFromUrlTo](#sendattachmentfromurlto)
+    -   [sendDefaultButtonMessageTo](#senddefaultbuttonmessageto)
+    -   [sendIsTypingMessageTo](#sendistypingmessageto)
+    -   [sendCascade](#sendcascade)
+    -   [sendTextCascadeTo](#sendtextcascadeto)
+    -   [sendRawMessage](#sendrawmessage)
+    -   [getUserInfo](#getuserinfo)
+    -   [createOutgoingMessage](#createoutgoingmessage)
+    -   [createOutgoingMessage](#createoutgoingmessage-1)
+    -   [createOutgoingMessage](#createoutgoingmessage-2)
+    -   [createOutgoingMessageFor](#createoutgoingmessagefor)
+-   [OutgoingMessage](#outgoingmessage)
+    -   [addRecipientById](#addrecipientbyid)
+    -   [addRecipientByPhoneNumber](#addrecipientbyphonenumber)
+    -   [removeRecipient](#removerecipient)
+    -   [addText](#addtext)
+    -   [removeText](#removetext)
+    -   [addAttachment](#addattachment)
+    -   [addAttachmentFromUrl](#addattachmentfromurl)
+    -   [removeAttachment](#removeattachment)
+    -   [addQuickReplies](#addquickreplies)
+    -   [addPayloadLessQuickReplies](#addpayloadlessquickreplies)
+    -   [addLocationQuickReply](#addlocationquickreply)
+    -   [removeQuickReplies](#removequickreplies)
+    -   [addSenderAction](#addsenderaction)
+    -   [addTypingOnSenderAction](#addtypingonsenderaction)
+    -   [addTypingOffSenderAction](#addtypingoffsenderaction)
+    -   [addMarkSeenSenderAction](#addmarkseensenderaction)
+    -   [removeSenderAction](#removesenderaction)
 
-## constructor
+## BaseBot
+
+**Extends EventEmitter**
+
+The class from which all Bot classes mus inherit. It contains all the base
+methods that are accessible via all bot classes. Classes that inherit from
+BaseBot and want to make implementation specific methods available have to
+prepend the method name with an underscore; e.g. in botmaster-messenger:
+\_getGetStartedButton
+
+### constructor
 
 Constructor to the BaseBot class from which all the bot classes inherit.
 A set a basic functionalities are defined here that have to be implemented
@@ -51,7 +63,7 @@ in the subclasses in order for them to work.
 -   `settings` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** inheritors of BaseBot take a settings
     object as first param.
 
-## sendMessage
+### sendMessage
 
 sendMessage() falls back to the sendMessage implementation of whatever
 subclass inherits form BaseBot. The expected format is normally any type of
@@ -81,45 +93,7 @@ message object that could be sent on to messenger
 
 Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** 
 
-## sendMessageTo
-
-Bot class implementation of the \_\_createStandardBodyResponseComponents
-function. Each Bot class has to implement this in order to be able to
-send outgoing messages using sendMessage. This function returns the standard
-recipient_id and message_id we can expect from using sendMessage
-
-**Parameters**
-
--   `sentOutgoingMessage` **OutgoingMessage** The OutgoingMessage object
-    before formatting
--   `sentRawMessage` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** The raw message that was actually sent to
-    the platform after \_\_formatOutgoingMessage was called
--   `rawPlatformBody` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** the raw body response from the platform
--   `message`  
--   `recipientId`  
--   `sendOptions`  
-
-Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** promise that resolves in an object that contains
-both the recipient_id and message_id fields\_\_createStandardBodyResponseComponents(
-  sentOutgoingMessage, sentRawMessage, rawPlatformBody) {}
-
-## sendMessageTo
-
-Bot class implementation of the \_\_formatOutgoingMessage function. Each Bot class
-has to implement this in order to be able to send outgoing messages that start
-off as valid Messenger message objects (i.e. OutgoingMessage objects).
-
-**Parameters**
-
--   `outgoingMessage` **OutgoingMessage** The outgoingMessage object that
-    needs to be formatted to the platform standard (formatted out).
--   `message`  
--   `recipientId`  
--   `sendOptions`  
-
-Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** promise that resolves in the body of the response from the platform\_\_formatOutgoingMessage(outgoingMessage) {}
-
-## sendMessageTo
+### sendMessageTo
 
 Bot class implementation of the \_\_sendMessage function. Each Bot class
 has to implement this in order to be able to send outgoing messages.
@@ -132,7 +106,45 @@ has to implement this in order to be able to send outgoing messages.
 
 Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** promise that resolves in the body of the response from the platform\_\_sendMessage(rawUpdate) {}
 
-## sendMessageTo
+### sendMessageTo
+
+Bot class implementation of the \_\_formatOutgoingMessage function. Each Bot class
+has to implement this in order to be able to send outgoing messages that start
+off as valid Messenger message objects (i.e. OutgoingMessage objects).
+
+**Parameters**
+
+-   `outgoingMessage` **[OutgoingMessage](#outgoingmessage)** The outgoingMessage object that
+    needs to be formatted to the platform standard (formatted out).
+-   `message`  
+-   `recipientId`  
+-   `sendOptions`  
+
+Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** promise that resolves in the body of the response from the platform\_\_formatOutgoingMessage(outgoingMessage) {}
+
+### sendMessageTo
+
+Bot class implementation of the \_\_createStandardBodyResponseComponents
+function. Each Bot class has to implement this in order to be able to
+send outgoing messages using sendMessage. This function returns the standard
+recipient_id and message_id we can expect from using sendMessage
+
+**Parameters**
+
+-   `sentOutgoingMessage` **[OutgoingMessage](#outgoingmessage)** The OutgoingMessage object
+    before formatting
+-   `sentRawMessage` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** The raw message that was actually sent to
+    the platform after \_\_formatOutgoingMessage was called
+-   `rawPlatformBody` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** the raw body response from the platform
+-   `message`  
+-   `recipientId`  
+-   `sendOptions`  
+
+Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** promise that resolves in an object that contains
+both the recipient_id and message_id fields\_\_createStandardBodyResponseComponents(
+  sentOutgoingMessage, sentRawMessage, rawPlatformBody) {}
+
+### sendMessageTo
 
 sendMessageTo() Just makes it easier to send a message without as much
 structure.
@@ -156,7 +168,7 @@ message: {
 
 Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** promise
 
-## sendTextMessageTo
+### sendTextMessageTo
 
 sendTextMessageTo() Just makes it easier to send a text message with
 minimal structure.
@@ -169,7 +181,7 @@ minimal structure.
 
 Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** promise
 
-## reply
+### reply
 
 reply() Another way to easily send a text message. In this case,
 we just send the update that came in as is and then the text we
@@ -183,7 +195,7 @@ want to send as a reply.
 
 Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** promise
 
-## sendAttachmentTo
+### sendAttachmentTo
 
 sendAttachmentTo() makes it easier to send an attachment message with
 less structure.
@@ -209,7 +221,7 @@ const attachment = {
 
 Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** promise
 
-## sendAttachmentFromUrlTo
+### sendAttachmentFromUrlTo
 
 sendAttachmentFromUrlTo() makes it easier to send an attachment message with
 minimal structure.
@@ -223,7 +235,7 @@ minimal structure.
 
 Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** promise
 
-## sendDefaultButtonMessageTo
+### sendDefaultButtonMessageTo
 
 sendDefaultButtonMessageTo() makes it easier to send a default set of
 buttons. The default button type is the Messenger quick_replies, where
@@ -239,7 +251,7 @@ the payload is the same as the button title and the content_type is text.
 
 Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** promise
 
-## sendIsTypingMessageTo
+### sendIsTypingMessageTo
 
 sendIsTypingMessageTo() just sets the is typing status to the platform
 if available.
@@ -265,7 +277,7 @@ i.e. it has no message_id (or it is null/undefined)
 
 Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** promise
 
-## sendCascade
+### sendCascade
 
 sendCascadeTo() allows developers to send a cascade of messages
 in a sequence. All types of messages can be sent (including raw messages).
@@ -280,7 +292,7 @@ Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refe
 The returned value an in-place array of bodies received from the client platform
 The objects of the array are of the same format as for standard messages
 
-## sendTextCascadeTo
+### sendTextCascadeTo
 
 sendTextCascadeTo() is simply a helper function around sendCascadeTo.
 It allows developers to send a cascade of text messages more easily.
@@ -295,7 +307,7 @@ Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refe
 The returned value an in-place array of bodies received from the client platform
 The objects of the array are of the same format as for standard messages
 
-## sendRawMessage
+### sendRawMessage
 
 sendRawMessage() simply sends a raw platform dependent message. This method
 calls **sendMessage in each botClass without calling formatOutgoingMessage
@@ -308,7 +320,7 @@ directly.
 
 Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** promise
 
-## getUserInfo
+### getUserInfo
 
 Retrieves the basic user info from a user if platform supports it
 
@@ -319,33 +331,7 @@ Retrieves the basic user info from a user if platform supports it
 Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** promise that resolves into the user info or an empty
 object by default
 
-## createOutgoingMessage
-
-Format the update gotten from the bot source (telegram, messenger etc..).
-Returns an update in a standard format
-
-**Parameters**
-
--   `rawUpdate` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
--   `message`  
-
-Returns **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** update\_\_formatUpdate(rawUpdate) {}
-
-## createOutgoingMessage
-
-\#createOutgoingMessage exposes the OutgoingMessage constructor
-via BaseBot. This simply means one can create their own
-OutgoingMessage object using any bot object. They can then compose
-it with all its helper functions
-
-**Parameters**
-
--   `message` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** base object that the outgoing Message should be based on
-
-Returns **OutgoingMessage** outgoingMessage. The same object passed in with
-all the helper functions from OutgoingMessage
-
-## createOutgoingMessage
+### createOutgoingMessage
 
 sets up the app if needed.
 As in sets up the endpoints that the bot can get called onto
@@ -358,7 +344,33 @@ Should not return anything
 
 -   `message`  
 
-## createOutgoingMessageFor
+### createOutgoingMessage
+
+Format the update gotten from the bot source (telegram, messenger etc..).
+Returns an update in a standard format
+
+**Parameters**
+
+-   `rawUpdate` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
+-   `message`  
+
+Returns **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** update\_\_formatUpdate(rawUpdate) {}
+
+### createOutgoingMessage
+
+\#createOutgoingMessage exposes the OutgoingMessage constructor
+via BaseBot. This simply means one can create their own
+OutgoingMessage object using any bot object. They can then compose
+it with all its helper functions
+
+**Parameters**
+
+-   `message` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** base object that the outgoing Message should be based on
+
+Returns **[OutgoingMessage](#outgoingmessage)** outgoingMessage. The same object passed in with
+all the helper functions from OutgoingMessage
+
+### createOutgoingMessageFor
 
 same as #createOutgoingMessage, creates empty outgoingMessage with
 id of the recipient set. Again, this is jut sugar syntax for creating a
@@ -368,9 +380,13 @@ new outgoingMessage object
 
 -   `recipientId` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** id of the recipient the message is for
 
-Returns **OutgoingMessage** outgoingMessage. A valid OutgoingMessage object with recipient set.
+Returns **[OutgoingMessage](#outgoingmessage)** outgoingMessage. A valid OutgoingMessage object with recipient set.
 
-## addRecipientById
+## OutgoingMessage
+
+This class will help you compose sendable message objects.
+
+### addRecipientById
 
 Adds recipient.id param to the OutgoingMessage object. This is most
 likely what you will want to do to add a recipient. Alternatively, you Can
@@ -383,7 +399,7 @@ supports that.
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## addRecipientByPhoneNumber
+### addRecipientByPhoneNumber
 
 Adds recipient.phone_number param to the OutgoingMessage object.
 You might prefer to add a recipient by id rather. This is achieved via
@@ -395,14 +411,14 @@ addRecipientById
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## removeRecipient
+### removeRecipient
 
 removes the recipient param from the OutgoingMessage object.
 This will remove the object wether it was set with a phone number or an id
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## addText
+### addText
 
 Adds message.text to the OutgoingMessage
 
@@ -412,13 +428,13 @@ Adds message.text to the OutgoingMessage
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## removeText
+### removeText
 
 Removes the message.text param from the OutgoingMessage object.
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## addAttachment
+### addAttachment
 
 Adds message.attachment to the OutgoingMessage. If you want to add
 an attachment simply from a type and a url, have a look at:
@@ -431,7 +447,7 @@ addAttachmentFromUrl
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## addAttachmentFromUrl
+### addAttachmentFromUrl
 
 Adds message.attachment from a type and url without requiring you to
 provide the whole attachment object. If you want to add an attachment using
@@ -444,13 +460,13 @@ a full object, use addAttachment.
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## removeAttachment
+### removeAttachment
 
 Removes message.attachment param from the OutgoingMessage object.
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## addQuickReplies
+### addQuickReplies
 
 Adds message.quick_replies to the OutgoinMessage object. Use
 addPayloadLessQuickReplies if you just want to add quick replies from an
@@ -463,7 +479,7 @@ array of titles
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## addPayloadLessQuickReplies
+### addPayloadLessQuickReplies
 
 Adds message.quick_replies to the OutgoinMessage object from a simple array
 of quick replies titles.Use addQuickReplies if want to add quick replies
@@ -476,7 +492,7 @@ from an quick reply objects
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## addLocationQuickReply
+### addLocationQuickReply
 
 Adds a content_type: location message.quick_replies to the OutgoingMessage.
 Use this if the platform the bot class you are using is based on supports
@@ -484,13 +500,13 @@ asking for the location to its users.
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## removeQuickReplies
+### removeQuickReplies
 
 Removes message.quick_replies param from the OutgoingMessage object.
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## addSenderAction
+### addSenderAction
 
 Adds an arbitrary sender_action to the OutgoinMessage
 
@@ -501,25 +517,25 @@ Adds an arbitrary sender_action to the OutgoinMessage
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## addTypingOnSenderAction
+### addTypingOnSenderAction
 
 Adds "typing_on" sender_action to the OutgoinMessage
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## addTypingOffSenderAction
+### addTypingOffSenderAction
 
 Adds "typing_off" sender_action to the OutgoinMessage
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## addMarkSeenSenderAction
+### addMarkSeenSenderAction
 
 Adds "mark_seen" sender_action to the OutgoinMessage
 
 Returns **OutgoinMessage** returns this object to allow for chaining of methods.
 
-## removeSenderAction
+### removeSenderAction
 
 Removes sender_action param from the OutgoingMessage object.
 
