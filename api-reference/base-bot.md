@@ -63,6 +63,16 @@ in the subclasses in order for them to work.
 -   `settings` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** inheritors of BaseBot take a settings
     object as first param.
 
+**Examples**
+
+```javascript
+// In general however, one can instantiate a bot object like this:
+const bot = new BaseBotSubClass({ // e.g. MessengerBot
+  credentials: <my_base_bot_sub_class_credentials>,
+  webhookEnpoint: 'someEndpoint' // only if class requires them
+})
+```
+
 ### sendMessage
 
 sendMessage() falls back to the sendMessage implementation of whatever

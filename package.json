@@ -9,10 +9,11 @@
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "postversion": "git push && git push --tags && rm -rf build/temp",
     "report": "nyc report",
-    "botmaster-docs": "documentation build lib/botmaster.js -f md > api_reference/botmaster.md",
-    "base-bot-docs": "documentation build lib/base_bot.js -f md > api_reference/base_bot.md",
-    "outgoing-message-docs": "documentation build lib/outgoing_message.js -f md > api_reference/outgoing_message.md",
-    "docs": "yarn botmaster-docs; yarn base-bot-docs; yarn outgoing-message-docs"
+    "botmaster-docs": "documentation build lib/botmaster.js -f md > api-reference/botmaster.md",
+    "base-bot-docs": "documentation build lib/base_bot.js -f md > api-reference/base-bot.md",
+    "outgoing-message-docs": "documentation build lib/outgoing_message.js -f md > api-reference/outgoing-message.md",
+    "docs": "mkdir -p api-reference; yarn botmaster-docs; yarn base-bot-docs; yarn outgoing-message-docs",
+    "docs-deploy": "yarn docs && cp -r api-reference ../botmasterai.github.io/docs"
   },
   "ava": {
     "files": [
