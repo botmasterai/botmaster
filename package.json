@@ -9,9 +9,9 @@
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "postversion": "git push && git push --tags",
     "report": "nyc report",
-    "botmaster-docs": "documentation build lib/botmaster.js -f md > api-reference/botmaster.md",
-    "base-bot-docs": "documentation build lib/base_bot.js -f md > api-reference/base-bot.md",
-    "outgoing-message-docs": "documentation build lib/outgoing_message.js -f md > api-reference/outgoing-message.md",
+    "botmaster-docs": "jsdoc2md lib/botmaster.js > api-reference/botmaster.md",
+    "base-bot-docs": "jsdoc2md lib/base_bot.js > api-reference/base-bot.md",
+    "outgoing-message-docs": "jsdoc2md lib/outgoing_message.js > api-reference/outgoing-message.md",
     "docs": "mkdir -p api-reference; yarn botmaster-docs; yarn base-bot-docs; yarn outgoing-message-docs",
     "docs-deploy": "yarn docs && cp -r api-reference ../botmasterai.github.io/docs"
   },
@@ -68,7 +68,6 @@
     "body-parser": "^1.17.1",
     "botmaster-test-fixtures": "^2.1.0",
     "coveralls": "^2.11.16",
-    "documentation": "^4.0.0-beta.18",
     "eslint": "^3.17.0",
     "eslint-config-airbnb": "^14.1.0",
     "eslint-plugin-ava": "^4.2.0",
@@ -76,6 +75,7 @@
     "eslint-plugin-jsx-a11y": "^4.0.0",
     "eslint-plugin-react": "^6.10.0",
     "express": "^4.15.2",
+    "jsdoc-to-markdown": "^3.0.0",
     "koa": "^2.0.1",
     "nyc": "^10.1.2",
     "request-promise": "^4.1.1"
