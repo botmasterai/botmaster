@@ -25,6 +25,23 @@ as a parameter. If not, it creates its own http server
 | --- | --- |
 | settings | <code>object</code> | 
 
+**Example**  
+```js
+// attach the botmaster generated server to port 5000 rather than the default 3000
+const botmaster = new Botmaster({
+  port: 5000,
+});
+```
+**Example**  
+```js
+const http = require('http');
+
+const myServer = http.createServer()
+// use my own server rather than letting botmaster creat its own.
+const botmaster = new Botmaster({
+  server: myServer,
+});
+```
 <a name="Botmaster+addBot"></a>
 
 ### botmaster.addBot(bot) ⇒ <code>[Botmaster](#Botmaster)</code>
