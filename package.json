@@ -7,7 +7,7 @@
     "test": "export NODE_ENV=test; nyc --reporter=lcov --reporter=html ava; nyc report",
     "test-debug": "export NODE_ENV=test DEBUG=botmaster:*; nyc --reporter=lcov --reporter=html ava",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
-    "postversion": "git push && git push --tags && rm -rf build/temp",
+    "postversion": "git push && git push --tags",
     "report": "nyc report",
     "botmaster-docs": "documentation build lib/botmaster.js -f md > api-reference/botmaster.md",
     "base-bot-docs": "documentation build lib/base_bot.js -f md > api-reference/base-bot.md",
