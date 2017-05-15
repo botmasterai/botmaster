@@ -58,7 +58,7 @@
     "bot-library"
   ],
   "dependencies": {
-    "debug": "^2.6.1",
+    "debug": "^2.6.6",
     "lodash": "^4.17.4"
   },
   "engines": {
@@ -68,18 +68,16 @@
     "ava": "^0.19.1",
     "body-parser": "^1.17.1",
     "botmaster-test-fixtures": "^2.1.0",
-    "coveralls": "^2.11.16",
-    "eslint": "^3.17.0",
-    "eslint-config-airbnb": "^14.1.0",
+    "coveralls": "^2.13.1",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb": "^15.0.0",
     "eslint-plugin-ava": "^4.2.0",
     "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-jsx-a11y": "^4.0.0",
-    "eslint-plugin-react": "^6.10.0",
     "express": "^4.15.2",
     "jsdoc-to-markdown": "^3.0.0",
-    "koa": "^2.0.1",
-    "nyc": "^10.1.2",
-    "request-promise": "^4.1.1"
+    "koa": "^2.2.0",
+    "nyc": "^10.3.2",
+    "request-promise": "^4.2.1"
   },
   "author": "JD Wuarin <jwuarin@uk.ibm.com>",
   "license": "MIT"
