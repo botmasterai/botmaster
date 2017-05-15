@@ -75,7 +75,7 @@
     "eslint-plugin-import": "^2.2.0",
     "express": "^4.15.2",
     "jsdoc-to-markdown": "^3.0.0",
-    "koa": "^2.2.0",
+    "koa": "2.0.1",
     "nyc": "^10.3.2",
     "request-promise": "^4.2.1"
   },
