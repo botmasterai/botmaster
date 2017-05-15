@@ -20,7 +20,7 @@ _getGetStartedButton
         * [.reply(incomingUpdate, text, [sendOptions])](#BaseBot+reply) ⇒ <code>Promise</code>
         * [.sendAttachmentTo(attachment, recipientId, [sendOptions])](#BaseBot+sendAttachmentTo) ⇒ <code>Promise</code>
         * [.sendAttachmentFromUrlTo(type, url, recipientId, [sendOptions])](#BaseBot+sendAttachmentFromUrlTo) ⇒ <code>Promise</code>
-        * [.sendDefaultButtonMessageTo(buttonTitles, recipientId, [sendOptions])](#BaseBot+sendDefaultButtonMessageTo) ⇒ <code>Promise</code>
+        * [.sendDefaultButtonMessageTo(buttonTitles, textOrAttachment, recipientId, [sendOptions])](#BaseBot+sendDefaultButtonMessageTo) ⇒ <code>Promise</code>
         * [.sendIsTypingMessageTo(recipientId, [sendOptions])](#BaseBot+sendIsTypingMessageTo) ⇒ <code>Promise</code>
         * [.sendCascade(messageArray, [sendOptions])](#BaseBot+sendCascade) ⇒ <code>Promise</code>
         * [.sendTextCascadeTo(textArray, [sendOptions])](#BaseBot+sendTextCascadeTo) ⇒ <code>Promise</code>
@@ -239,7 +239,7 @@ bot.sendAttachmentFromURLTo('image', "some image url you've got", update.sender.
 ```
 <a name="BaseBot+sendDefaultButtonMessageTo"></a>
 
-### baseBot.sendDefaultButtonMessageTo(buttonTitles, recipientId, [sendOptions]) ⇒ <code>Promise</code>
+### baseBot.sendDefaultButtonMessageTo(buttonTitles, textOrAttachment, recipientId, [sendOptions]) ⇒ <code>Promise</code>
 sendDefaultButtonMessageTo() makes it easier to send a default set of
 buttons. The default button type is the Messenger quick_replies, where
 the payload is the same as the button title and the content_type is text.
@@ -251,7 +251,7 @@ the payload is the same as the button title and the content_type is text.
 | Param | Type | Description |
 | --- | --- | --- |
 | buttonTitles | <code>Array</code> | array of button titles (no longer than 10 in size). |
-| textOrAttachment. | <code>string/object</code> | a string or an attachment object similar to the ones required in `bot.sendAttachmentTo`. This is meant to provide context to the buttons. I.e. why are there buttons here. A piece of text or an attachment could detail that. If falsy, text will be added that reads: 'Please select one of:'. |
+| textOrAttachment | <code>string</code> \| <code>object</code> | a string or an attachment object similar to the ones required in `bot.sendAttachmentTo`. This is meant to provide context to the buttons. I.e. why are there buttons here. A piece of text or an attachment could detail that. If falsy, text will be added that reads: 'Please select one of:'. |
 | recipientId | <code>string</code> | a string representing the id of the user to whom you want to send the message. |
 | [sendOptions] | <code>object</code> | see `sendOptions` for `sendMessage` |
 
