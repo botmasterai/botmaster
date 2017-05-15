@@ -788,7 +788,6 @@ test('sets up the outgoing middleware which is aware of update on the second pas
           t.is(message.message.text, 'Goodbye World!', 'message text is not as expected on second pass');
           t.is(update.newProp, 2, 'newProp is not the expected value on second pass');
           t.is(update, receivedUpdate, 'Reference to update is not the same');
-          resolve();
         }
       },
     });
@@ -799,6 +798,7 @@ test('sets up the outgoing middleware which is aware of update on the second pas
         update.newProp = 1;
         const body = await bot.reply(update, 'Hello World!');
         t.is(body.sentRawMessage.message.text, 'Hello World!');
+        resolve();
       },
     });
 
