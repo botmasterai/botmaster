@@ -23,7 +23,7 @@ _getGetStartedButton
         * [.sendDefaultButtonMessageTo(buttonTitles, textOrAttachment, recipientId, [sendOptions])](#BaseBot+sendDefaultButtonMessageTo) ⇒ <code>Promise</code>
         * [.sendIsTypingMessageTo(recipientId, [sendOptions])](#BaseBot+sendIsTypingMessageTo) ⇒ <code>Promise</code>
         * [.sendCascade(messageArray, [sendOptions])](#BaseBot+sendCascade) ⇒ <code>Promise</code>
-        * [.sendTextCascadeTo(textArray, [sendOptions])](#BaseBot+sendTextCascadeTo) ⇒ <code>Promise</code>
+        * [.sendTextCascadeTo(textArray, recipientId, [sendOptions])](#BaseBot+sendTextCascadeTo) ⇒ <code>Promise</code>
         * [.sendRawMessage(rawMessage)](#BaseBot+sendRawMessage) ⇒ <code>Promise</code>
         * [.getUserInfo(userId)](#BaseBot+getUserInfo) ⇒ <code>Promise</code>
     * _static_
@@ -251,7 +251,7 @@ the payload is the same as the button title and the content_type is text.
 | Param | Type | Description |
 | --- | --- | --- |
 | buttonTitles | <code>Array</code> | array of button titles (no longer than 10 in size). |
-| textOrAttachment | <code>string</code> \| <code>object</code> | a string or an attachment object similar to the ones required in `bot.sendAttachmentTo`. This is meant to provide context to the buttons. I.e. why are there buttons here. A piece of text or an attachment could detail that. If falsy, text will be added that reads: 'Please select one of:'. |
+| textOrAttachment | <code>string_OR_object</code> | a string or an attachment object similar to the ones required in `bot.sendAttachmentTo`. This is meant to provide context to the buttons. I.e. why are there buttons here. A piece of text or an attachment could detail that. If falsy, text will be added that reads: 'Please select one of:'. |
 | recipientId | <code>string</code> | a string representing the id of the user to whom you want to send the message. |
 | [sendOptions] | <code>object</code> | see `sendOptions` for `sendMessage` |
 
@@ -313,7 +313,7 @@ bot.sendCascade(messageArray);
 ```
 <a name="BaseBot+sendTextCascadeTo"></a>
 
-### baseBot.sendTextCascadeTo(textArray, [sendOptions]) ⇒ <code>Promise</code>
+### baseBot.sendTextCascadeTo(textArray, recipientId, [sendOptions]) ⇒ <code>Promise</code>
 sendTextCascadeTo() is simply a helper function around sendCascadeTo.
 It allows developers to send a cascade of text messages more easily.
 
@@ -324,6 +324,7 @@ It allows developers to send a cascade of text messages more easily.
 | Param | Type | Description |
 | --- | --- | --- |
 | textArray | <code>Array</code> | of messages. |
+| recipientId | <code>string</code> | a string representing the id of the user to whom you want to send the message. |
 | [sendOptions] | <code>object</code> | see `sendOptions` for `sendMessage` |
 
 **Example**  
