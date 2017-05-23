@@ -700,8 +700,8 @@ test('sets up the outgoing middleware which is ignored if specified so in sendOp
   });
 });
 
-test('sets up the outgoing middleware which is aware of update when manually set using sendOptions. or __createBotPatchedWithUpdate', (t) => {
-  t.plan(4);
+test('sets up the outgoing middleware which is aware of update when manually set using __createBotPatchedWithUpdate', (t) => {
+  t.plan(2);
 
   return new Promise(async (resolve) => {
     const botmaster = t.context.botmaster;
@@ -719,9 +719,6 @@ test('sets up the outgoing middleware which is aware of update when manually set
 
     const bot = botmaster.bots[0];
     try {
-      await bot.sendMessage(
-        outgoingMessageFixtures.textMessage(), { __update: mockUpdate });
-
       // with a patchedBot
       const patchedBot = bot.__createBotPatchedWithUpdate(mockUpdate);
       await patchedBot.sendMessage(outgoingMessageFixtures.textMessage());
@@ -805,4 +802,3 @@ test('sets up the outgoing middleware which is aware of update on the second pas
     t.context.bot.__emitUpdate(receivedUpdate);
   });
 });
-
