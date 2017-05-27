@@ -39,7 +39,7 @@ const arbitraryBotMacro = (t, botSettings) => {
       const updateToSend = { text: 'Hello world' };
       const requestOptions = {
         method: 'POST',
-        uri: `http://localhost:3000/${botSettings.type}/webhook`,
+        uri: `http://localhost:3000/${botSettings.type}/webhook/endpoint`,
         json: updateToSend,
       };
 
@@ -62,14 +62,20 @@ const arbitraryBotMacro = (t, botSettings) => {
 
 test('works with an express bot', arbitraryBotMacro, {
   requiresWebhook: true,
-  webhookEndpoint: 'webhook',
+  webhookEndpoint: 'webhook/endpoint',
   type: 'express',
 });
 
 test('works with a koa bot', arbitraryBotMacro, {
   requiresWebhook: true,
-  webhookEndpoint: 'webhook',
+  webhookEndpoint: 'webhook/endpoint',
   type: 'koa',
+});
+
+test('works with a webhook that has slash bot', arbitraryBotMacro, {
+  requiresWebhook: true,
+  webhookEndpoint: '/webhook/endpoint/',
+  type: 'express',
 });
 
 test('works with an express server AND both an express and a koa bot', (t) => {
