@@ -2,9 +2,9 @@ import test from 'ava';
 import http from 'http';
 import express from 'express';
 import Koa from 'koa';
-import _ from 'lodash';
 import request from 'request-promise';
 
+import MockBot from '../_mock_bot';
 import Botmaster from '../../lib';
 
 // just this code to make sure unhandled exceptions are printed to
@@ -90,6 +90,50 @@ test('should correctly set port when passed in settings', (t) => {
   });
 });
 
+
+// this test could also have been in add-bot. As it spans over both constructor and bot adding
+test('should accept requests where expected when useDefaultMountPathPrepend is truthy', (t) => {
+  t.plan(3);
+  return new Promise((resolve) => {
+    const botmaster = new Botmaster({
+      useDefaultMountPathPrepend: false,
+    });
+
+    botmaster.on('listening', () => {
+      const bot = new MockBot({
+        requiresWebhook: true,
+        webhookEndpoint: 'webhook/endpoint',
+        type: 'express',
+      });
+
+      botmaster.addBot(bot);
+      t.is(Object.keys(botmaster.__serverRequestListeners).length, 1);
+      t.is(botmaster.bots.length, 1);
+
+      const updateToSend = { text: 'Hello world' };
+      const requestOptions = {
+        method: 'POST',
+        uri: 'http://localhost:3000/webhook/endpoint',
+        json: updateToSend,
+      };
+
+      request(requestOptions);
+
+      botmaster.use({
+        type: 'incoming',
+        controller: (onUpdateBot, update) => {
+          t.deepEqual(update.raw, updateToSend);
+          botmaster.server.close(resolve);
+        },
+      });
+
+      botmaster.on('error', () => {
+        botmaster.server.close(resolve);
+      });
+    });
+  });
+});
+
 test('should throw and error when server and port passed in settings', (t) => {
   t.plan(1);
 
@@ -103,16 +147,6 @@ test('should throw and error when server and port passed in settings', (t) => {
     const botmaster = new Botmaster(settings);
   } catch (e) {
     t.is(e.message.indexOf('IncompatibleArgumentsError') > -1, true);
-  }
-});
-
-test('should throw and error when settings is an object and neither port nor server is passed', (t) => {
-  t.plan(1);
-
-  try {
-    const botmaster = new Botmaster({});
-  } catch (e) {
-    t.is(e.message.indexOf('If passing through settings,') > -1, true, 'Error message not same as expected');
   }
 });
 
