@@ -90,50 +90,6 @@ test('should correctly set port when passed in settings', (t) => {
   });
 });
 
-
-// this test could also have been in add-bot. As it spans over both constructor and bot adding
-test('should accept requests where expected when useDefaultMountPathPrepend is truthy', (t) => {
-  t.plan(3);
-  return new Promise((resolve) => {
-    const botmaster = new Botmaster({
-      useDefaultMountPathPrepend: false,
-    });
-
-    botmaster.on('listening', () => {
-      const bot = new MockBot({
-        requiresWebhook: true,
-        webhookEndpoint: 'webhook/endpoint',
-        type: 'express',
-      });
-
-      botmaster.addBot(bot);
-      t.is(Object.keys(botmaster.__serverRequestListeners).length, 1);
-      t.is(botmaster.bots.length, 1);
-
-      const updateToSend = { text: 'Hello world' };
-      const requestOptions = {
-        method: 'POST',
-        uri: 'http://localhost:3000/webhook/endpoint',
-        json: updateToSend,
-      };
-
-      request(requestOptions);
-
-      botmaster.use({
-        type: 'incoming',
-        controller: (onUpdateBot, update) => {
-          t.deepEqual(update.raw, updateToSend);
-          botmaster.server.close(resolve);
-        },
-      });
-
-      botmaster.on('error', () => {
-        botmaster.server.close(resolve);
-      });
-    });
-  });
-});
-
 test('should throw and error when server and port passed in settings', (t) => {
   t.plan(1);
 

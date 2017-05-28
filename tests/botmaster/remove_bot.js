@@ -24,10 +24,11 @@ test('works with a bot that doesn\'t require webhhooks', (t) => {
   });
 });
 
-const arbitraryBotMacro = (t, botSettings) => {
+const arbitraryBotMacro = (t, { botmasterSettings, botSettings }) => {
   t.plan(3);
+  console.log(botSettings);
   return new Promise((resolve) => {
-    const botmaster = new Botmaster();
+    const botmaster = new Botmaster(botmasterSettings);
 
     botmaster.on('listening', () => {
       const bot = new MockBot(botSettings);
@@ -56,11 +57,25 @@ const arbitraryBotMacro = (t, botSettings) => {
 };
 
 test('works with an express bot', arbitraryBotMacro, {
-  requiresWebhook: true,
-  webhookEndpoint: 'express',
+  botSettings: {
+    requiresWebhook: true,
+    webhookEndpoint: 'express',
+  },
 });
 
 test('works with a koa bot', arbitraryBotMacro, {
-  requiresWebhook: true,
-  webhookEndpoint: 'koa',
+  botSettings: {
+    requiresWebhook: true,
+    webhookEndpoint: 'koa',
+  },
+});
+
+test('Removes path if useDefaultMountPathPrepend is false', arbitraryBotMacro, {
+  botmasterSettings: {
+    useDefaultMountPathPrepend: false,
+  },
+  botSettings: {
+    requiresWebhook: true,
+    webhookEndpoint: '/express/',
+  },
 });

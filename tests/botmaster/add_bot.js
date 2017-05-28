@@ -24,10 +24,10 @@ test('works with a bot that doesn\'t require webhhooks', (t) => {
   });
 });
 
-const arbitraryBotMacro = (t, botSettings) => {
+const arbitraryBotMacro = (t, { botmasterSettings, botSettings }) => {
   t.plan(3);
   return new Promise((resolve) => {
-    const botmaster = new Botmaster();
+    const botmaster = new Botmaster(botmasterSettings);
 
     botmaster.on('listening', () => {
       const bot = new MockBot(botSettings);
@@ -36,10 +36,14 @@ const arbitraryBotMacro = (t, botSettings) => {
       t.is(Object.keys(botmaster.__serverRequestListeners).length, 1);
       t.is(botmaster.bots.length, 1);
 
+      const uri = botmaster.settings.useDefaultMountPathPrepend
+        ? `http://localhost:3000/${botSettings.type}/webhook/endpoint`
+        : 'http://localhost:3000/webhook/endpoint';
+
       const updateToSend = { text: 'Hello world' };
       const requestOptions = {
         method: 'POST',
-        uri: `http://localhost:3000/${botSettings.type}/webhook/endpoint`,
+        uri,
         json: updateToSend,
       };
 
@@ -61,21 +65,39 @@ const arbitraryBotMacro = (t, botSettings) => {
 };
 
 test('works with an express bot', arbitraryBotMacro, {
-  requiresWebhook: true,
-  webhookEndpoint: 'webhook/endpoint',
-  type: 'express',
+  botSettings: {
+    requiresWebhook: true,
+    webhookEndpoint: 'webhook/endpoint',
+    type: 'express',
+  },
 });
 
 test('works with a koa bot', arbitraryBotMacro, {
-  requiresWebhook: true,
-  webhookEndpoint: 'webhook/endpoint',
-  type: 'koa',
+  botSettings: {
+    requiresWebhook: true,
+    webhookEndpoint: 'webhook/endpoint',
+    type: 'koa',
+  },
 });
 
 test('works with a webhook that has slash bot', arbitraryBotMacro, {
-  requiresWebhook: true,
-  webhookEndpoint: '/webhook/endpoint/',
-  type: 'express',
+  botSettings: {
+    requiresWebhook: true,
+    webhookEndpoint: '/webhook/endpoint/',
+    type: 'express',
+  },
+});
+
+// this test could also have been in constructor. As it spans over both constructor and bot adding
+test('should accept requests where expected when useDefaultMountPathPrepend is truthy', arbitraryBotMacro, {
+  botmasterSettings: {
+    useDefaultMountPathPrepend: false,
+  },
+  botSettings: {
+    requiresWebhook: true,
+    webhookEndpoint: 'webhook/endpoint',
+    type: 'express',
+  },
 });
 
 test('works with an express server AND both an express and a koa bot', (t) => {
