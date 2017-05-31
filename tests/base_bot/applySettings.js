@@ -103,3 +103,37 @@ test(`${errorTestTitleBase} with a webhookEndpoint although it does not requires
     t.is(err.message.indexOf('do not require webhookEndpoint in') > -1, true);
   }
 });
+
+test(`${errorTestTitleBase} with 'pages' being passed and one of the pages' token is not defined`, (t) => {
+  t.plan(1);
+  const botSettings = {
+    pages: {
+      '123x': {
+        pageToken: '',
+      },
+    },
+  };
+
+  try {
+    const bot = new MockBot(botSettings);
+  } catch (err) {
+    t.is(err.message, 'All pages are expected to have a pageToken. Page "123x" is missing it.');
+  }
+});
+
+test(`${successTestTitleBase} with 'pages' being passed and pages' tokens all defined`, (t) => {
+  t.plan(1);
+  const botSettings = {
+    pages: {
+      '123x': {
+        pageToken: '123xtoken',
+      },
+      '432y': {
+        pageToken: '432ytoken',
+      },
+    },
+  };
+
+  const bot = new MockBot(botSettings);
+  t.pass();
+});
