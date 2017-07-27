@@ -235,7 +235,7 @@ minimal structure.
 
 **Example**  
 ```js
-bot.sendAttachmentFromURLTo('image', "some image url you've got", update.sender.id);
+bot.sendAttachmentFromUrlTo('image', "some image url you've got", update.sender.id);
 ```
 <a name="BaseBot+sendDefaultButtonMessageTo"></a>
 
