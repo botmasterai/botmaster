@@ -39,6 +39,9 @@
       "tests"
     ]
   },
+  "files": [
+    "tests/_mock_bot.js"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/jdwuarin/botmaster"
