@@ -1,6 +1,4 @@
 import test from 'ava';
-import http from 'http';
-import express from 'express';
 import request from 'request-promise';
 
 import Botmaster from '../../lib';
