@@ -42,14 +42,6 @@ in the subclasses in order for them to work.
 | --- | --- | --- |
 | settings | <code>object</code> | inheritors of BaseBot take a settings object as first param. |
 
-**Example**  
-```js
-// In general however, one can instantiate a bot object like this:
-const bot = new BaseBotSubClass({ // e.g. MessengerBot
-  credentials: <my_base_bot_sub_class_credentials>,
-  webhookEnpoint: 'someEndpoint' // only if class requires them
-})
-```
 <a name="BaseBot+createOutgoingMessage"></a>
 
 ### baseBot.createOutgoingMessage(message) ⇒ <code>OutgoingMessage</code>
@@ -60,7 +52,7 @@ it with all its helper functions
 
 This is the instance version of this method
 
-**Kind**: instance method of <code>[BaseBot](#BaseBot)</code>  
+**Kind**: instance method of [<code>BaseBot</code>](#BaseBot)  
 **Returns**: <code>OutgoingMessage</code> - outgoingMessage. The same object passed in with
 all the helper functions from OutgoingMessage  
 
@@ -77,7 +69,7 @@ new outgoingMessage object
 
 This is the instance version of this method
 
-**Kind**: instance method of <code>[BaseBot](#BaseBot)</code>  
+**Kind**: instance method of [<code>BaseBot</code>](#BaseBot)  
 **Returns**: <code>OutgoingMessage</code> - outgoingMessage. A valid OutgoingMessage object with recipient set.  
 
 | Param | Type | Description |
@@ -91,7 +83,7 @@ sendMessage() falls back to the sendMessage implementation of whatever
 subclass inherits form BaseBot. The expected format is normally any type of
 message object that could be sent on to messenger
 
-**Kind**: instance method of <code>[BaseBot](#BaseBot)</code>  
+**Kind**: instance method of [<code>BaseBot</code>](#BaseBot)  
 **Returns**: <code>Promise</code> - promise that resolves with a body object (see example)  
 
 | Param | Type | Description |
@@ -127,7 +119,7 @@ bot.sendMessage(outgoingMessage);
 sendMessageTo() Just makes it easier to send a message without as much
 structure.
 
-**Kind**: instance method of <code>[BaseBot](#BaseBot)</code>  
+**Kind**: instance method of [<code>BaseBot</code>](#BaseBot)  
 **Returns**: <code>Promise</code> - promise that resolves with a body object
 (see `sendMessage` example)  
 
@@ -153,7 +145,7 @@ bot.sendMessageTo(message, update.sender.id);
 sendTextMessageTo() Just makes it easier to send a text message with
 minimal structure.
 
-**Kind**: instance method of <code>[BaseBot](#BaseBot)</code>  
+**Kind**: instance method of [<code>BaseBot</code>](#BaseBot)  
 **Returns**: <code>Promise</code> - promise that resolves with a body object
 (see `sendMessage` example)  
 
@@ -174,7 +166,7 @@ reply() Another way to easily send a text message. In this case,
 we just send the update that came in as is and then the text we
 want to send as a reply.
 
-**Kind**: instance method of <code>[BaseBot](#BaseBot)</code>  
+**Kind**: instance method of [<code>BaseBot</code>](#BaseBot)  
 **Returns**: <code>Promise</code> - promise that resolves with a body object
 (see `sendMessage` example)  
 
@@ -194,7 +186,7 @@ bot.reply(update, 'something super important!');
 sendAttachmentTo() makes it easier to send an attachment message with
 less structure.
 
-**Kind**: instance method of <code>[BaseBot](#BaseBot)</code>  
+**Kind**: instance method of [<code>BaseBot</code>](#BaseBot)  
 **Returns**: <code>Promise</code> - promise that resolves with a body object
 (see `sendMessage` example)  
 
@@ -222,7 +214,7 @@ bot.sendAttachmentTo(attachment, update.sender.id);
 sendAttachmentFromUrlTo() makes it easier to send an attachment message with
 minimal structure.
 
-**Kind**: instance method of <code>[BaseBot](#BaseBot)</code>  
+**Kind**: instance method of [<code>BaseBot</code>](#BaseBot)  
 **Returns**: <code>Promise</code> - promise that resolves with a body object
 (see `sendMessage` example)  
 
@@ -244,7 +236,7 @@ sendDefaultButtonMessageTo() makes it easier to send a default set of
 buttons. The default button type is the Messenger quick_replies, where
 the payload is the same as the button title and the content_type is text.
 
-**Kind**: instance method of <code>[BaseBot](#BaseBot)</code>  
+**Kind**: instance method of [<code>BaseBot</code>](#BaseBot)  
 **Returns**: <code>Promise</code> - promise that resolves with a body object
 (see `sendMessage` example)  
 
@@ -267,7 +259,7 @@ bot.sendDefaultButtonMessageTo(buttonArray,
 sendIsTypingMessageTo() just sets the is typing status to the platform
 if available.
 
-**Kind**: instance method of <code>[BaseBot](#BaseBot)</code>  
+**Kind**: instance method of [<code>BaseBot</code>](#BaseBot)  
 **Returns**: <code>Promise</code> - promise that resolves with a body object
 (see `sendMessage` example)  
 
@@ -287,7 +279,7 @@ bot.sendIsTypingMessageTo(update.sender.id);
 sendCascade() allows developers to send a cascade of messages
 in a sequence. All types of messages can be sent (including raw messages).
 
-**Kind**: instance method of <code>[BaseBot](#BaseBot)</code>  
+**Kind**: instance method of [<code>BaseBot</code>](#BaseBot)  
 **Returns**: <code>Promise</code> - promise that resolves with an array of body objects
 (see `sendMessage` example for one said object)  
 
@@ -317,7 +309,7 @@ bot.sendCascade(messageArray);
 sendTextCascadeTo() is simply a helper function around sendCascadeTo.
 It allows developers to send a cascade of text messages more easily.
 
-**Kind**: instance method of <code>[BaseBot](#BaseBot)</code>  
+**Kind**: instance method of [<code>BaseBot</code>](#BaseBot)  
 **Returns**: <code>Promise</code> - promise that resolves with an array of body objects
 (see `sendMessage` example for one said object)  
 
@@ -339,7 +331,7 @@ calls __sendMessage in each botClass without calling formatOutgoingMessage
 before. It's really just sugar around __sendMessage which shouldn't be used
 directly.
 
-**Kind**: instance method of <code>[BaseBot](#BaseBot)</code>  
+**Kind**: instance method of [<code>BaseBot</code>](#BaseBot)  
 **Returns**: <code>Promise</code> - promise  
 
 | Param | Type |
@@ -351,7 +343,7 @@ directly.
 ### baseBot.getUserInfo(userId) ⇒ <code>Promise</code>
 Retrieves the basic user info from a user if platform supports it
 
-**Kind**: instance method of <code>[BaseBot](#BaseBot)</code>  
+**Kind**: instance method of [<code>BaseBot</code>](#BaseBot)  
 **Returns**: <code>Promise</code> - promise that resolves into the user info or an empty
 object by default  
 
@@ -369,7 +361,7 @@ it with all its helper functions
 
 This is the static version of this method
 
-**Kind**: static method of <code>[BaseBot](#BaseBot)</code>  
+**Kind**: static method of [<code>BaseBot</code>](#BaseBot)  
 **Returns**: <code>OutgoingMessage</code> - outgoingMessage. The same object passed in with
 all the helper functions from OutgoingMessage  
 
@@ -386,7 +378,7 @@ new outgoingMessage object
 
 This is the static version of this method
 
-**Kind**: static method of <code>[BaseBot](#BaseBot)</code>  
+**Kind**: static method of [<code>BaseBot</code>](#BaseBot)  
 **Returns**: <code>OutgoingMessage</code> - outgoingMessage. A valid OutgoingMessage object with recipient set.  
 
 | Param | Type | Description |

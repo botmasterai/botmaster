@@ -49,7 +49,7 @@ likely what you will want to do to add a recipient. Alternatively, you Can
 use addRecipientByPhoneNumber if the platform you are sending the message to
 supports that.
 
-**Kind**: instance method of <code>[OutgoingMessage](#OutgoingMessage)</code>  
+**Kind**: instance method of [<code>OutgoingMessage</code>](#OutgoingMessage)  
 **Returns**: <code>OutgoinMessage</code> - returns this object to allow for chaining of methods.  
 
 | Param | Type | Description |
@@ -63,7 +63,7 @@ Adds `recipient.phone_number` param to the OutgoingMessage object.
 You might prefer to add a recipient by id rather. This is achieved via
 addRecipientById
 
-**Kind**: instance method of <code>[OutgoingMessage](#OutgoingMessage)</code>  
+**Kind**: instance method of [<code>OutgoingMessage</code>](#OutgoingMessage)  
 **Returns**: <code>OutgoinMessage</code> - returns this object to allow for chaining of methods.  
 
 | Param | Type | Description |
@@ -76,14 +76,14 @@ addRecipientById
 removes the `recipient` param from the OutgoingMessage object.
 This will remove the object wether it was set with a phone number or an id
 
-**Kind**: instance method of <code>[OutgoingMessage](#OutgoingMessage)</code>  
+**Kind**: instance method of [<code>OutgoingMessage</code>](#OutgoingMessage)  
 **Returns**: <code>OutgoinMessage</code> - returns this object to allow for chaining of methods.  
 <a name="OutgoingMessage+addText"></a>
 
 ### outgoingMessage.addText(text) ⇒ <code>OutgoinMessage</code>
 Adds `message.text` to the OutgoingMessage
 
-**Kind**: instance method of <code>[OutgoingMessage](#OutgoingMessage)</code>  
+**Kind**: instance method of [<code>OutgoingMessage</code>](#OutgoingMessage)  
 **Returns**: <code>OutgoinMessage</code> - returns this object to allow for chaining of methods.  
 
 | Param | Type | Description |
@@ -95,7 +95,7 @@ Adds `message.text` to the OutgoingMessage
 ### outgoingMessage.removeText() ⇒ <code>OutgoinMessage</code>
 Removes the `message.text` param from the OutgoingMessage object.
 
-**Kind**: instance method of <code>[OutgoingMessage](#OutgoingMessage)</code>  
+**Kind**: instance method of [<code>OutgoingMessage</code>](#OutgoingMessage)  
 **Returns**: <code>OutgoinMessage</code> - returns this object to allow for chaining of methods.  
 <a name="OutgoingMessage+addAttachment"></a>
 
@@ -104,7 +104,7 @@ Adds `message.attachment` to the OutgoingMessage. If you want to add
 an attachment simply from a type and a url, have a look at:
 addAttachmentFromUrl
 
-**Kind**: instance method of <code>[OutgoingMessage](#OutgoingMessage)</code>  
+**Kind**: instance method of [<code>OutgoingMessage</code>](#OutgoingMessage)  
 **Returns**: <code>OutgoinMessage</code> - returns this object to allow for chaining of methods.  
 
 | Param | Type | Description |
@@ -118,7 +118,7 @@ Adds `message.attachment` from a type and url without requiring you to
 provide the whole attachment object. If you want to add an attachment using
 a full object, use addAttachment.
 
-**Kind**: instance method of <code>[OutgoingMessage](#OutgoingMessage)</code>  
+**Kind**: instance method of [<code>OutgoingMessage</code>](#OutgoingMessage)  
 **Returns**: <code>OutgoinMessage</code> - returns this object to allow for chaining of methods.  
 
 | Param | Type | Description |
@@ -131,7 +131,7 @@ a full object, use addAttachment.
 ### outgoingMessage.removeAttachment() ⇒ <code>OutgoinMessage</code>
 Removes `message.attachment` param from the OutgoingMessage object.
 
-**Kind**: instance method of <code>[OutgoingMessage](#OutgoingMessage)</code>  
+**Kind**: instance method of [<code>OutgoingMessage</code>](#OutgoingMessage)  
 **Returns**: <code>OutgoinMessage</code> - returns this object to allow for chaining of methods.  
 <a name="OutgoingMessage+addQuickReplies"></a>
 
@@ -140,7 +140,7 @@ Adds `message.quick_replies` to the OutgoinMessage object. Use
 addPayloadLessQuickReplies if you just want to add quick replies from an
 array of titles
 
-**Kind**: instance method of <code>[OutgoingMessage](#OutgoingMessage)</code>  
+**Kind**: instance method of [<code>OutgoingMessage</code>](#OutgoingMessage)  
 **Returns**: <code>OutgoinMessage</code> - returns this object to allow for chaining of methods.  
 
 | Param | Type | Description |
@@ -154,7 +154,7 @@ Adds `message.quick_replies` to the OutgoinMessage object from a simple array
 of quick replies titles.Use addQuickReplies if want to add quick replies
 from an quick reply objects
 
-**Kind**: instance method of <code>[OutgoingMessage](#OutgoingMessage)</code>  
+**Kind**: instance method of [<code>OutgoingMessage</code>](#OutgoingMessage)  
 **Returns**: <code>OutgoinMessage</code> - returns this object to allow for chaining of methods.  
 
 | Param | Type | Description |
@@ -168,21 +168,21 @@ Adds a `content_type: location` message.quick_replies to the OutgoingMessage.
 Use this if the platform the bot class you are using is based on supports
 asking for the location to its users.
 
-**Kind**: instance method of <code>[OutgoingMessage](#OutgoingMessage)</code>  
+**Kind**: instance method of [<code>OutgoingMessage</code>](#OutgoingMessage)  
 **Returns**: <code>OutgoinMessage</code> - returns this object to allow for chaining of methods.  
 <a name="OutgoingMessage+removeQuickReplies"></a>
 
 ### outgoingMessage.removeQuickReplies() ⇒ <code>OutgoinMessage</code>
 Removes `message.quick_replies` param from the OutgoingMessage object.
 
-**Kind**: instance method of <code>[OutgoingMessage](#OutgoingMessage)</code>  
+**Kind**: instance method of [<code>OutgoingMessage</code>](#OutgoingMessage)  
 **Returns**: <code>OutgoinMessage</code> - returns this object to allow for chaining of methods.  
 <a name="OutgoingMessage+addSenderAction"></a>
 
 ### outgoingMessage.addSenderAction(senderAction) ⇒ <code>OutgoinMessage</code>
 Adds an arbitrary `sender_action` to the OutgoinMessage
 
-**Kind**: instance method of <code>[OutgoingMessage](#OutgoingMessage)</code>  
+**Kind**: instance method of [<code>OutgoingMessage</code>](#OutgoingMessage)  
 **Returns**: <code>OutgoinMessage</code> - returns this object to allow for chaining of methods.  
 
 | Param | Type | Description |
@@ -194,26 +194,26 @@ Adds an arbitrary `sender_action` to the OutgoinMessage
 ### outgoingMessage.addTypingOnSenderAction() ⇒ <code>OutgoinMessage</code>
 Adds `sender_action: typing_on` to the OutgoinMessage
 
-**Kind**: instance method of <code>[OutgoingMessage](#OutgoingMessage)</code>  
+**Kind**: instance method of [<code>OutgoingMessage</code>](#OutgoingMessage)  
 **Returns**: <code>OutgoinMessage</code> - returns this object to allow for chaining of methods.  
 <a name="OutgoingMessage+addTypingOffSenderAction"></a>
 
 ### outgoingMessage.addTypingOffSenderAction() ⇒ <code>OutgoinMessage</code>
 Adds `sender_action: typing_off`  to the OutgoinMessage
 
-**Kind**: instance method of <code>[OutgoingMessage](#OutgoingMessage)</code>  
+**Kind**: instance method of [<code>OutgoingMessage</code>](#OutgoingMessage)  
 **Returns**: <code>OutgoinMessage</code> - returns this object to allow for chaining of methods.  
 <a name="OutgoingMessage+addMarkSeenSenderAction"></a>
 
 ### outgoingMessage.addMarkSeenSenderAction() ⇒ <code>OutgoinMessage</code>
 Adds `sender_action: mark_seen`  to the OutgoinMessage
 
-**Kind**: instance method of <code>[OutgoingMessage](#OutgoingMessage)</code>  
+**Kind**: instance method of [<code>OutgoingMessage</code>](#OutgoingMessage)  
 **Returns**: <code>OutgoinMessage</code> - returns this object to allow for chaining of methods.  
 <a name="OutgoingMessage+removeSenderAction"></a>
 
 ### outgoingMessage.removeSenderAction() ⇒ <code>OutgoinMessage</code>
 Removes `sender_action` param from the OutgoingMessage object.
 
-**Kind**: instance method of <code>[OutgoingMessage](#OutgoingMessage)</code>  
+**Kind**: instance method of [<code>OutgoingMessage</code>](#OutgoingMessage)  
 **Returns**: <code>OutgoinMessage</code> - returns this object to allow for chaining of methods.  
