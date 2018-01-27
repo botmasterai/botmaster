@@ -1,6 +1,6 @@
 {
   "name": "botmaster",
-  "version": "3.1.5",
+  "version": "3.2.0",
   "description": "Framework allowing developers to write bots that are agnostic with respect to the channel used by their users (messenger, telegram etc...)",
   "main": "./lib/index.js",
   "scripts": {
