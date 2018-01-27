@@ -62,7 +62,7 @@
     "lodash": "^4.17.4"
   },
   "engines": {
-    "node": ">=4.x.x <13.0.0"
+    "node": "4.x.x || >=6.x.x"
   },
   "devDependencies": {
     "ava": "^0.19.1",
