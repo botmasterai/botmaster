@@ -15,13 +15,13 @@ to where we wanted it to be. It is now truly a micro-framework. With only 2 depe
 relying on express anymore, Botmaster v3 is the only JS bot framework that gives as much control
 as possible to the developer without losing its ease of use.
 
-A migration documentation can be found at: http://botmasterai.com/documentation/latest/changelog.html#major-308
+A migration documentation can be found at: https://github.com/botmasterai/botmasterai.github.io/blob/master/docs/changelog.md#major-308
 
 Botmaster is a lightweight chatbot framework. Its purpose is to integrate your existing chatbot into a variety of messaging channels - currently Facebook Messenger, Twitter DM and Telegram.
 
 ## Documentation
 
-Find the whole documentation for the framework on: http://botmasterai.com/documentation/latest
+Find the whole documentation for the framework here: https://github.com/botmasterai/botmasterai.github.io/tree/master/docs
 
 ## License
 
